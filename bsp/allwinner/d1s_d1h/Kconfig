@@ -18,14 +18,30 @@ config PKGS_DIR
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 
-config BOARD_allwinnerd1s
-    bool
-    select ARCH_RISCV64
-    select RT_USING_COMPONENTS_INIT
-    select RT_USING_USER_MAIN
-    select RT_USING_CACHE
-    select ARCH_MM_MMU
-    default y
+choice
+    prompt "Select Allwinner D1 type"
+    default BOARD_allwinnerd1
+
+    config BOARD_allwinnerd1
+        bool "Allwinner D1"
+        select ARCH_RISCV64
+        select RT_USING_COMPONENTS_INIT
+        select RT_USING_USER_MAIN
+        select RT_USING_CACHE
+        select ARCH_MM_MMU
+
+    config BOARD_allwinnerd1s
+        bool "Allwinner D1s"
+        select ARCH_RISCV64
+        select RT_USING_COMPONENTS_INIT
+        select RT_USING_USER_MAIN
+        select RT_USING_CACHE
+        select ARCH_MM_MMU
+endchoice
+
+
+
+
 
 config ENABLE_FPU
     bool "Enable FPU"
