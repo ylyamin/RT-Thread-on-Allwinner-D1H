@@ -87,7 +87,14 @@ extern "C" {
 /**
  * @brief Macros used to sleep for the given time (milliseconds or seconds)
  */
-#define OS_MSleep(msec)         rt_thread_delay((rt_tick_t)OS_MSecsToTicks(msec))
+    /*
+        with original implementation:
+        #define OS_MSleep(msec)   rt_thread_delay((rt_tick_t)OS_MSecsToTicks(msec))
+        board stuck by some reason, replace to:
+        #define OS_MSleep(msec)   rt_hw_us_delay(msec*1000)
+    */
+#define OS_MSleep(msec)   rt_hw_us_delay(msec*1000)
+
 #define OS_Sleep(sec)           OS_MSleep((sec) * OS_MSEC_PER_SEC)
 #define OS_SSleep(sec)          OS_Sleep(sec)
 

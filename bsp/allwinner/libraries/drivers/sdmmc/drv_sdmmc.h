@@ -13,7 +13,7 @@
 
 #include <rtdef.h>
 
-#define SDMMC_CARD_NR 2
+#define SDMMC_CARD_NR 1 //replace original 2 to 1
 
 #define SDMMC_DEV_NAME_DEF "sdmmc0"
 

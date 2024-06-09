@@ -218,7 +218,12 @@ rt_err_t sdmmc_init(rt_device_t dev)
     int mdelay = 500;
     while (!hal_sdc_init_timeout() && mdelay > 0)
     {
-        rt_thread_mdelay(50);
+        /*
+            with original implementation rt_thread_mdelay() 
+            board stuck by some reason, replace to rt_hw_us_delay()
+        */
+        //rt_thread_mdelay(50); 
+        rt_hw_us_delay(50*1000);
         mdelay -= 50;
     }
     return 0;

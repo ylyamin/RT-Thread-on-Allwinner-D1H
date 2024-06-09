@@ -20,8 +20,10 @@
 #include <hal_clk.h>
 #include <hal_reset.h>
 #include <hal_gpio.h>
-
-#define UART_DEFAULT_BAUDRATE 500000
+/*
+    woriginal baudrate was 500000 replace to 115200
+*/
+#define UART_DEFAULT_BAUDRATE 115200
 
 #ifdef UART0_TX_USING_GPIOB8
 #define UART0_TX GPIOB(8)
