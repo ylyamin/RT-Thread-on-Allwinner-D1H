@@ -51,3 +51,4 @@ tags
 CMakeLists.txt
 cmake-build-debug
 *.mk
+*.img
