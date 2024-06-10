@@ -9,3 +9,6 @@
 	path = bootloaders/u-boot
 	url = https://github.com/smaeul/u-boot
 	branch = 7446a47
+[submodule "bootloaders/xfel"]
+	path = bootloaders/xfel
+	url = https://github.com/xboot/xfel
