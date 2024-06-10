@@ -1,0 +1,4 @@
+[submodule "bootloaders/sun20i_d1_spl"]
+	path = bootloaders/sun20i_d1_spl
+	url = https://github.com/smaeul/sun20i_d1_spl.git
+	branch = mainline
