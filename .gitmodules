@@ -2,3 +2,10 @@
 	path = bootloaders/sun20i_d1_spl
 	url = https://github.com/smaeul/sun20i_d1_spl.git
 	branch = mainline
+[submodule "bootloaders/opensbi"]
+	path = bootloaders/opensbi
+	url = https://github.com/riscv-software-src/opensbi
+[submodule "bootloaders/u-boot"]
+	path = bootloaders/u-boot
+	url = https://github.com/smaeul/u-boot
+	branch = 7446a47
