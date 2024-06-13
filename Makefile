@@ -1,45 +1,115 @@
-TOOLCHAIN_INSTALL_DIR ?= "$(shell pwd)/toolchain"
-RISCV64-GLIBC-GCC = "$(TOOLCHAIN_INSTALL_DIR)/riscv64-glibc-gcc-thead_20200702/bin/riscv64-unknown-linux-gnu-"
-RISCV64-MUSL = "$(TOOLCHAIN_INSTALL_DIR)/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin"
+#Variables
+BUILD = build
+SD_IMAGE = image/sd_image.img
+SD_MOUNT = /dev/sdb
+TOOLCHAIN_INSTALL_DIR ?= $(shell pwd)/toolchain
+U_BOOT_INSTALL_DIR ?= $(shell pwd)/bootloaders
+DEBUGGER_INSTALL_DIR = $(shell pwd)/debugger
 
-all: toolchain
+RED=\033[0;31m
+NC=\033[0m
 
-toolchain:
-	cd toolchain && ./get_riscv64-musle.sh install $(TOOLCHAIN_INSTALL_DIR)
+#Toolcahin
+RISCV64_MUSL_DIR = $(TOOLCHAIN_INSTALL_DIR)/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu
+RISCV64_GLIBC_GCC_DIR = $(TOOLCHAIN_INSTALL_DIR)/riscv64-glibc-gcc-thead_20200702
+T_HEAD_DEBUGSERVER_DIR = $(TOOLCHAIN_INSTALL_DIR)/T-HEAD_DebugServer
+
+RISCV64_MUSL_BIN = $(RISCV64_MUSL_DIR)/bin
+RISCV64_GLIBC_GCC_BIN = $(RISCV64_GLIBC_GCC_DIR)/bin/riscv64-unknown-linux-gnu-
+T_HEAD_DEBUGSERVER_BIN = $(T_HEAD_DEBUGSERVER_DIR)/DebugServerConsole.elf
+
+$(RISCV64_MUSL_DIR):
+	wget -P $(TOOLCHAIN_INSTALL_DIR) https://github.com/RT-Thread/toolchains-ci/releases/download/v1.7/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu_latest.tar.bz2
+	tar -C $(TOOLCHAIN_INSTALL_DIR) -xf $(TOOLCHAIN_INSTALL_DIR)/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu_latest.tar.bz2
+
+$(RISCV64_MUSL_DIR)-remove:
+	rm -rf $(TOOLCHAIN_INSTALL_DIR)/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu*
+
+$(RISCV64_GLIBC_GCC_DIR):
 	cd toolchain && ./get_riscv64-glibc-gcc-thead.sh install $(TOOLCHAIN_INSTALL_DIR)
-	cd toolchain && ./get_T-Head-DebugServer.sh install $(TOOLCHAIN_INSTALL_DIR)
+	wget -P $(TOOLCHAIN_INSTALL_DIR) https://github.com/YuzukiHD/sunxi-bsp-toolchains/releases/download/1.0.0/riscv64-glibc-gcc-thead_20200702.tar.xz
+	tar -C $(TOOLCHAIN_INSTALL_DIR) -xf $(TOOLCHAIN_INSTALL_DIR)/riscv64-glibc-gcc-thead_20200702.tar.xz
 
-toolchain_remove:
-	cd toolchain && ./get_riscv64-musle.sh remove $(TOOLCHAIN_INSTALL_DIR)
-	cd toolchain && ./get_riscv64-glibc-gcc-thead.sh remove $(TOOLCHAIN_INSTALL_DIR)
-	cd toolchain && ./get_T-Head-DebugServer.sh remove $(TOOLCHAIN_INSTALL_DIR)
+$(RISCV64_GLIBC_GCC_DIR)-remove:
+	rm -rf $(TOOLCHAIN_INSTALL_DIR)/riscv64-glibc-gcc-thead_20200702*
 
-bootloaders:
+$(T_HEAD_DEBUGSERVER_DIR):
+	wget -P $(TOOLCHAIN_INSTALL_DIR) https://occ-oss-prod.oss-cn-hangzhou.aliyuncs.com/resource//1666331533949/T-Head-DebugServer-linux-x86_64-V5.16.5-20221021.sh.tar.gz
+	tar -C $(TOOLCHAIN_INSTALL_DIR) -xvzf $(TOOLCHAIN_INSTALL_DIR)/T-Head-DebugServer-linux-x86_64-V5.16.5-20221021.sh.tar.gz 
+	cd $(TOOLCHAIN_INSTALL_DIR) && sudo $(TOOLCHAIN_INSTALL_DIR)/T-Head-DebugServer-linux-x86_64-V5.16.5-20221021.sh -i
+
+$(T_HEAD_DEBUGSERVER_DIR)-remove:
+	rm -rf $(TOOLCHAIN_INSTALL_DIR)/T-Head-DebugServer*
+	sudo rm -rf $(TOOLCHAIN_INSTALL_DIR)/T-HEAD_DebugServer*
+
+toolchain: $(RISCV64_MUSL_DIR) $(RISCV64_GLIBC_GCC_DIR) $(T_HEAD_DEBUGSERVER_DIR)
+
+toolchain-remove: $(RISCV64_MUSL_DIR)-remove $(RISCV64_GLIBC_GCC_DIR)-remove $(T_HEAD_DEBUGSERVER_DIR)-remove
+
+#Bootloaders
+submodules:
 	git submodule update --init
-	cd bootloaders/opensbi/ && make CROSS_COMPILE=$(RISCV64-GLIBC-GCC) PLATFORM=generic  FW_DYNAMIC=y FW_TEXT_START=0x40000000
-	cd bootloaders/sun20i_d1_spl/ && make CROSS_COMPILE=$(RISCV64-GLIBC-GCC) OPENSBI=../opensbi/build/platform/generic/firmware/fw_dynamic.bin p=sun20iw1p1 mmc
-	cd bootloaders/u-boot/ && make CROSS_COMPILE=$(RISCV64-GLIBC-GCC) lichee_rv_defconfig #!!!
-	cd bootloaders/u-boot/ && make CROSS_COMPILE=$(RISCV64-GLIBC-GCC)
-	#xfel
 
+opensbi:
+	cd bootloaders/opensbi/ && make CROSS_COMPILE=$(RISCV64_GLIBC_GCC_BIN) PLATFORM=generic  FW_DYNAMIC=y FW_TEXT_START=0x40000000
+
+sun20i_d1_spl:
+	cd bootloaders/sun20i_d1_spl/ && make CROSS_COMPILE=$(RISCV64_GLIBC_GCC_BIN) OPENSBI=../opensbi/build/platform/generic/firmware/fw_dynamic.bin p=sun20iw1p1 mmc
+
+xfel:
+	cd bootloaders/xfel/ && make && sudo make install
+
+U_BOOT_INSTALL_DIR_ORIGIN = $(shell pwd)/bootloaders
+U_BOOT_DIR = $(U_BOOT_INSTALL_DIR)/u-boot
+
+u-boot:
+    ifneq ($(U_BOOT_INSTALL_DIR_ORIGIN),$(U_BOOT_INSTALL_DIR))
+		cp -v -u -r $(U_BOOT_INSTALL_DIR_ORIGIN)/u-boot $(U_BOOT_INSTALL_DIR)
+    endif
+	cd $(U_BOOT_DIR) && make CROSS_COMPILE=$(RISCV64_GLIBC_GCC_BIN) lichee_rv_defconfig
+	cd $(U_BOOT_DIR) && make ARCH=riscv CROSS_COMPILE=$(RISCV64_GLIBC_GCC_BIN) all
+
+bootloaders: submodules opensbi sun20i_d1_spl xfel u-boot
+
+#RT-thread
 rt:
-	cd rt-thread/bsp/allwinner/d1s_d1h/ && RTT_EXEC_PATH=$(RISCV64-MUSL) scons
+	cd rt-thread/bsp/allwinner/d1s_d1h/ && RTT_EXEC_PATH=$(RISCV64_MUSL_BIN) scons
 
 rt_clean:
-	cd rt-thread/bsp/allwinner/d1s_d1h/ && RTT_EXEC_PATH=$(RISCV64-MUSL) scons -c
+	cd rt-thread/bsp/allwinner/d1s_d1h/ && RTT_EXEC_PATH=$(RISCV64_MUSL_BIN) scons -c
 
 rt_conf:
-	cd rt-thread/bsp/allwinner/d1s_d1h/ && RTT_EXEC_PATH=$(RISCV64-MUSL) scons -menuconfig
+	cd rt-thread/bsp/allwinner/d1s_d1h/ && RTT_EXEC_PATH=$(RISCV64_MUSL_BIN) scons -menuconfig
 
-#sd
+#SD card
+$(SD_IMAGE):
+	/home/yury/Lichee/u-boot/tools/mkimage -T sunxi_toc1 -d $(BUILD)/toc1_D1H.cfg $(BUILD)/sd.bin
+	sudo dd if=bootloaders/sun20i_d1_spl/nboot/boot0_sdcard_sun20iw1p1.bin of=$(SD_IMAGE) bs=8192 seek=16
+	sudo dd if=$(BUILD)/sd.bin of=$(SD_IMAGE) bs=512 seek=32800
 
-#sd_burn
+sd: $(SD_IMAGE)
 
-#debug_build
+sd_burn: sd
+	sudo dd if=$(SD_IMAGE) of=$(SD_MOUNT) bs=512 seek=16 conv=sync
 
-#debug_session
+#Debug
+$(DEBUGGER_INSTALL_DIR)/blisp:
+	wget -P $(DEBUGGER_INSTALL_DIR) https://github.com/bouffalolab/bouffalo_sdk/blob/master/tools/cklink_firmware/bl702_cklink_whole_img_v2.2.bin
+	wget -P $(DEBUGGER_INSTALL_DIR) https://github.com/pine64/blisp/releases/download/v0.0.4/blisp-linux-x86_64-v0.0.4.zip
+	unzip $(DEBUGGER_INSTALL_DIR)/blisp-linux-x86_64-v0.0.4.zip -d $(DEBUGGER_INSTALL_DIR)
 
+debug_burn: $(DEBUGGER_INSTALL_DIR)/blisp
+	@echo "${RED}Press and hold the boot pin then plug the usb in the computer to go to the boot mode.${NC}"
+	$(DEBUGGER_INSTALL_DIR)/blisp iot -c bl70x --reset -s $(DEBUGGER_INSTALL_DIR)/bl702_cklink_whole_img_v2.2.bin -l 0x0
 
+debug:
+	@echo "${RED}Press and hold the FEL pin then press RESET pin to go to the FEL mode.${NC}"
+	xfel ddr d1
+	xfel jtag
+	$(T_HEAD_DEBUGSERVER_BIN)&
+	$(RISCV64_GLIBC_GCC_BIN)gdb
+
+all: rt
 
 
 

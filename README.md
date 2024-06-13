@@ -3,9 +3,9 @@ This is an experimentation with the [RT-Thread Operating System](https://www.rt-
 
 Executed at hardware such as [Sipeed Lichee RV + Dock](https://wiki.sipeed.com/hardware/en/lichee/RV/Dock.html) and [ClockworkPi DevTerm R01](https://www.clockworkpi.com/home-devterm).  
 
-The intention is to easily run peripherals in D1, exactly Display. Looks like RT-thread OS has the most extensive HAL layer for D1, similar to the [Linux kernel](https://github.com/cuu/last_linux-5.4/tree/master/drivers/video/fbdev/sunxi/) but not so overcomplicated.
+The intention is to easily run peripherals in D1, exactly Display. Because looks like RT-thread OS has the most extensive HAL layer for D1, similar to the [Linux kernel](https://github.com/cuu/last_linux-5.4/tree/master/drivers/video/fbdev/sunxi/) but not so overcomplicated.
 
-At the original repository [RT-Thread](https://github.com/RT-Thread/rt-thread) it looks like the compilation is not streamlined for D1H [issue 9063](https://github.com/RT-Thread/rt-thread/issues/9063). So was perform fork from [v5.0.2](https://github.com/RT-Thread/rt-thread/releases/tag/v5.0.2) and introduced several changes to make it runnable in D1H. Added latests bootloaders, compiler, debugger, build system.
+At the original repository [RT-Thread](https://github.com/RT-Thread/rt-thread) it looks like the compilation is not streamlined for D1H [issue 9063](https://github.com/RT-Thread/rt-thread/issues/9063). So was performed fork from [v5.0.2](https://github.com/RT-Thread/rt-thread/releases/tag/v5.0.2) and introduced several changes to make it runnable in D1H. Added latests bootloaders, compiler, debugger, build system.
 
 ## Installation
 In repository exist prebuilded image for SD card [image/sd_image.img](image/sd_image.img), need to flash it to SD card and install to device.
@@ -23,7 +23,7 @@ sudo dd if=image/sd_image.img of=/dev/sdb bs=512 seek=16 conv=sync
 Verified in Ubuntu 22.04.3 virtual machine.  
 Please first install make enviroment:
 ```sh
-sudo apt install make build-essential
+sudo apt install make build-essential libusb-1.0-0-dev
 ```
 Then install toolchain
 ```sh
@@ -68,10 +68,11 @@ TOOLCHAIN_INSTALL_DIR=/home/etc make rt
 ```
 ## Debugging
 ```sh
-xfel ddr d1
-xfel jtag
-TOOLCHAIN_INSTALL_DIR/T-HEAD_DebugServer/DebugServerConsole.elf
-TOOLCHAIN_INSTALL_DIR/riscv64-glibc-gcc-thead_20200702/bin/riscv64-unknown-linux-gnu-gdb
+make debug_burn
+```
+
+```sh
+make debug
 ```
 ## Hardware
 
@@ -80,11 +81,6 @@ https://linux-sunxi.org/Allwinner_Nezha
 https://andreas.welcomes-you.com/boot-sw-debian-risc-v-lichee-rv-2/  
 
 ## TODO
-- rt-thread d1 compilation (issue)
-- makefile rename targets
-- u-boot install directory
-- makefile install_toolchain artifacts check
-- debugger build
 - enviroment.sh
 - source structure
 - log from uart
