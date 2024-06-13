@@ -5,7 +5,7 @@ Executed at hardware such as [Sipeed Lichee RV + Dock](https://wiki.sipeed.com/h
 
 The intention is to easily run peripherals in D1, exactly Display. Looks like RT-thread OS has the most extensive HAL layer for D1, similar to the [Linux kernel](https://github.com/cuu/last_linux-5.4/tree/master/drivers/video/fbdev/sunxi/) but not so overcomplicated.
 
-At the original repository [RT-Thread](https://github.com/RT-Thread/rt-thread) it looks like the compilation is not streamlined for D1H. So was perform fork from [v5.0.2](https://github.com/RT-Thread/rt-thread/releases/tag/v5.0.2) and introduced several changes to make it runnable in D1H. Added latests bootloaders, compiler, debugger, build system.
+At the original repository [RT-Thread](https://github.com/RT-Thread/rt-thread) it looks like the compilation is not streamlined for D1H [issue 9063](https://github.com/RT-Thread/rt-thread/issues/9063). So was perform fork from [v5.0.2](https://github.com/RT-Thread/rt-thread/releases/tag/v5.0.2) and introduced several changes to make it runnable in D1H. Added latests bootloaders, compiler, debugger, build system.
 
 ## Installation
 In repository exist prebuilded image for SD card [image/sd_image.img](image/sd_image.img), need to flash it to SD card and install to device.

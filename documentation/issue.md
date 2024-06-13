@@ -1,6 +1,6 @@
-### issue description
+https://github.com/RT-Thread/rt-thread/issues/9063
 
-Not compiled for Allwinner D1H.
+### Not compiled for Allwinner D1H.
 
 I like this project but can't build for Allwinner D1H on Sipeed Lichee RV board
 I use compiler https://github.com/RT-Thread/toolchains-ci/releases/download/v1.7/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu_latest.tar.bz2
@@ -26,7 +26,7 @@ But loading frosen in rt_thread_mdelay function in files
 - bsp/allwinner/libraries/sunxi-hal/include/hal/sdmmc/osal/RT-Thread/_os_time.h
 
 Chnage it to rt_hw_us_delay and is finnaly looks like works:
-"
+```
  \ | /
 - RT -     Thread Smart Operating System
  / | \     5.0.2 build Jun  9 2024 17:11:05
@@ -49,7 +49,7 @@ Hello RISC-V
 msh />Mount "sd0p0" on "/" fail
 msh />
 msh />
-"
+```
 This my changes https://github.com/RT-Thread/rt-thread/commit/ec2c0f10894bca703354e7e1d4c23fbaed5a034b
 
 Please could you make it compiled properly in master and figure out what happened with SDMMC driver?
