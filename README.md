@@ -1,18 +1,9 @@
 # Overview
-This is an experimentation with the [RT-Thread Operating System](https://www.rt-thread.io/) with the [Allwinner D1H](https://d1.docs.aw-ol.com/en/) RISC-V soc and a collection of Bootloaders and Developer environment for programming and debugging.  Executed at hardware such as [Sipeed Lichee RV + Dock](https://wiki.sipeed.com/hardware/en/lichee/RV/Dock.html) and [ClockworkPi DevTerm R01](https://www.clockworkpi.com/home-devterm).  
+This is an experimentation with the [RT-Thread Operating System](https://www.rt-thread.io/) with the [Allwinner D1H](https://d1.docs.aw-ol.com/en/) RISC-V soc and a collection of Bootloaders and Developer environment for programming and debugging.  
+Executed at hardware such as [Sipeed Lichee RV + Dock](https://wiki.sipeed.com/hardware/en/lichee/RV/Dock.html) and [ClockworkPi DevTerm R01](https://www.clockworkpi.com/home-devterm).  
 The intention is to easily run peripherals in D1, exactly Display. Looks like RT-thread OS has the most extensive HAL layer for D1, similar to the [Linux kernel](https://github.com/cuu/last_linux-5.4/tree/master/drivers/video/fbdev/sunxi/) but not so overcomplicated.
 
-At the original repository [RT-Thread](https://github.com/RT-Thread/rt-thread) achieved such observations:  
-
-Master or [v5.1.0](https://github.com/RT-Thread/rt-thread/releases/tag/v5.1.0):
-- bsp/allwinner/d1/ - not compiled looks outdated
-- bsp/allwinner/d1s/ - not compiled  
-
-[v5.0.2](https://github.com/RT-Thread/rt-thread/releases/tag/v5.0.2):  
-- bsp/allwinner/d1/ - not compiled looks outdated
-- bsp/allwinner/d1s/ - compiled but not started in D1H
-
-Was forked from [v5.0.2](https://github.com/RT-Thread/rt-thread/releases/tag/v5.0.2) and introduced several changes to make it runnable in D1H. Add latests bootloaders, compiler, debugger, build system.
+At the original repository [RT-Thread](https://github.com/RT-Thread/rt-thread) it looks like the compilation is not streamlined for D1H. So was perform fork from [v5.0.2](https://github.com/RT-Thread/rt-thread/releases/tag/v5.0.2) and introduced several changes to make it runnable in D1H. Added latests bootloaders, compiler, debugger, build system.
 
 ## Installation
 In repository exist prebuilded image for SD card [image/sd_image.img](image/sd_image.img), need to flash it to SD card and install to device.
@@ -34,7 +25,7 @@ sudo apt install make build-essential
 ```
 Then install toolchain
 ```sh
-make install_toolchain
+make toolchain
 
 T-HEAD_DebugServer will request specify installation dir: 'Set full installing path:'
 ```
@@ -47,16 +38,16 @@ Will be installed:
 
 Command could be perfomed with specified install folder
 ```sh
-TOOLCHAIN_INSTALL_DIR=/home/etc make install_toolchain
+TOOLCHAIN_INSTALL_DIR=/home/etc make toolchain
 ```
 ## Build bootloaders
 To compile bootloaders use command
 ```sh
-make compile_bootloaders
+make bootloaders
 ```
 If in previus step was specified toolchain install folder need to do it again
 ```sh
-TOOLCHAIN_INSTALL_DIR=/home/etc make compile_bootloaders
+TOOLCHAIN_INSTALL_DIR=/home/etc make bootloaders
 ```
 Will be installed:
 - opensbi
@@ -67,11 +58,11 @@ Will be installed:
 ## Build RT-Thread
 To compile RT-Thread use command
 ```sh
-make compile_rt
+make rt
 ```
 If in previus step was specified toolchain install folder need to do it again
 ```sh
-TOOLCHAIN_INSTALL_DIR=/home/etc make compile_rt
+TOOLCHAIN_INSTALL_DIR=/home/etc make rt
 ```
 ## Debugging
 ```sh
@@ -94,4 +85,4 @@ https://andreas.welcomes-you.com/boot-sw-debian-risc-v-lichee-rv-2/
 - debugger build
 - enviroment.sh
 - source structure
-
+- log from uart
