@@ -97,7 +97,10 @@ rt_conf: toolchain
 	cd rt-thread/bsp/allwinner/d1s_d1h/ && RTT_EXEC_PATH=$(RISCV64_MUSL_BIN) scons -menuconfig
 
 #SD card
-$(SD_IMAGE): rt-thread/bsp/allwinner/d1s_d1h/rtthread.bin bootloaders/sun20i_d1_spl/nboot/boot0_sdcard_sun20iw1p1.bin bootloaders/opensbi/build/platform/generic/firmware/fw_dynamic.bin $(U_BOOT_INSTALL_DIR)/tools/mkimage
+$(SD_IMAGE): rt-thread/bsp/allwinner/d1s_d1h/rtthread.bin \
+			bootloaders/sun20i_d1_spl/nboot/boot0_sdcard_sun20iw1p1.bin \
+			bootloaders/opensbi/build/platform/generic/firmware/fw_dynamic.bin \
+			$(U_BOOT_INSTALL_DIR)/tools/mkimage
 	$(U_BOOT_INSTALL_DIR)/tools/mkimage -T sunxi_toc1 -d $(BUILD)/toc1_D1H.cfg $(BUILD)/sd.bin
 	sudo dd if=bootloaders/sun20i_d1_spl/nboot/boot0_sdcard_sun20iw1p1.bin of=$(SD_IMAGE) bs=8192 seek=16
 	sudo dd if=$(BUILD)/sd.bin of=$(SD_IMAGE) bs=512 seek=32800
@@ -124,7 +127,7 @@ debug:
 	$(T_HEAD_DEBUGSERVER_BIN)&
 	$(RISCV64_GLIBC_GCC_BIN)gdb -x build/.gdbinit
 
-all: rt
+all: sd
 
 
 

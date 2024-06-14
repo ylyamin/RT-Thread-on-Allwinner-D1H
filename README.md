@@ -115,7 +115,7 @@ Installing toolchain
 make toolchain
 
 * T-HEAD_DebugServer will request specify installation dir: 'Set full installing path:'
-  Could be seted the same as in TOOLCHAIN_INSTALL_DIR or repo/toolchain folder
+  Could be seted as $HOME/toolchain or RT-Thread-on-Allwinner-D1H/toolchain folder
 ```
 Will be installed:
 - riscv64-linux-musleabi_for_x86_64-pc-linux-gnu (Used by RT-Thread compilation)
@@ -158,7 +158,7 @@ sd_burn:
 
 ## Debugging
 For debbugging used Sipeed RV-Debuggr Plus with [T-Head CKLink firmware](https://github.com/bouffalolab/bouffalo_sdk/tree/master/tools/cklink_firmware). 
-To connect debugger to board need use MicroSD brakout board as in D1H JTAG pins mapped to SD Card pins as shown in [Hardware section](#hardware).  
+To connect debugger to board need use MicroSD brakout board as in D1H JTAG pins mapped to SD Card [pins](https://linux-sunxi.org/JTAG) as shown in [Hardware section](#hardware).  
 
 For flash firmware to Sipeed RV-Debuggr Plus - Press and hold the boot pin then plug the usb in the computer to go to the boot mode. And execte command:
 ```sh
