@@ -26,7 +26,6 @@ $(RISCV64_MUSL_DIR)-remove:
 	rm -rf $(TOOLCHAIN_INSTALL_DIR)/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu*
 
 $(RISCV64_GLIBC_GCC_DIR):
-	cd toolchain && ./get_riscv64-glibc-gcc-thead.sh install $(TOOLCHAIN_INSTALL_DIR)
 	wget -P $(TOOLCHAIN_INSTALL_DIR) https://github.com/YuzukiHD/sunxi-bsp-toolchains/releases/download/1.0.0/riscv64-glibc-gcc-thead_20200702.tar.xz
 	tar -C $(TOOLCHAIN_INSTALL_DIR) -xf $(TOOLCHAIN_INSTALL_DIR)/riscv64-glibc-gcc-thead_20200702.tar.xz
 
@@ -50,11 +49,19 @@ toolchain-remove: $(RISCV64_MUSL_DIR)-remove $(RISCV64_GLIBC_GCC_DIR)-remove $(T
 submodules:
 	git submodule update --init
 
-opensbi:
-	cd bootloaders/opensbi/ && make CROSS_COMPILE=$(RISCV64_GLIBC_GCC_BIN) PLATFORM=generic  FW_DYNAMIC=y FW_TEXT_START=0x40000000
+opensbi: toolchain
+	mkdir -p bootloaders/opensbi/build/platform/generic/kconfig/
+	cp bootloaders/opensbi_config bootloaders/opensbi/build/platform/generic/kconfig/.config
+	cd bootloaders/opensbi/ && make CROSS_COMPILE=$(RISCV64_GLIBC_GCC_BIN) PLATFORM=generic FW_DYNAMIC=y FW_TEXT_START=0x40000000
 
-sun20i_d1_spl:
+opensbi-clean: toolchain
+	cd bootloaders/opensbi/ && make CROSS_COMPILE=$(RISCV64_GLIBC_GCC_BIN) clean distclean
+
+sun20i_d1_spl: toolchain
 	cd bootloaders/sun20i_d1_spl/ && make CROSS_COMPILE=$(RISCV64_GLIBC_GCC_BIN) p=sun20iw1p1 mmc
+
+sun20i_d1_spl-clean: toolchain
+	cd bootloaders/sun20i_d1_spl/ && make CROSS_COMPILE=$(RISCV64_GLIBC_GCC_BIN) clean
 
 xfel:
 	cd bootloaders/xfel/ && make && sudo make install
@@ -68,25 +75,30 @@ $(U_BOOT_INSTALL_DIR):
 		cd $(U_BOOT_INSTALL_DIR) && git checkout d1-2022-04-05
     endif
 
-u-boot: $(U_BOOT_INSTALL_DIR)
+u-boot: $(U_BOOT_INSTALL_DIR) toolchain
 	cd $(U_BOOT_INSTALL_DIR) && make CROSS_COMPILE=$(RISCV64_GLIBC_GCC_BIN) lichee_rv_defconfig
 	cd $(U_BOOT_INSTALL_DIR) && make CROSS_COMPILE=$(RISCV64_GLIBC_GCC_BIN) ARCH=riscv OPENSBI=${U_BOOT_INSTALL_DIR_ORIGIN}/../opensbi/build/platform/generic/firmware/fw_dynamic.bin
 
+u-boot-claen: $(U_BOOT_INSTALL_DIR) toolchain
+	cd $(U_BOOT_INSTALL_DIR) && make CROSS_COMPILE=$(RISCV64_GLIBC_GCC_BIN) clean
+
 bootloaders: submodules opensbi sun20i_d1_spl xfel u-boot
 
+bootloaders-clean: opensbi-clean sun20i_d1_spl-clean u-boot-clean
+
 #RT-thread
-rt:
+rt: toolchain
 	cd rt-thread/bsp/allwinner/d1s_d1h/ && RTT_EXEC_PATH=$(RISCV64_MUSL_BIN) scons
 
-rt_clean:
+rt_clean: toolchain
 	cd rt-thread/bsp/allwinner/d1s_d1h/ && RTT_EXEC_PATH=$(RISCV64_MUSL_BIN) scons -c
 
-rt_conf:
+rt_conf: toolchain
 	cd rt-thread/bsp/allwinner/d1s_d1h/ && RTT_EXEC_PATH=$(RISCV64_MUSL_BIN) scons -menuconfig
 
 #SD card
-$(SD_IMAGE):
-	/home/yury/Lichee/u-boot/tools/mkimage -T sunxi_toc1 -d $(BUILD)/toc1_D1H.cfg $(BUILD)/sd.bin
+$(SD_IMAGE): rt-thread/bsp/allwinner/d1s_d1h/rtthread.bin bootloaders/sun20i_d1_spl/nboot/boot0_sdcard_sun20iw1p1.bin bootloaders/opensbi/build/platform/generic/firmware/fw_dynamic.bin $(U_BOOT_INSTALL_DIR)/tools/mkimage
+	$(U_BOOT_INSTALL_DIR)/tools/mkimage -T sunxi_toc1 -d $(BUILD)/toc1_D1H.cfg $(BUILD)/sd.bin
 	sudo dd if=bootloaders/sun20i_d1_spl/nboot/boot0_sdcard_sun20iw1p1.bin of=$(SD_IMAGE) bs=8192 seek=16
 	sudo dd if=$(BUILD)/sd.bin of=$(SD_IMAGE) bs=512 seek=32800
 
@@ -110,7 +122,7 @@ debug:
 	xfel ddr d1
 	xfel jtag
 	$(T_HEAD_DEBUGSERVER_BIN)&
-	$(RISCV64_GLIBC_GCC_BIN)gdb
+	$(RISCV64_GLIBC_GCC_BIN)gdb -x build/.gdbinit
 
 all: rt
 

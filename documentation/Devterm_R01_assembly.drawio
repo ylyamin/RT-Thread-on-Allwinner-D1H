@@ -1,6 +1,6 @@
-<mxfile host="Electron" modified="2024-06-14T12:19:11.219Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.5.3 Chrome/124.0.6367.207 Electron/30.0.6 Safari/537.36" etag="J1JnaBPwHsKDx-byrjFr" version="24.5.3" type="device">
+<mxfile host="Electron" modified="2024-06-14T12:31:02.782Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.5.3 Chrome/124.0.6367.207 Electron/30.0.6 Safari/537.36" etag="ceqGxUHgLYcO7eeXN7mA" version="24.5.3" type="device">
   <diagram name="Page-1" id="an24-an1WaksEmPy2jlE">
-    <mxGraphModel dx="4820" dy="3695" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="1644" dy="1619" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -124,6 +124,9 @@
         </mxCell>
         <mxCell id="Ua5wy-_UybMwyFje-ked-24" value="to PC USB(Debug)" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=35;" parent="1" vertex="1">
           <mxGeometry x="1830" y="340" width="440" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="Btwq4DadDxsJ9PxoKjE--1" value="Jumper to&amp;nbsp; 3.3V !" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=35;" vertex="1" parent="1">
+          <mxGeometry x="1740" y="-650" width="270" height="50" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

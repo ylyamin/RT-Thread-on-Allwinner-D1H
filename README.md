@@ -25,9 +25,9 @@ sudo dd if=image/sd_image.img of=/dev/sdb bs=512 seek=16 conv=sync
 *where /dev/sdb - your SD card device
 
 ## Run
-Configyre UART device to 115200 baudrate, 8N1.  
+Configyre UART device to 115200 baudrate, 8N1. And connect to UART pins as shown in [Hardware section](#hardware).    
 
-Insert flashed SD card to device and power on, should see at the end out like this:
+Insert flashed SD card to device and power on, should see at the end of output like this:
 ```
  \ | /
 - RT -     Thread Smart Operating System
@@ -85,7 +85,7 @@ RT-Thread-on-Allwinner-D1H
     └── README.md
 ```
 ## Environment
-Windows 10 64x was used as a host with IDU VSCode and Ubuntu 22.04.3 64x virtual machine as a guest for compilation.
+Windows 10 64x was used as a host with IDE VSCode and Ubuntu 22.04.3 64x virtual machine as a guest for compilation.
 
 Ar guest ubuntu need to install make enviroment:
 ```sh
@@ -154,19 +154,43 @@ sd_burn:
 ```
 
 ## Debugging
-Flashing Sipeed RV-Debuggr Plus:
+For debbugging used Sipeed RV-Debuggr Plus with [T-Head CKLink firmware](https://github.com/bouffalolab/bouffalo_sdk/tree/master/tools/cklink_firmware). 
+To connect debugger to board need use MicroSD brakout board as in D1H JTAG pins mapped to SD Card pins as shown in [Hardware section](#hardware).  
+
+For flash firmware to Sipeed RV-Debuggr Plus - Press and hold the boot pin then plug the usb in the computer to go to the boot mode. And execte command:
 ```sh
 make debug_burn
 ```
-GDB session:
+To start GDB session, press and hold the FEL pin then press RESET pin to go to the FEL mode, then execte command:
 ```sh
 make debug
 ```
+Should see at the output the like this:
+```
++---                                                    ---+
+|  T-Head Debugger Server (Build: Oct 21 2022)             |
+   User   Layer Version : 5.16.05
+   Target Layer version : 2.0
+|  Copyright (C) 2022 T-HEAD Semiconductor Co.,Ltd.        |
++---                                                    ---+
+
+...
+
+GDB connection command for CPUs(CPU0):
+        target remote 127.0.0.1:1025
+
+...
+
+0x000000000000a22a in ?? ()
+Restoring binary file bootloaders/opensbi/build/platform/generic/firmware/fw_dynamic.bin into memory (0x40000000 to 0x40042790)
+Restoring binary file build/sun20i-d1-lichee-rv-dock.dtb into memory (0x40200000 to 0x40207b23)
+Breakpoint 1 at 0x40449dae: file applications/main.c, line 15.
+```
 
 ## Hardware
-- Sipeed Lichee RV + Dock
-- ClockworkPi DevTerm R01
-- FTDI 2248-c USB/UART board
+- [Sipeed Lichee RV + Dock](https://wiki.sipeed.com/hardware/en/lichee/RV/Dock.html)  
+- [ClockworkPi DevTerm R01](https://www.clockworkpi.com/home-devterm)
+- FTDI 2248-c USB/UART adapter
 - Sipeed RV-Debuggr Plus
 - MicroSD_Sniffer
 
