@@ -60,10 +60,12 @@ RT-Thread-on-Allwinner-D1H
     │   ├── sun20i_d1_spl
     │   ├── u-boot
     │   └── xfel
+    │   ├── opensbi_config
     ├── build
     │   ├── sd.bin
     │   ├── sun20i-d1-lichee-rv-dock.dtb
-    │   └── toc1_D1H.cfg
+    │   ├── toc1_D1H.cfg
+    │   └── .gdbinit
     ├── debugger (will be created by make !)
     │   ├── bl702_cklink_whole_img_v2.2.bin
     │   ├── blisp
@@ -113,6 +115,7 @@ Installing toolchain
 make toolchain
 
 * T-HEAD_DebugServer will request specify installation dir: 'Set full installing path:'
+  Could be seted the same as in TOOLCHAIN_INSTALL_DIR or repo/toolchain folder
 ```
 Will be installed:
 - riscv64-linux-musleabi_for_x86_64-pc-linux-gnu (Used by RT-Thread compilation)
@@ -209,5 +212,4 @@ https://linux-sunxi.org/Allwinner_Nezha
 https://andreas.welcomes-you.com/boot-sw-debian-risc-v-lichee-rv-2/  
 
 ## TODO
-- debug
-- run driver for rgb LCD 
+- Run driver for rgb LCD 
