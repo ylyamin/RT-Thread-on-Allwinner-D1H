@@ -170,13 +170,15 @@ MicroSD_Sniffer
 
 ### Sipeed Lichee RV assembly
 Sipeed Lichee RV + Dock
-![Lichee_RV_assembly](documentation\Lichee_RV_assembly.png)
-
+![Lichee_RV_assembly](documentation/Lichee_RV_assembly.png)
 
 ### ClockworkPi DevTerm R01 assembly
 ClockworkPi DevTerm R01
-![\Devterm_R01_assembly](documentation\Devterm_R01_assembly.png)
-![Devterm_R01_uart](documentation\Devterm_R01_uart.png)
+![\Devterm_R01_assembly](documentation/Devterm_R01_assembly.png)
+
+I figureout that integrated UART work very unstable. Acording [discussion](https://forum.clockworkpi.com/t/devterm-r-01-ext-board-uart-is-read-only/8704)
+"The problem is that the CH340C provides 5 V logic levels, whereas the D1 only supports 3.3 V I/O...A better solution would be to solder wires to pins 2 and 3 of the CH340C and use a different USB-UART adapter that runs at the correct voltage." So I do this:
+![Devterm_R01_uart](documentation/Devterm_R01_uart.png)
 
 ## Links
 https://linux-sunxi.org/Allwinner_Nezha  
