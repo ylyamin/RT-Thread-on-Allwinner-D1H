@@ -3,7 +3,7 @@ BUILD = build
 SD_IMAGE = image/sd_image.img
 SD_MOUNT = /dev/sdb
 TOOLCHAIN_INSTALL_DIR ?= $(shell pwd)/toolchain
-U_BOOT_INSTALL_DIR ?= $(shell pwd)/bootloaders
+U_BOOT_INSTALL_DIR ?= $(shell pwd)/bootloaders/u-boot
 DEBUGGER_INSTALL_DIR = $(shell pwd)/debugger
 
 RED=\033[0;31m
@@ -54,20 +54,23 @@ opensbi:
 	cd bootloaders/opensbi/ && make CROSS_COMPILE=$(RISCV64_GLIBC_GCC_BIN) PLATFORM=generic  FW_DYNAMIC=y FW_TEXT_START=0x40000000
 
 sun20i_d1_spl:
-	cd bootloaders/sun20i_d1_spl/ && make CROSS_COMPILE=$(RISCV64_GLIBC_GCC_BIN) OPENSBI=../opensbi/build/platform/generic/firmware/fw_dynamic.bin p=sun20iw1p1 mmc
+	cd bootloaders/sun20i_d1_spl/ && make CROSS_COMPILE=$(RISCV64_GLIBC_GCC_BIN) p=sun20iw1p1 mmc
 
 xfel:
 	cd bootloaders/xfel/ && make && sudo make install
 
-U_BOOT_INSTALL_DIR_ORIGIN = $(shell pwd)/bootloaders
-U_BOOT_DIR = $(U_BOOT_INSTALL_DIR)/u-boot
-
-u-boot:
+U_BOOT_INSTALL_DIR_ORIGIN = $(shell pwd)/bootloaders/u-boot
+$(U_BOOT_INSTALL_DIR):
     ifneq ($(U_BOOT_INSTALL_DIR_ORIGIN),$(U_BOOT_INSTALL_DIR))
-		cp -v -u -r $(U_BOOT_INSTALL_DIR_ORIGIN)/u-boot $(U_BOOT_INSTALL_DIR)
+		#mkdir -p $(U_BOOT_INSTALL_DIR)
+		#cd $(U_BOOT_INSTALL_DIR_ORIGIN) && tar cf - . | tar xf - -C $(U_BOOT_INSTALL_DIR) #Not make after this don't know why
+		git clone https://github.com/smaeul/u-boot $(U_BOOT_INSTALL_DIR)
+		cd $(U_BOOT_INSTALL_DIR) && git checkout d1-2022-04-05
     endif
-	cd $(U_BOOT_DIR) && make CROSS_COMPILE=$(RISCV64_GLIBC_GCC_BIN) lichee_rv_defconfig
-	cd $(U_BOOT_DIR) && make ARCH=riscv CROSS_COMPILE=$(RISCV64_GLIBC_GCC_BIN) all
+
+u-boot: $(U_BOOT_INSTALL_DIR)
+	cd $(U_BOOT_INSTALL_DIR) && make CROSS_COMPILE=$(RISCV64_GLIBC_GCC_BIN) lichee_rv_defconfig
+	cd $(U_BOOT_INSTALL_DIR) && make CROSS_COMPILE=$(RISCV64_GLIBC_GCC_BIN) ARCH=riscv OPENSBI=${U_BOOT_INSTALL_DIR_ORIGIN}/../opensbi/build/platform/generic/firmware/fw_dynamic.bin
 
 bootloaders: submodules opensbi sun20i_d1_spl xfel u-boot
 
@@ -89,7 +92,7 @@ $(SD_IMAGE):
 
 sd: $(SD_IMAGE)
 
-sd_burn: sd
+sd_burn:
 	sudo dd if=$(SD_IMAGE) of=$(SD_MOUNT) bs=512 seek=16 conv=sync
 
 #Debug

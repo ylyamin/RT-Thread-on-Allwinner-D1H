@@ -7,15 +7,32 @@ I use compiler https://github.com/RT-Thread/toolchains-ci/releases/download/v1.7
 
 I was trying:
 
-On [Master](https://github.com/RT-Thread/rt-thread/commit/2866da37a02dae72200e02ad87480718002760a5) or [v5.1.0](https://github.com/RT-Thread/rt-thread/releases/tag/v5.1.0):
-- bsp/allwinner/d1/ - not compiled looks outdated
-- bsp/allwinner/d1s/ - not compiled  
+### On [Master](https://github.com/RT-Thread/rt-thread/commit/2866da37a02dae72200e02ad87480718002760a5) or [v5.1.0](https://github.com/RT-Thread/rt-thread/releases/tag/v5.1.0):  
 
-On [v5.0.2](https://github.com/RT-Thread/rt-thread/releases/tag/v5.0.2):  
-- bsp/allwinner/d1/ - not compiled looks outdated
-- bsp/allwinner/d1s/ - compiled, but no output to UART. 
+1) bsp/allwinner/d1/ - not compiled looks outdated
+```
+board/board.c:45:5: error: unknown type name 'rt_mmu_info'
+   45 |     rt_mmu_info mmu_info;
+      |     ^~~~~~~~~~~
+```
+2) bsp/allwinner/d1s/ - not compiled
+```
+/mnt/hgfs/allwinner_d1/rt-thread/components/dfs/dfs_v2/filesystems/devfs/devfs.c:68:30: error: 'struct rt_device' has no member named 'ops'; did you mean 'fops'?
+   68 |             else if (device->ops && file->vnode->ref_count == 1)
+      |                              ^~~
+      |                              fops
+```  
+### On [v5.0.2](https://github.com/RT-Thread/rt-thread/releases/tag/v5.0.2):  
 
-After I forked v5.0.2 and added:
+3) bsp/allwinner/d1/ - not compiled looks outdated
+```
+board/board.c:45:5: error: unknown type name 'rt_mmu_info'
+   45 |     rt_mmu_info mmu_info;
+      |     ^~~~~~~~~~~
+```
+4) bsp/allwinner/d1s/ - compiled, but no output to UART. 
+
+### After I forked v5.0.2 and added:
 - bsp\allwinner\d1s\tools\boot0_sdcard_sun20iw1p1_d1s.bin change to varian from https://github.com/smaeul/sun20i_d1_spl.git
 - bsp\allwinner\d1s\sbi.bin change to varian from https://github.com/riscv-software-src/opensbi
 - Change UART pins and boudrate in config 
@@ -52,4 +69,4 @@ msh />
 ```
 This my changes https://github.com/RT-Thread/rt-thread/commit/ec2c0f10894bca703354e7e1d4c23fbaed5a034b
 
-Please could you make it compiled properly in master and figure out what happened with SDMMC driver?
+### Please could you make it compiled properly in master and figure out what happened with SDMMC driver?
