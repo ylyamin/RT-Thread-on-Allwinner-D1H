@@ -27,11 +27,11 @@ sudo dd if=image/sd_image.img of=/dev/sdb bs=512 seek=16 conv=sync
 ## Run
 Configyre UART device to 115200 baudrate, 8N1.  
 
-Insert flashed SD card to device and power on, should see out like this at the end:
+Insert flashed SD card to device and power on, should see at the end out like this:
 ```
  \ | /
 - RT -     Thread Smart Operating System
- / | \     5.0.2 build Jun  9 2024 17:11:05
+ / | \     5.0.2 build Jun  9 2024 21:11:05
  2006 - 2022 Copyright by RT-Thread team
 hal_sdc_create 0
 card_detect insert
@@ -87,7 +87,7 @@ RT-Thread-on-Allwinner-D1H
 ## Environment
 Windows 10 64x was used as a host with IDU VSCode and Ubuntu 22.04.3 64x virtual machine as a guest for compilation.
 
-Need to install make enviroment:
+Ar guest ubuntu need to install make enviroment:
 ```sh
 sudo apt install git make build-essential libusb-1.0-0-dev
 ```
@@ -125,10 +125,10 @@ To compile bootloaders use command
 make bootloaders
 ```
 Will be installed:
-- opensbi
-- sun20i_d1_spl
-- u-boot
-- xfel
+- sun20i_d1_spl (first bootloader after BROM, used for init DRAM and load TOC image from MMC)
+- u-boot (could used to load Linux image but now just tool to creat TOC image)
+- opensbi (Supervisor Binary Interface for platform in M mode)
+- xfel (used for debug in when platform in FEL mode)
 
 ## Build RT-Thread
 To compile RT-Thread use command:
@@ -148,7 +148,7 @@ To create SD card image in image/sd_image.img:
 ```sh
 make sd
 ```
-For flash SD card:
+For flash to SD card:
 ```sh
 sd_burn:
 ```
@@ -164,16 +164,16 @@ make debug
 ```
 
 ## Hardware
-FTDI 2248-c USB/UART board
-Sipeed RV-Debuggr Plus
-MicroSD_Sniffer
+- Sipeed Lichee RV + Dock
+- ClockworkPi DevTerm R01
+- FTDI 2248-c USB/UART board
+- Sipeed RV-Debuggr Plus
+- MicroSD_Sniffer
 
 ### Sipeed Lichee RV assembly
-Sipeed Lichee RV + Dock
 ![Lichee_RV_assembly](documentation/Lichee_RV_assembly.png)
 
 ### ClockworkPi DevTerm R01 assembly
-ClockworkPi DevTerm R01
 ![\Devterm_R01_assembly](documentation/Devterm_R01_assembly.png)
 
 I figureout that integrated UART work very unstable. Acording [discussion](https://forum.clockworkpi.com/t/devterm-r-01-ext-board-uart-is-read-only/8704)
@@ -186,5 +186,4 @@ https://andreas.welcomes-you.com/boot-sw-debian-risc-v-lichee-rv-2/
 
 ## TODO
 - debug
-- hardware
 - run driver for rgb LCD 
