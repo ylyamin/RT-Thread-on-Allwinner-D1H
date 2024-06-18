@@ -126,6 +126,9 @@ extern struct __lcd_panel st7796s_panel;
 #ifdef CONFIG_LCD_SUPPORT_ST7701S
 extern struct __lcd_panel st7701s_panel;
 #endif
+#ifdef CONFIG_LCD_SUPPORT_ST7701S_RGB
+extern struct __lcd_panel st7701s_rgb_panel;
+#endif
 #ifdef CONFIG_LCD_SUPPORT_T30P106
 extern struct __lcd_panel t30p106_panel;
 #endif

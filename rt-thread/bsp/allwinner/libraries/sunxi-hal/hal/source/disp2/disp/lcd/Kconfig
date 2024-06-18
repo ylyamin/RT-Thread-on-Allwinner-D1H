@@ -114,6 +114,12 @@ config LCD_SUPPORT_ST7701S
     ---help---
         If you want to support ST7701S panel for display driver, select it.
 
+config LCD_SUPPORT_ST7701S_RGB
+    bool "LCD support ST7701S RGB panel"
+    default n
+    ---help---
+        If you want to support ST7701S RGB panel for display driver, select it.
+
 config LCD_SUPPORT_T30P106
     bool "LCD support T30P106 panel"
     default n

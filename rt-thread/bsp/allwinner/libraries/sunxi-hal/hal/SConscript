@@ -122,6 +122,7 @@ disp2_src = Split('''
 ./source/disp2/disp/lcd/default_panel.c
 ./source/disp2/disp/lcd/lcd_source.c
 ./source/disp2/disp/lcd/panels.c
+./source/disp2/disp/lcd/st7701s_rgb.c
 ./source/disp2/disp/disp_sys_intf.c
 ./source/disp2/disp/dev_disp.c
 ./source/disp2/disp/disp_debug.c
@@ -271,7 +272,7 @@ if GetDepend('DRVIERS_UART'):
 
 if GetDepend('DISP2_SUNXI'):
     CPPPATH += disp2_path
-    src += disp2_src #+ disp2_test_src
+    src += disp2_src + disp2_test_src
 
 CPPPATH += rtc_path
 

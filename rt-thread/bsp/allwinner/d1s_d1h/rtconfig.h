@@ -66,6 +66,7 @@
 #define RT_USING_USER_MAIN
 #define RT_MAIN_THREAD_STACK_SIZE 16384
 #define RT_MAIN_THREAD_PRIORITY 10
+#define RT_USING_LEGACY
 #define RT_USING_MSH
 #define RT_USING_FINSH
 #define FINSH_USING_MSH
@@ -132,8 +133,10 @@
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
+#define RT_USING_PWM
 #define RT_USING_RTC
 #define RT_USING_WDT
+#define RT_USING_LCD
 #define RT_USING_DEV_BUS
 #define RT_USING_KTIME
 
@@ -226,6 +229,15 @@
 
 /* LVGL: powerful and easy-to-use embedded GUI library */
 
+#define PKG_USING_LVGL
+#define PKG_LVGL_THREAD_PRIO 20
+#define PKG_LVGL_THREAD_STACK_SIZE 4096
+#define PKG_LVGL_DISP_REFR_PERIOD 5
+#define PKG_LVGL_USING_EXAMPLES
+#define PKG_LVGL_USING_DEMOS
+#define PKG_LVGL_USING_V080311
+#define PKG_LVGL_VER_NUM 0x080311
+#define PKG_USING_GUI_GUIDER_DEMO
 
 /* u8g2: a monochrome graphic library */
 
@@ -323,11 +335,13 @@
 /* General Purpose UARTs */
 
 #define BSP_USING_UART0
-#define UART0_TX_USING_GPIOE2
-#define UART0_RX_USING_GPIOE3
+#define UART0_TX_USING_GPIOB8
+#define UART0_RX_USING_GPIOB9
+#define BSP_USING_PWM
 #define BSP_USING_SDMMC
 #define SD_CARD_CHECK
 #define BSP_USING_FS
+#define BSP_USING_LCD
 
 /* Board extended module Drivers */
 
@@ -335,6 +349,8 @@
 
 /* UART Devices */
 
+#define DRIVERS_UART
+#define SUNXI_UART_REGISTER_UART0
 
 /* CCMU Devices */
 
@@ -353,13 +369,11 @@
 
 #define DISP2_SUNXI
 #define SUNXI_DISP2_FB_DISABLE_ROTATE
+#define HAL_TEST_DISP
 
 /* LCD panels select */
 
-#define LCD_SUPPORT_HE0801A068
-#define LCD_SUPPORT_WILLIAMLCD
-#define LCD_SUPPORT_LQ101R1SX03
-#define LCD_SUPPORT_INET_DSI_PANEL
+#define LCD_SUPPORT_ST7701S_RGB
 
 /* Display engine feature select */
 
@@ -372,6 +386,7 @@
 
 /* Soc Select */
 
+#define ARCH_SUN20IW1
 
 /* SDMMC Devices */
 

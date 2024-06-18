@@ -3,9 +3,9 @@ This is an experimentation with the [RT-Thread Operating System](https://www.rt-
 
 Executed at hardware such as [Sipeed Lichee RV + Dock](https://wiki.sipeed.com/hardware/en/lichee/RV/Dock.html) and [ClockworkPi DevTerm R01](https://www.clockworkpi.com/home-devterm).  
 
-The intention is to easily run peripherals in D1, exactly Display. Because looks like RT-thread OS has the most extensive HAL layer for D1, similar to the [Linux kernel](https://github.com/cuu/last_linux-5.4/tree/master/drivers/video/fbdev/sunxi/) but not so overcomplicated.
+The intention is to easily run peripherals in D1, exactly Display. RT-Thread OS was chosen because it looks like has the most extensive HAL layer for D1, similar to the [Linux kernel](https://github.com/cuu/last_linux-5.4/tree/master/drivers/video/fbdev/sunxi/) but not so overcomplicated.
 
-At the original repository [RT-Thread](https://github.com/RT-Thread/rt-thread) it looks like the compilation is not streamlined for D1H [issue 9063](https://github.com/RT-Thread/rt-thread/issues/9063). So was performed fork from [v5.0.2](https://github.com/RT-Thread/rt-thread/releases/tag/v5.0.2) and introduced several changes to make it runnable in D1H. Added latests bootloaders, compiler, debugger, build system.
+At the original repository [RT-Thread](https://github.com/RT-Thread/rt-thread) the compilation is not streamlined for D1H [issue 9063](https://github.com/RT-Thread/rt-thread/issues/9063). So was performed fork from [v5.0.2](https://github.com/RT-Thread/rt-thread/releases/tag/v5.0.2) and introduced several changes to make it runnable in D1H. Added also bootloaders, compiler, debugger, build system.
 
 ## Installation
 In repository exist prebuilded image for SD card [image/sd_image.img](image/sd_image.img), need to flash it to SD card and install to device.
@@ -25,7 +25,7 @@ sudo dd if=image/sd_image.img of=/dev/sdb bs=512 seek=16 conv=sync
 *where /dev/sdb - your SD card device
 
 ## Run
-Configyre UART device to 115200 baudrate, 8N1. And connect to UART pins as shown in [Hardware section](#hardware).    
+Configyre UART adapter to 115200 baudrate, 8N1. And connect to UART pins as shown in [Hardware section](#hardware).    
 
 Insert flashed SD card to device and power on, should see at the end of output like this:
 ```
@@ -140,11 +140,11 @@ make rt
 ```
 For clean:
 ```sh
-make rt_clean
+make rt-clean
 ```
 For configure:
 ```sh
-make rt_conf
+make rt-conf
 ```
 ## Build SD card image
 To create SD card image in image/sd_image.img:
@@ -162,11 +162,11 @@ To connect debugger to board need use MicroSD brakout board as in D1H JTAG pins 
 
 For flash firmware to Sipeed RV-Debuggr Plus - Press and hold the boot pin then plug the usb in the computer to go to the boot mode. And execte command:
 ```sh
-make debug_burn
+make debug-burn
 ```
-To start GDB session, press and hold the FEL pin then press RESET pin to go to the FEL mode, then execte command:
+To start GDB session in device that have FEL button (Sipeed Lichee RV) - press and hold the FEL button then press RESET button to go to the FEL mode, then execte command:
 ```sh
-make debug
+make debug-fel
 ```
 Should see at the output the like this:
 ```
@@ -201,7 +201,7 @@ Breakpoint 1 at 0x40449dae: file applications/main.c, line 15.
 ![Lichee_RV_assembly](documentation/Lichee_RV_assembly.png)
 
 ### ClockworkPi DevTerm R01 assembly
-![\Devterm_R01_assembly](documentation/Devterm_R01_assembly.png)
+![Devterm_R01_assembly](documentation/Devterm_R01_assembly.png)
 
 I figureout that integrated UART work very unstable. Acording [discussion](https://forum.clockworkpi.com/t/devterm-r-01-ext-board-uart-is-read-only/8704)
 "The problem is that the CH340C provides 5 V logic levels, whereas the D1 only supports 3.3 V I/O...A better solution would be to solder wires to pins 2 and 3 of the CH340C and use a different USB-UART adapter that runs at the correct voltage." So I do this:

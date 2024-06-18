@@ -9,6 +9,9 @@ DEBUGGER_INSTALL_DIR = $(shell pwd)/debugger
 RED=\033[0;31m
 NC=\033[0m
 
+.PHONY: all clean
+all: sd
+
 #Toolcahin
 RISCV64_MUSL_DIR = $(TOOLCHAIN_INSTALL_DIR)/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu
 RISCV64_GLIBC_GCC_DIR = $(TOOLCHAIN_INSTALL_DIR)/riscv64-glibc-gcc-thead_20200702
@@ -53,6 +56,7 @@ opensbi: toolchain
 	mkdir -p bootloaders/opensbi/build/platform/generic/kconfig/
 	cp bootloaders/opensbi_config bootloaders/opensbi/build/platform/generic/kconfig/.config
 	cd bootloaders/opensbi/ && make CROSS_COMPILE=$(RISCV64_GLIBC_GCC_BIN) PLATFORM=generic FW_DYNAMIC=y FW_TEXT_START=0x40000000
+	#cd bootloaders/opensbi/ && make CROSS_COMPILE=$(RISCV64_GLIBC_GCC_BIN) PLATFORM=generic FW_JUMP=y FW_TEXT_START=0x40000000 FW_JUMP_ADDR=0x40400000 FW_JUMP_FDT_ADDR=0x40200000
 
 opensbi-clean: toolchain
 	cd bootloaders/opensbi/ && make CROSS_COMPILE=$(RISCV64_GLIBC_GCC_BIN) clean distclean
@@ -90,24 +94,21 @@ bootloaders-clean: opensbi-clean sun20i_d1_spl-clean u-boot-clean
 rt: toolchain
 	cd rt-thread/bsp/allwinner/d1s_d1h/ && RTT_EXEC_PATH=$(RISCV64_MUSL_BIN) scons
 
-rt_clean: toolchain
+rt-clean: toolchain
 	cd rt-thread/bsp/allwinner/d1s_d1h/ && RTT_EXEC_PATH=$(RISCV64_MUSL_BIN) scons -c
 
-rt_conf: toolchain
-	cd rt-thread/bsp/allwinner/d1s_d1h/ && RTT_EXEC_PATH=$(RISCV64_MUSL_BIN) scons -menuconfig
+rt-conf: toolchain
+	cd rt-thread/bsp/allwinner/d1s_d1h/ && RTT_EXEC_PATH=$(RISCV64_MUSL_BIN) scons --menuconfig
 
 #SD card
-$(SD_IMAGE): rt-thread/bsp/allwinner/d1s_d1h/rtthread.bin \
-			bootloaders/sun20i_d1_spl/nboot/boot0_sdcard_sun20iw1p1.bin \
-			bootloaders/opensbi/build/platform/generic/firmware/fw_dynamic.bin \
-			$(U_BOOT_INSTALL_DIR)/tools/mkimage
+$(SD_IMAGE): rt
 	$(U_BOOT_INSTALL_DIR)/tools/mkimage -T sunxi_toc1 -d $(BUILD)/toc1_D1H.cfg $(BUILD)/sd.bin
 	sudo dd if=bootloaders/sun20i_d1_spl/nboot/boot0_sdcard_sun20iw1p1.bin of=$(SD_IMAGE) bs=8192 seek=16
 	sudo dd if=$(BUILD)/sd.bin of=$(SD_IMAGE) bs=512 seek=32800
 
 sd: $(SD_IMAGE)
 
-sd_burn:
+sd-burn:
 	sudo dd if=$(SD_IMAGE) of=$(SD_MOUNT) bs=512 seek=16 conv=sync
 
 #Debug
@@ -116,18 +117,20 @@ $(DEBUGGER_INSTALL_DIR)/blisp:
 	wget -P $(DEBUGGER_INSTALL_DIR) https://github.com/pine64/blisp/releases/download/v0.0.4/blisp-linux-x86_64-v0.0.4.zip
 	unzip $(DEBUGGER_INSTALL_DIR)/blisp-linux-x86_64-v0.0.4.zip -d $(DEBUGGER_INSTALL_DIR)
 
-debug_burn: $(DEBUGGER_INSTALL_DIR)/blisp
+debug-burn: $(DEBUGGER_INSTALL_DIR)/blisp
 	@echo "${RED}Press and hold the boot pin then plug the usb in the computer to go to the boot mode.${NC}"
 	$(DEBUGGER_INSTALL_DIR)/blisp iot -c bl70x --reset -s $(DEBUGGER_INSTALL_DIR)/bl702_cklink_whole_img_v2.2.bin -l 0x0
 
-debug:
+debug-fel:
 	@echo "${RED}Press and hold the FEL pin then press RESET pin to go to the FEL mode.${NC}"
 	xfel ddr d1
 	xfel jtag
 	$(T_HEAD_DEBUGSERVER_BIN)&
 	$(RISCV64_GLIBC_GCC_BIN)gdb -x build/.gdbinit
 
-all: sd
+clean: toolchain-remove bootloaders-clean rt-clean
+
+
 
 
 

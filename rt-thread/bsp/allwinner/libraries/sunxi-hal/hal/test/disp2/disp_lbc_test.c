@@ -10,7 +10,7 @@
 #include "disp_layer_cfg.h"
 #include "disp_mem.h"
 
-#define FILE_PATH                      "/mnt/F/FourPeople_1280x720_30.bin"     /*  "/mnt/E/vidyo4_1280x720_30.bin" ok*/
+#define FILE_PATH                      "r"//"/mnt/F/FourPeople_1280x720_30.bin"     /*  "/mnt/E/vidyo4_1280x720_30.bin" ok*/
 #define WIDTH                                 1280
 #define HEIGHT                                720
 #define CROP_X 0LL
@@ -159,7 +159,6 @@ int lbc_test(int argc, char **argv)
 
 
 
-
-
+MSH_CMD_EXPORT(lbc_test, lbc_test);
 FINSH_FUNCTION_EXPORT_ALIAS(lbc_test, __cmd_disp_lbc_test, disp lbc test);
 

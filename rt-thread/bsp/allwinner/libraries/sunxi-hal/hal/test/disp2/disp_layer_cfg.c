@@ -548,8 +548,7 @@ int parse_cmdline_and_set_config(int argc, char **argv)
     }
 
     if(err > 0) {
-        printf("example : ./disp_layer_cfg -ch 0 -mem_id 0 -layer_id 0 -channel_id 0 "
-            "-in_fb 0 1280 800 0 0 1280 800 4  -layer_mode 0  -alpha 1 255 -screen_win 0 0 250 150\n");
+        printf("example : parse_cmdline_and_set_config -ch 0 -mem_id 0 -layer_id 0 -channel_id 0 -layer_mode 0 -alpha 1 255 -screen_win 0 0 250 150\n");
         return -1;
     } else {
         return disp_layer_cfg(p);
@@ -557,6 +556,6 @@ int parse_cmdline_and_set_config(int argc, char **argv)
 }
 
 
-
+MSH_CMD_EXPORT(parse_cmdline_and_set_config, parse_cmdline_and_set_config);
 FINSH_FUNCTION_EXPORT_ALIAS(parse_cmdline_and_set_config, disp_layer_cfg, disp set layer);
 

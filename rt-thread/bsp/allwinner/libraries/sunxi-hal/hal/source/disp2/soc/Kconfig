@@ -42,6 +42,12 @@ config DEFAULT_LVDS
     ---help---
       board, disp with lvds
 
+config LicheeRV_RGB
+    bool "Lichee RV board, disp with RGB"
+    default n
+    ---help---
+      Lichee RV board, disp with RGB
+
 endmenu
 
 menu "Soc Select"
