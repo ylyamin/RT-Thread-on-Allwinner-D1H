@@ -28,7 +28,7 @@ struct property_t g_lcd0_config_rgb[] = {
     {
         .name = "lcd_if",
         .type = PROPERTY_INTGER,
-        .v.value = 2, /* LCD_IF_HV */
+        .v.value = 0, /* LCD_IF_HV */
     },
     {
         .name = "lcd_hv_if",
@@ -144,7 +144,7 @@ struct property_t g_lcd0_config_rgb[] = {
         .v.value = 1,
     },
     // backlight enable
-    {
+    /*{
         .name = "lcd_gpio_1",
         .type = PROPERTY_GPIO,
         .v.gpio_list = {
@@ -154,7 +154,7 @@ struct property_t g_lcd0_config_rgb[] = {
             .drv_level = 3,
             .data = 1,
         },
-    },
+    },*/
     /* POWER-vcc */
     {
         .name = "lcd_gpio_0", //RST

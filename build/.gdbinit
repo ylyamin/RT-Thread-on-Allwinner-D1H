@@ -43,5 +43,5 @@ set *(unsigned long *)($dyninfo_addr + 32) = 0
 set *(unsigned long *)($dyninfo_addr + 40) = 0
 set $a2 = $dyninfo_addr
 
-b rt_components_board_init
+#b bsp_disp_init
 j *$opensbi_addr

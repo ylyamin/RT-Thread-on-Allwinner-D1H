@@ -27,7 +27,7 @@
 #define RT_KPRINTF_USING_LONGLONG
 #define RT_USING_DEBUG
 #define RT_DEBUGING_COLOR
-#define RT_DEBUGING_CONTEXT
+#define RT_DEBUGING_INIT
 
 /* Inter-Thread communication */
 
@@ -36,6 +36,8 @@
 #define RT_USING_EVENT
 #define RT_USING_MAILBOX
 #define RT_USING_MESSAGEQUEUE
+#define RT_USING_MESSAGEQUEUE_PRIORITY
+#define RT_USING_SIGNALS
 
 /* Memory Management */
 
@@ -326,6 +328,7 @@
 /* Uncategorized */
 
 #define BOARD_allwinnerd1
+#define ENABLE_FPU
 #define __STACKSIZE__ 16384
 
 /* General Drivers Configuration */

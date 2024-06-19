@@ -165,7 +165,7 @@ static s32 LCD_open_flow(u32 sel)
 {
     rt_kprintf("=====================LCD_open_flow\n");
 	/* open lcd power, and delay 50ms */
-	LCD_OPEN_FUNC(sel, LCD_power_on, 20);
+	//LCD_OPEN_FUNC(sel, LCD_power_on, 20);
 	/* open lcd power, than delay 200ms */
 	LCD_OPEN_FUNC(sel, LCD_panel_init, 20);
 	/* open lcd controller, and delay 100ms */
@@ -173,11 +173,13 @@ static s32 LCD_open_flow(u32 sel)
 	/* open lcd backlight, and delay 0ms */
 	LCD_OPEN_FUNC(sel, LCD_bl_open, 0);
 
+    rt_kprintf("=====================LCD_open_flow finish\n");
 	return 0;
 }
 
 static s32 LCD_close_flow(u32 sel)
 {
+    rt_kprintf("=====================LCD_close_flow\n");
 	/* close lcd backlight, and delay 0ms */
 	LCD_CLOSE_FUNC(sel, LCD_bl_close, 0);
 	/* close lcd controller, and delay 0ms */
@@ -196,11 +198,11 @@ static void LCD_power_on(u32 sel)
 	/* config lcd_power pin to open lcd power0 */
 	sunxi_lcd_power_enable(sel, 0);
 	sunxi_lcd_pin_cfg(sel, 1);
-
 }
 
 static void LCD_power_off(u32 sel)
 {
+    rt_kprintf("=====================LCD_power_off\n");
 	sunxi_lcd_pin_cfg(sel, 0);
 	/* config lcd_power pin to close lcd power0 */
 	sunxi_lcd_power_disable(sel, 0);
@@ -272,13 +274,11 @@ void LCD_panel_init(u32 sel)
 {
     rt_kprintf("=====================LCD_panel_init\n");
     
-    sunxi_lcd_gpio_set_direction(0,0,0);
-    //st7701s_spi_reset_0;
+    st7701s_spi_reset_0;
 	sunxi_lcd_delay_ms(10);
-    sunxi_lcd_gpio_set_direction(0,0,1);
-    //st7701s_spi_reset_1;
+    st7701s_spi_reset_1;
 	sunxi_lcd_delay_ms(10);
-
+    
 
     LCD_WRITE_COMMAND(0xFF);
     LCD_WRITE_DATA(0x77);
@@ -518,6 +518,8 @@ void LCD_panel_init(u32 sel)
     
     LCD_WRITE_COMMAND(0x29);
     //sunxi_lcd_delay_ms(20);
+
+    rt_kprintf("=====================LCD_panel_init finish\n");
 	return;
 }
 
