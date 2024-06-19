@@ -1,10 +1,7 @@
 #Set gdb environment
 set confirm off
 set height  0
-
 target remote localhost:1025
-
-monitor set resume-bkpt-exception on
 
 #Memory layout
 #set $spl_addr = 0x0000000000020000
@@ -29,12 +26,12 @@ file rt-thread/bsp/allwinner/d1s_d1h/rtthread.elf
 #j *0x00000000000203c8
 
 #Set opensbi dynamic info param
-#Magic
-#Version
-#Next booting stage address
-#Next booting stage mode 1 - S, 3 - M
-#Options for OpenSBI library 
-#boot_hart
+#- Magic
+#- Version
+#- Next booting stage address
+#- Next booting stage mode 1 - S, 3 - M
+#- Options for OpenSBI library 
+#- boot_hart
 
 set $a0 = 0
 set $a1 = $dtb_addr
@@ -46,5 +43,5 @@ set *(unsigned long *)($dyninfo_addr + 32) = 0
 set *(unsigned long *)($dyninfo_addr + 40) = 0
 set $a2 = $dyninfo_addr
 
-b rt_hw_board_init
+b rt_components_board_init
 j *$opensbi_addr
