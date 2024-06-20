@@ -8,7 +8,8 @@ The intention is to easily run peripherals in D1, exactly Display. RT-Thread OS 
 At the original repository [RT-Thread](https://github.com/RT-Thread/rt-thread) the compilation is not streamlined for D1H [issue 9063](https://github.com/RT-Thread/rt-thread/issues/9063). So was performed fork from [v5.0.2](https://github.com/RT-Thread/rt-thread/releases/tag/v5.0.2) and introduced several changes to make it runnable in D1H. Added also bootloaders, compiler, debugger, build system.
 
 ## Current progress
-Sipeed Lichee RV could control 4.3 RGB LCD 480*272 Display with IC st7001s (SPI)
+Sipeed Lichee RV could control 4.3 RGB LCD 480*272 Display with IC st7001s (SPI)  
+
 ![lichee_lcd_rgb_work](documentation/lichee_lcd_rgb_work.jpg)
 
 
@@ -217,5 +218,12 @@ https://linux-sunxi.org/Allwinner_Nezha
 https://andreas.welcomes-you.com/boot-sw-debian-risc-v-lichee-rv-2/  
 
 ## TODO
+Sipeed:
 - Move LCD config to disp2/soc folder
-- build RTT gui
+- Build RTT gui
+
+devterm:
+- Debug without fel
+- Twi power control
+- Mipi dsi
+- Keyboard
