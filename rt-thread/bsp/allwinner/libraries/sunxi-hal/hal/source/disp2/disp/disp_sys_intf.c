@@ -157,13 +157,22 @@ hal_clk_id_t disp_sys_clk_get_parent(hal_clk_id_t clk)
 
 s32 disp_delay_ms(u32 ms)
 {
-    return hal_msleep(ms);
+    /*
+        with original implementation hal_msleep() 
+        board stuck by some reason, replace to rt_hw_us_delay()
+    */
+    //return hal_msleep(ms);
+    rt_hw_us_delay(ms*1000);
 }
 
 s32 disp_delay_us(u32 us)
 {
-
-    return hal_usleep(us);
+    /*
+        with original implementation hal_msleep() 
+        board stuck by some reason, replace to rt_hw_us_delay()
+    */
+    //return hal_usleep(us);
+    rt_hw_us_delay(us);
 }
 
 void *disp_sys_malloc(u32 size)
@@ -453,7 +462,7 @@ int disp_sys_pin_set_state(char *dev_name, char *name)
     p_list = disp_get_all_pin_property(dev_name, &len);
 
     if (!p_list || !len) {
-        DE_INF("No pin to be configureed!\n");
+        DE_WRN("No pin to be configureed!\n");
         return 0;
     }
     for (i = 0; i < len; ++i) {

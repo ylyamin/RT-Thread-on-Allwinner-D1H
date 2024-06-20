@@ -581,9 +581,6 @@ LCD             RV_Dock_EXT_3517    GPIO Function
 		"backlight": "led-gpio.1" //"gpio": 118, D1_GPIOD22
 	},
 
-
-
-
 &lcd0 {
     lcd_used        = <1>;
     lcd_driver_name = "st7701s_rgb";

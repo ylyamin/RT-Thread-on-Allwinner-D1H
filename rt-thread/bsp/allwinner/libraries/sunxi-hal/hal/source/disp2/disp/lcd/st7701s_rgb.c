@@ -165,7 +165,7 @@ static s32 LCD_open_flow(u32 sel)
 {
     rt_kprintf("=====================LCD_open_flow\n");
 	/* open lcd power, and delay 50ms */
-	//LCD_OPEN_FUNC(sel, LCD_power_on, 20);
+	LCD_OPEN_FUNC(sel, LCD_power_on, 20);
 	/* open lcd power, than delay 200ms */
 	LCD_OPEN_FUNC(sel, LCD_panel_init, 20);
 	/* open lcd controller, and delay 100ms */

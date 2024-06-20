@@ -7,13 +7,18 @@ The intention is to easily run peripherals in D1, exactly Display. RT-Thread OS 
 
 At the original repository [RT-Thread](https://github.com/RT-Thread/rt-thread) the compilation is not streamlined for D1H [issue 9063](https://github.com/RT-Thread/rt-thread/issues/9063). So was performed fork from [v5.0.2](https://github.com/RT-Thread/rt-thread/releases/tag/v5.0.2) and introduced several changes to make it runnable in D1H. Added also bootloaders, compiler, debugger, build system.
 
-## Installation
+## Current progress
+Sipeed Lichee RV could control 4.3 RGB LCD 480*272 Display with IC st7001s (SPI)
+![lichee_lcd_rgb_work](documentation/lichee_lcd_rgb_work.jpg)
+
+
+# Installation
 In repository exist prebuilded image for SD card [image/sd_image.img](image/sd_image.img), need to flash it to SD card and install to device.
 
-### Windows
+## Windows
 Could use https://etcher.balena.io/#download-etcher for flash image to SD card.
 
-### Linux
+## Linux
 Could use command 
 ```sh
 make sd_burn
@@ -24,7 +29,7 @@ sudo dd if=image/sd_image.img of=/dev/sdb bs=512 seek=16 conv=sync
 ```
 *where /dev/sdb - your SD card device
 
-## Run
+# Run
 Configyre UART adapter to 115200 baudrate, 8N1. And connect to UART pins as shown in [Hardware section](#hardware).    
 
 Insert flashed SD card to device and power on, should see at the end of output like this:
@@ -212,4 +217,5 @@ https://linux-sunxi.org/Allwinner_Nezha
 https://andreas.welcomes-you.com/boot-sw-debian-risc-v-lichee-rv-2/  
 
 ## TODO
-- Run driver for rgb LCD 
+- Move LCD config to disp2/soc folder
+- build RTT gui

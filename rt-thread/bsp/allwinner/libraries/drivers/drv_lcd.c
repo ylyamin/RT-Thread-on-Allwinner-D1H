@@ -795,7 +795,7 @@ static int lcd_draw_point(int args, char *argv[])
     }
 
     *((uint32_t *)lcd_drv->framebuffer + lcd_drv->lcd_info.width * y + x) = 0xffff0000;
-    // *((uint32_t *)lcd->framebuffer + lcd_drv->lcd_info.width * y + x + 2) = 0xff00ff00;
+    // *((uint32_t *)g_lcd->framebuffer + lcd_drv->lcd_info.width * y + x + 2) = 0xff00ff00;
 
     rt_hw_cpu_dcache_clean(lcd_drv->framebuffer, LCD_DRV_FB_SZ);
     rt_lcd_control((rt_device_t)g_lcd, RTGRAPHIC_CTRL_RECT_UPDATE, RT_NULL);

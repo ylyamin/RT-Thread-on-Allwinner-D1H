@@ -58,7 +58,7 @@ struct property_t g_lcd0_config_rgb[] = {
     {
         .name = "lcd_dclk_freq",
         .type = PROPERTY_INTGER,
-        .v.value = 30,
+        .v.value = 12,
     },
     /* lcd_ht = lcd_x + lcd_hspw + lcd_hbp + lcd_hfp */
     {
@@ -132,6 +132,11 @@ struct property_t g_lcd0_config_rgb[] = {
         .type = PROPERTY_INTGER,
         .v.value = 90,
     },
+    {
+        .name = "lcd_pwm_used",
+        .type = PROPERTY_INTGER,
+        .v.value = 0,
+    },
     // from drv_lcd
     {
         .name = "bl_pin",
@@ -162,21 +167,21 @@ struct property_t g_lcd0_config_rgb[] = {
         .v.gpio_list = {
             .gpio = GPIOG(13),
             .mul_sel = GPIO_DIRECTION_OUTPUT,
-            .pull = 0,
+            .pull = 1,
             .drv_level = 3,
-            .data = 1,
+            .data = 0,
         },
     },
 
     {
-        .name = "lcd_gpio_1", //CS - 16
+        .name = "lcd_gpio_1", //CS - 16?
         .type = PROPERTY_GPIO,
         .v.gpio_list = {
             .gpio = GPIOE(14),//14
             .mul_sel = GPIO_DIRECTION_OUTPUT,
             .pull = 1,
             .drv_level = 3,
-            .data = 0,
+            .data = 1,
         },
     },
 
@@ -188,7 +193,7 @@ struct property_t g_lcd0_config_rgb[] = {
             .mul_sel = GPIO_DIRECTION_OUTPUT,
             .pull = 1,
             .drv_level = 3,
-            .data = 0,
+            .data = 1,
         },
     },
     {
@@ -199,24 +204,14 @@ struct property_t g_lcd0_config_rgb[] = {
             .mul_sel = GPIO_DIRECTION_OUTPUT,
             .pull = 1,
             .drv_level = 3,
-            .data = 0,
+            .data = 1,
         },
     },
 
 
     // gpio
     {
-        .name = "LCD0_D2",
-        .type = PROPERTY_PIN,
-        .v.gpio_list = {
-            .gpio = GPIOD(0),
-            .mul_sel = 2,
-            .pull = 0,
-            .drv_level = 3,
-        },
-    },
-    {
-        .name = "LCD0_D3",
+        .name = "LCD0_D3",     // 1 - 5 (5)
         .type = PROPERTY_PIN,
         .v.gpio_list = {
             .gpio = GPIOD(1),
@@ -266,7 +261,7 @@ struct property_t g_lcd0_config_rgb[] = {
         },
     },
     {
-        .name = "LCD0_D10",
+        .name = "LCD0_D10",     //6 - 11 (6)
         .type = PROPERTY_PIN,
         .v.gpio_list = {
             .gpio = GPIOD(6),
@@ -326,17 +321,7 @@ struct property_t g_lcd0_config_rgb[] = {
         },
     },
     {
-        .name = "LCD0_D18",
-        .type = PROPERTY_PIN,
-        .v.gpio_list = {
-            .gpio = GPIOD(12),
-            .mul_sel = 2,
-            .pull = 0,
-            .drv_level = 3,
-        },
-    },
-    {
-        .name = "LCD0_D19",
+        .name = "LCD0_D19",     //13 - 17 (5)
         .type = PROPERTY_PIN,
         .v.gpio_list = {
             .gpio = GPIOD(13),
@@ -389,7 +374,7 @@ struct property_t g_lcd0_config_rgb[] = {
         .name = "LCD0_CLK",
         .type = PROPERTY_PIN,
         .v.gpio_list = {
-            .gpio = GPIOD(18),
+            .gpio = GPIOD(18),      //18 - 21 (4)
             .mul_sel = 2,
             .pull = 0,
             .drv_level = 3,
@@ -1173,6 +1158,11 @@ struct property_t g_disp_config[] = {
         .name = "screen0_output_aspect_ratio",
         .type = PROPERTY_INTGER,
         .v.value = 8,
+    },
+    {
+        .name = "screen1_output_type",
+        .type = PROPERTY_INTGER,
+        .v.value = 0, // NONE
     },
 };
 
