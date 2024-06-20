@@ -42,11 +42,11 @@ config DEFAULT_LVDS
     ---help---
       board, disp with lvds
 
-config LicheeRV_RGB
-    bool "Lichee RV board, disp with RGB"
+config RGB_LCD_ST7001S
+    bool "4.3 inch RGB LCD display 043026-N6(ML) with ST7001s (SPI)"
     default n
     ---help---
-      Lichee RV board, disp with RGB
+      4.3 inch RGB LCD display 043026-N6(ML) with ST7001s (SPI)
 
 endmenu
 

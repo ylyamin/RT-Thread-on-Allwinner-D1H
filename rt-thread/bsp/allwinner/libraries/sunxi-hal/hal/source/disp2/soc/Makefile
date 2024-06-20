@@ -11,6 +11,6 @@ obj-$(CONFIG_TFT08006_MIPI)+= tft08006_mipi_config.o
 obj-$(CONFIG_HE0801A068_MIPI)+= he0801a068_mipi_config.o
 obj-$(CONFIG_DEFAULT_LVDS)+= f133_lvds.o
 
-obj-$(CONFIG_LicheeRV_RGB)+= LicheeRV_RGB.o
+obj-$(CONFIG_RGB_LCD_ST7001S)+= RGB_LCD_ST7001s.o
 
 

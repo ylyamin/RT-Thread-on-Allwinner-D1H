@@ -137,6 +137,9 @@ if GetDepend('LCD_SUPPORT_TFT08006'):
     # disp2_src += ['./source/disp2/soc/tft08006_mipi_config.c']
     disp2_src += ['./source/disp2/disp/lcd/tft08006.c']
 
+if GetDepend('RGB_LCD_ST7001S'):
+    disp2_src += ['./source/disp2/soc/RGB_LCD_ST7001s.c']
+
 sdmmc_src = Split('''
 source/sdmmc/core.c
 source/sdmmc/hal_sdpin.c

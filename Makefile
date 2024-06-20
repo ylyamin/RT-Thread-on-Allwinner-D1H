@@ -92,7 +92,7 @@ bootloaders-clean: opensbi-clean sun20i_d1_spl-clean u-boot-clean
 
 #RT-thread
 rt: toolchain
-	cd rt-thread/bsp/allwinner/d1s_d1h/ && RTT_EXEC_PATH=$(RISCV64_MUSL_BIN) scons
+	cd rt-thread/bsp/allwinner/d1s_d1h/ && RTT_EXEC_PATH=$(RISCV64_MUSL_BIN) scons #--verbose
 
 rt-clean: toolchain
 	cd rt-thread/bsp/allwinner/d1s_d1h/ && RTT_EXEC_PATH=$(RISCV64_MUSL_BIN) scons -c

@@ -386,6 +386,7 @@
 
 /* Board Select */
 
+#define RGB_LCD_ST7001S
 
 /* Soc Select */
 

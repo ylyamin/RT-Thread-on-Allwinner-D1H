@@ -23,7 +23,8 @@
 #include "../disp/disp_sys_intf.h"
 #include "disp_board_config.h"
 
-struct property_t g_lcd0_config[] = {
+
+struct property_t g_lcd0_config_soc[] = {
     {
         .name = "lcd_used",
         .type = PROPERTY_INTGER,
@@ -37,74 +38,74 @@ struct property_t g_lcd0_config[] = {
     {
         .name = "lcd_if",
         .type = PROPERTY_INTGER,
-        .v.value = 0,   /* LCD_IF_HV */
+        .v.value = 0, /* LCD_IF_HV */
     },
     {
         .name = "lcd_hv_if",
         .type = PROPERTY_INTGER,
-        .v.value = 0,   /* LCD_HV_IF_PRGB_1CYC */
+        .v.value = 0, /* LCD_HV_IF_PRGB_1CYC */
     },
     {
         .name = "lcd_x",
         .type = PROPERTY_INTGER,
-        .v.value = 1024,
+        .v.value = 480, //
     },
     {
         .name = "lcd_y",
         .type = PROPERTY_INTGER,
-        .v.value = 600,
+        .v.value = 272,
     },
     {
         .name = "lcd_width",
         .type = PROPERTY_INTGER,
-        .v.value = 1024,
+        .v.value = 80,
     },
     {
         .name = "lcd_height",
         .type = PROPERTY_INTGER,
-        .v.value = 600,
+        .v.value = 72,
     },
     {
         .name = "lcd_dclk_freq",
         .type = PROPERTY_INTGER,
-        .v.value = 49,
+        .v.value = 12,
     },
     /* lcd_ht = lcd_x + lcd_hspw + lcd_hbp + lcd_hfp */
     {
         .name = "lcd_ht",
         .type = PROPERTY_INTGER,
-        .v.value = 1312,
+        .v.value = 612,
     },
     {
         .name = "lcd_hbp",
         .type = PROPERTY_INTGER,
-        .v.value = 144,
+        .v.value = 60,
     },
     {
         .name = "lcd_hspw",
         .type = PROPERTY_INTGER,
-        .v.value = 104,
+        .v.value = 12,
     },
     /* lcd_vt = lcd_y + lcd_vspw + lcd_vbp + lcd_vfp */
     {
         .name = "lcd_vt",
         .type = PROPERTY_INTGER,
-        .v.value = 624,
+        .v.value = 520,
     },
     {
         .name = "lcd_vspw",
         .type = PROPERTY_INTGER,
-        .v.value = 10,
+        .v.value = 4,
     },
     {
         .name = "lcd_vbp",
         .type = PROPERTY_INTGER,
-        .v.value = 11,
+        .v.value = 18,
     },
     {
         .name = "lcd_frm",
         .type = PROPERTY_INTGER,
-        .v.value = 1,
+        .v.value = 0,
     },
     {
         .name = "lcd_io_phase",
@@ -141,76 +142,86 @@ struct property_t g_lcd0_config[] = {
         .type = PROPERTY_INTGER,
         .v.value = 90,
     },
-
-    // backlight enable
-    /*
-    {
-        .name = "lcd_gpio_1",
-        .type = PROPERTY_GPIO,
-        .v.gpio_list = {
-            .gpio = GPIOE(11),
-            .mul_sel = GPIO_DIRECTION_OUTPUT,
-            .pull = 0,
-            .drv_level = 3,
-            .data = 1,
-        },
-    },
-    */
-    {
-        .name = "lcd_backlight",
-        .type = PROPERTY_INTGER,
-        .v.value = 50,
-    },
     {
         .name = "lcd_pwm_used",
         .type = PROPERTY_INTGER,
-        .v.value = 1,
+        .v.value = 0,
     },
+    // from drv_lcd
     {
-        .name = "lcd_pwm_ch",
+        .name = "bl_pin",
         .type = PROPERTY_INTGER,
-        .v.value = 7,
+        .v.value = GPIO_PD22,
     },
     {
-        .name = "lcd_pwm_freq",
-        .type = PROPERTY_INTGER,
-        .v.value = 1000,
-    },
-    {
-        .name = "lcd_pwm_pol",
+        .name = "bl_level",
         .type = PROPERTY_INTGER,
         .v.value = 1,
     },
-    {
-        .name = "lcd_pwm_max_limit",
-        .type = PROPERTY_INTGER,
-        .v.value = 255,
-    },
-    /* POWER-vcc */
-    {
-        .name = "lcd_gpio_0",
+    // backlight enable
+    /*{
+        .name = "lcd_gpio_1",
         .type = PROPERTY_GPIO,
         .v.gpio_list = {
-            .gpio = GPIOB(6),
+            .gpio = GPIOD(22),
             .mul_sel = GPIO_DIRECTION_OUTPUT,
             .pull = 0,
             .drv_level = 3,
             .data = 1,
         },
-    },
-    //gpio
+    },*/
+    /* POWER-vcc */
     {
-        .name = "LCD0_D2",
-        .type = PROPERTY_PIN,
+        .name = "lcd_gpio_0", //RST
+        .type = PROPERTY_GPIO,
         .v.gpio_list = {
-            .gpio = GPIOD(0),
-            .mul_sel = 2,
-            .pull = 0,
+            .gpio = GPIOG(13),
+            .mul_sel = GPIO_DIRECTION_OUTPUT,
+            .pull = 1,
             .drv_level = 3,
+            .data = 0,
+        },
+    },
+
+    {
+        .name = "lcd_gpio_1", //CS - 16?
+        .type = PROPERTY_GPIO,
+        .v.gpio_list = {
+            .gpio = GPIOE(14),//14
+            .mul_sel = GPIO_DIRECTION_OUTPUT,
+            .pull = 1,
+            .drv_level = 3,
+            .data = 1,
+        },
+    },
+
+    {
+        .name = "lcd_gpio_2", //SDI
+        .type = PROPERTY_GPIO,
+        .v.gpio_list = {
+            .gpio = GPIOE(12),//12
+            .mul_sel = GPIO_DIRECTION_OUTPUT,
+            .pull = 1,
+            .drv_level = 3,
+            .data = 1,
         },
     },
     {
-        .name = "LCD0_D3",
+        .name = "lcd_gpio_3", //SCL
+        .type = PROPERTY_GPIO,
+        .v.gpio_list = {
+            .gpio = GPIOE(15),//15
+            .mul_sel = GPIO_DIRECTION_OUTPUT,
+            .pull = 1,
+            .drv_level = 3,
+            .data = 1,
+        },
+    },
+
+
+    // gpio
+    {
+        .name = "LCD0_D3",     // 1 - 5 (5)
         .type = PROPERTY_PIN,
         .v.gpio_list = {
             .gpio = GPIOD(1),
@@ -260,7 +271,7 @@ struct property_t g_lcd0_config[] = {
         },
     },
     {
-        .name = "LCD0_D10",
+        .name = "LCD0_D10",     //6 - 11 (6)
         .type = PROPERTY_PIN,
         .v.gpio_list = {
             .gpio = GPIOD(6),
@@ -320,17 +331,7 @@ struct property_t g_lcd0_config[] = {
         },
     },
     {
-        .name = "LCD0_D18",
-        .type = PROPERTY_PIN,
-        .v.gpio_list = {
-            .gpio = GPIOD(12),
-            .mul_sel = 2,
-            .pull = 0,
-            .drv_level = 3,
-        },
-    },
-    {
-        .name = "LCD0_D19",
+        .name = "LCD0_D19",     //13 - 17 (5)
         .type = PROPERTY_PIN,
         .v.gpio_list = {
             .gpio = GPIOD(13),
@@ -383,7 +384,7 @@ struct property_t g_lcd0_config[] = {
         .name = "LCD0_CLK",
         .type = PROPERTY_PIN,
         .v.gpio_list = {
-            .gpio = GPIOD(18),
+            .gpio = GPIOD(18),      //18 - 21 (4)
             .mul_sel = 2,
             .pull = 0,
             .drv_level = 3,
@@ -418,8 +419,7 @@ struct property_t g_lcd0_config[] = {
             .pull = 0,
             .drv_level = 3,
         },
-    }
-};
+    }};
 
 struct property_t g_lcd1_config[] = {
     {
@@ -438,12 +438,12 @@ struct property_t g_disp_config[] = {
     {
         .name = "disp_mode",
         .type = PROPERTY_INTGER,
-        .v.value = 0,   /* DISP_INIT_MODE_SCREEN0 */
+        .v.value = 0, /* DISP_INIT_MODE_SCREEN0 */
     },
     {
         .name = "screen0_output_type",
         .type = PROPERTY_INTGER,
-        .v.value = 1,   /* DISP_OUTPUT_TYPE_LCD */
+        .v.value = 1, /* DISP_OUTPUT_TYPE_LCD */
     },
     {
         .name = "screen0_output_mode",
@@ -453,17 +453,12 @@ struct property_t g_disp_config[] = {
     {
         .name = "screen0_output_format",
         .type = PROPERTY_INTGER,
-        .v.value = 0,
+        .v.value = 1,
     },
     {
         .name = "screen0_output_bits",
         .type = PROPERTY_INTGER,
         .v.value = 0,
-    },
-    {
-        .name = "screen0_output_range",
-        .type = PROPERTY_INTGER,
-        .v.value = 1,
     },
     {
         .name = "screen0_output_eotf",
@@ -481,35 +476,36 @@ struct property_t g_disp_config[] = {
         .v.value = 2,
     },
     {
+        .name = "screen0_output_range",
+        .type = PROPERTY_INTGER,
+        .v.value = 2,
+    },
+    {
         .name = "screen0_output_scan",
         .type = PROPERTY_INTGER,
         .v.value = 0,
     },
     {
-        .name = "screen1_output_type",
+        .name = "screen0_output_aspect_ratio",
         .type = PROPERTY_INTGER,
-        .v.value = 1,
+        .v.value = 8,
     },
     {
-        .name = "screen1_output_mode",
+        .name = "screen1_output_type",
         .type = PROPERTY_INTGER,
-        .v.value = 4,
+        .v.value = 0, // NONE
     },
 };
 
-u32 g_lcd0_config_len = sizeof(g_lcd0_config) / sizeof(struct property_t);
+
+u32 g_lcd0_config_len = sizeof(g_lcd0_config_soc) / sizeof(struct property_t);
 u32 g_lcd1_config_len = sizeof(g_lcd1_config) / sizeof(struct property_t);
 u32 g_disp_config_len = sizeof(g_disp_config) / sizeof(struct property_t);
 
 
 /*
-4.3 inch LCD 480*272
-043026-N6(ML)
-043056B0-40-N
-GLD-P20230802
-
-
 LCD             RV_Dock_EXT_3517    GPIO Function
+
 1   LEDK    -   pd22_rgn_bl (5v)
 2   LEDA
 3   GND
@@ -551,88 +547,4 @@ LCD             RV_Dock_EXT_3517    GPIO Function
 39  XL      -   pe15
 40  YU      -   pe16
 
-
-
-
-"fb-d1-rgb@0x05000000": {
-		"clock-name-de": "link-de",
-		"clock-name-tconlcd": "link-tconlcd",
-		"reset-de": 16,
-		"reset-tconlcd": 912,
-		"width": 480,
-		"height": 480,
-		"physical-width": 70,
-		"physical-height": 72,
-		"bits-per-pixel": 16,
-		"clock-frequency": 12000000,
-
-		"hfront-porch": 22,
-		"hback-porch": 8,
-		"hsync-len": 2,
-		
-        "vfront-porch": 2,
-		"vback-porch": 11,
-		"vsync-len": 2,
-		
-        "hsync-active": true,
-		"vsync-active": true,
-		"den-active": true,
-		"clk-active": true,
-		"backlight": "led-gpio.1" //"gpio": 118, D1_GPIOD22
-	},
-
-&lcd0 {
-    lcd_used        = <1>;
-    lcd_driver_name = "st7701s_rgb";
-
-    lcd_if          = <0>;
-    lcd_hv_if       = <0>;
-
-    lcd_width       = <70>;
-    lcd_height      = <72>;
-    lcd_x           = <480>;
-    lcd_y           = <480>;
-    lcd_dclk_freq   = <19>;
-    lcd_hbp         = <60>;
-    lcd_ht          = <612>;
-    lcd_hspw        = <12>;
-    lcd_vbp         = <18>;
-    lcd_vt          = <520>;
-    lcd_vspw        = <4>;
-
-    lcd_backlight   = <50>;
-    lcd_pwm_used    = <1>;
-    lcd_pwm_ch      = <7>;
-    lcd_pwm_freq    = <20000>;
-    lcd_pwm_pol     = <1>;
-    lcd_bright_curve_en = <0>;
-
-    lcd_frm         = <1>;
-    lcd_io_phase    = <0x0000>;
-    lcd_gamma_en    = <0>;
-    lcd_cmap_en     = <0>;
-    lcd_hv_clk_phase= <0>;
-    lcd_hv_sync_polarity= <0>;
-    lcd_rb_swap          = <0>;
-
-    lcd_power       = "vcc-lcd";
-    lcd_pin_power   = "vcc-pd";
-    lcd_gpio_0      = <&pio PG 13 GPIO_ACTIVE_HIGH>;
-    lcd_gpio_1      = <&pio PE 14 GPIO_ACTIVE_HIGH>;
-    lcd_gpio_2      = <&pio PE 12 GPIO_ACTIVE_HIGH>;
-    lcd_gpio_3      = <&pio PE 15 GPIO_ACTIVE_HIGH>;
-    pinctrl-0       = <&rgb18_pins_a>;
-    pinctrl-1       = <&rgb18_pins_b>;
-};
-
-
-
-
-
 */
-
-
-
-
-
-

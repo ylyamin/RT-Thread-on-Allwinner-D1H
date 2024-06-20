@@ -8,7 +8,7 @@ The intention is to easily run peripherals in D1, exactly Display. RT-Thread OS 
 At the original repository [RT-Thread](https://github.com/RT-Thread/rt-thread) the compilation is not streamlined for D1H [issue 9063](https://github.com/RT-Thread/rt-thread/issues/9063). So was performed fork from [v5.0.2](https://github.com/RT-Thread/rt-thread/releases/tag/v5.0.2) and introduced several changes to make it runnable in D1H. Added also bootloaders, compiler, debugger, build system.
 
 ## Current progress
-Sipeed Lichee RV could control 4.3 RGB LCD 480*272 Display with IC st7001s (SPI)  
+RT-Thread could run in Sipeed Lichee RV and manage RGB LCD Display  
 
 ![lichee_lcd_rgb_work](documentation/lichee_lcd_rgb_work.jpg)
 
@@ -197,7 +197,9 @@ Breakpoint 1 at 0x40449dae: file applications/main.c, line 15.
 ```
 
 ## Hardware
-- [Sipeed Lichee RV + Dock](https://wiki.sipeed.com/hardware/en/lichee/RV/Dock.html)  
+- [Sipeed Lichee RV + Dock](https://wiki.sipeed.com/hardware/en/lichee/RV/Dock.html)
+- Lichee RV Dock extension LCD adapter board
+- 4.3 RGB LCD Display (043026-N6(ML)) with IC ST7001s (SPI)
 - [ClockworkPi DevTerm R01](https://www.clockworkpi.com/home-devterm)
 - FTDI 2248-c USB/UART adapter
 - Sipeed RV-Debuggr Plus

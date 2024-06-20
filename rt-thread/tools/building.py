@@ -819,6 +819,7 @@ def DoBuilding(target, objects):
 
         # sort seperately, because the data type of
         # the members of the two lists are different
+
         objects_in_group = sorted(objects_in_group)
         objects = sorted(objects)
         objects.append(objects_in_group)
