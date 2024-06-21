@@ -1,15 +1,16 @@
 #Variables
 BUILD = build
-SD_IMAGE = image/sd_image.img
-SD_MOUNT = /dev/sdb
 TOOLCHAIN_INSTALL_DIR ?= $(shell pwd)/toolchain
 U_BOOT_INSTALL_DIR ?= $(shell pwd)/bootloaders/u-boot
 DEBUGGER_INSTALL_DIR = $(shell pwd)/debugger
 
+SD_IMAGE = image/sd_image.img
+SD_MOUNT = /dev/sdb
+
 RED=\033[0;31m
 NC=\033[0m
 
-.PHONY: all clean
+.PHONY: all clean test
 all: sd
 
 #Toolcahin
@@ -72,16 +73,16 @@ xfel:
 
 U_BOOT_INSTALL_DIR_ORIGIN = $(shell pwd)/bootloaders/u-boot
 $(U_BOOT_INSTALL_DIR):
-    ifneq ($(U_BOOT_INSTALL_DIR_ORIGIN),$(U_BOOT_INSTALL_DIR))
-		#mkdir -p $(U_BOOT_INSTALL_DIR)
-		#cd $(U_BOOT_INSTALL_DIR_ORIGIN) && tar cf - . | tar xf - -C $(U_BOOT_INSTALL_DIR) #Not make after this don't know why
-		git clone https://github.com/smaeul/u-boot $(U_BOOT_INSTALL_DIR)
-		cd $(U_BOOT_INSTALL_DIR) && git checkout d1-2022-04-05
-    endif
+    #ifneq ($(U_BOOT_INSTALL_DIR_ORIGIN),$(U_BOOT_INSTALL_DIR))
+	#mkdir -p $(U_BOOT_INSTALL_DIR)
+	#cd $(U_BOOT_INSTALL_DIR_ORIGIN) && tar cf - . | tar xf - -C $(U_BOOT_INSTALL_DIR) #Not make after this don't know why
+	git clone https://github.com/smaeul/u-boot $(U_BOOT_INSTALL_DIR)
+	cd $(U_BOOT_INSTALL_DIR) && git checkout d1-2022-04-05
+    #endif
 
 u-boot: $(U_BOOT_INSTALL_DIR) toolchain
 	cd $(U_BOOT_INSTALL_DIR) && make CROSS_COMPILE=$(RISCV64_GLIBC_GCC_BIN) lichee_rv_defconfig
-	cd $(U_BOOT_INSTALL_DIR) && make CROSS_COMPILE=$(RISCV64_GLIBC_GCC_BIN) ARCH=riscv OPENSBI=${U_BOOT_INSTALL_DIR_ORIGIN}/../opensbi/build/platform/generic/firmware/fw_dynamic.bin
+	cd $(U_BOOT_INSTALL_DIR) && make CROSS_COMPILE=$(RISCV64_GLIBC_GCC_BIN) ARCH=riscv OPENSBI=$(shell pwd)/bootloaders/opensbi/build/platform/generic/firmware/fw_dynamic.bin
 
 u-boot-claen: $(U_BOOT_INSTALL_DIR) toolchain
 	cd $(U_BOOT_INSTALL_DIR) && make CROSS_COMPILE=$(RISCV64_GLIBC_GCC_BIN) clean
@@ -100,8 +101,18 @@ rt-clean: toolchain
 rt-conf: toolchain
 	cd rt-thread/bsp/allwinner/d1s_d1h/ && RTT_EXEC_PATH=$(RISCV64_MUSL_BIN) scons --menuconfig
 
+include rt-thread/bsp/allwinner/d1s_d1h/.config
+
 #SD card
 $(SD_IMAGE): rt
+    ifeq ($(CONFIG_BSP_USING_SIPEED_LICHEE_RV),y)
+		@echo "${RED}Sipeed Lichee RV board used${NC}"
+		$(eval SD_IMAGE = image/sd_image_lichee.img)
+    endif
+    ifeq ($(CONFIG_BSP_USING_CWP_DT_R01),y)
+		@echo "${RED}ClockworkPi DevTerm R01 board used${NC}"
+		$(eval SD_IMAGE = image/sd_image_devterm.img)
+    endif
 	$(U_BOOT_INSTALL_DIR)/tools/mkimage -T sunxi_toc1 -d $(BUILD)/toc1_D1H.cfg $(BUILD)/sd.bin
 	sudo dd if=bootloaders/sun20i_d1_spl/nboot/boot0_sdcard_sun20iw1p1.bin of=$(SD_IMAGE) bs=8192 seek=16
 	sudo dd if=$(BUILD)/sd.bin of=$(SD_IMAGE) bs=512 seek=32800
@@ -129,8 +140,3 @@ debug:
 	$(RISCV64_GLIBC_GCC_BIN)gdb -x build/.gdbinit
 
 clean: toolchain-remove bootloaders-clean rt-clean
-
-
-
-
-

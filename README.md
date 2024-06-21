@@ -14,7 +14,9 @@ RT-Thread could run in Sipeed Lichee RV and manage RGB LCD Display
 
 
 # Installation
-In repository exist prebuilded image for SD card [image/sd_image.img](image/sd_image.img), need to flash it to SD card and install to device.
+In repository exist prebuilded images for SD card in folder [image](image), need to flash it to SD card and install to device.
+- If Sipeed Lichee RV board is used please use [image/sd_image_lichee.img](image/sd_image_lichee.img)
+- If ClockworkPi DevTerm R01 board is used please use [image/sd_image_devterm.img](image/sd_image_devterm.img)
 
 ## Windows
 Could use https://etcher.balena.io/#download-etcher for flash image to SD card.
@@ -26,7 +28,7 @@ make sd_burn
 ```
 Or
 ```sh
-sudo dd if=image/sd_image.img of=/dev/sdb bs=512 seek=16 conv=sync
+sudo dd if=image/sd_image_lichee.img of=/dev/sdb bs=512 seek=16 conv=sync
 ```
 *where /dev/sdb - your SD card device
 
@@ -152,6 +154,8 @@ For configure:
 ```sh
 make rt-conf
 ```
+In menuconfig chooses "General Drivers Configuration" -> "Choose Board" and then choose "Sipeed Lichee RV board" or "ClockworkPi DevTerm R01 board" depend what board do you use.
+
 ## Build SD card image
 To create SD card image in image/sd_image.img:
 ```sh
@@ -220,8 +224,10 @@ https://linux-sunxi.org/Allwinner_Nezha
 https://andreas.welcomes-you.com/boot-sw-debian-risc-v-lichee-rv-2/  
 
 ## TODO
-- Two board conf, make, sd img
 - Twi power control
 - Mipi dsi
 - Keyboard, trackball
 - Build env and RTT gui
+
+
+

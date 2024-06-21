@@ -323,7 +323,7 @@
 
 /* General Drivers Configuration */
 
-#define BSP_USING_M7
+#define BSP_USING_SIPEED_LICHEE_RV
 
 /* General Purpose UARTs */
 
@@ -366,7 +366,7 @@
 
 /* LCD panels select */
 
-#define LCD_SUPPORT_ICN9707_480x1280
+#define LCD_SUPPORT_ST7701S_RGB
 
 /* Display engine feature select */
 
@@ -376,7 +376,7 @@
 
 /* Board Select */
 
-#define MIPI_DSI_LCD_ICN9707
+#define RGB_LCD_ST7001S
 
 /* Soc Select */
 

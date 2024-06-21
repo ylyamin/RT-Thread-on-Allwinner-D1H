@@ -3,10 +3,21 @@ menu "General Drivers Configuration"
 choice
     prompt "Choose Board"
 
-    default BSP_USING_M7
+    default BSP_USING_SIPEED_LICHEE_RV
 
     config BSP_USING_M7
         bool "Persimmon M7 board"
+
+    config BSP_USING_SIPEED_LICHEE_RV
+        bool "Sipeed Lichee RV board"
+        select LCD_SUPPORT_ST7701S_RGB
+        select RGB_LCD_ST7001S
+
+    config BSP_USING_CWP_DT_R01
+        bool "ClockworkPi DevTerm R01 board"
+        select LCD_SUPPORT_ICN9707_480x1280
+        select MIPI_DSI_LCD_ICN9707
+
 endchoice
 
 menu "General Purpose UARTs"

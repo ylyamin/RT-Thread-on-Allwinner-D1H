@@ -39,10 +39,6 @@ choice
         select ARCH_MM_MMU
 endchoice
 
-
-
-
-
 config ENABLE_FPU
     bool "Enable FPU"
     default y

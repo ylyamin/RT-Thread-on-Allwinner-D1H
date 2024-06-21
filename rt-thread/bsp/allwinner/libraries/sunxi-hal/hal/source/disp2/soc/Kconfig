@@ -45,12 +45,14 @@ config DEFAULT_LVDS
 config RGB_LCD_ST7001S
     bool "4.3 inch RGB LCD display 043026-N6(ML) with ST7001s (SPI)"
     default n
+    depends on BSP_USING_SIPEED_LICHEE_RV
     ---help---
       4.3 inch RGB LCD display 043026-N6(ML) with ST7001s (SPI)
 
 config MIPI_DSI_LCD_ICN9707
     bool "Clockworkpi Devterm R01 board with MIPI DSI display ICN9707"
     default n
+    depends on BSP_USING_CWP_DT_R01
     ---help---
       Clockworkpi Devterm R01 board with MIPI DSI display ICN9707
 
