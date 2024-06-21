@@ -12,5 +12,9 @@ obj-$(CONFIG_HE0801A068_MIPI)+= he0801a068_mipi_config.o
 obj-$(CONFIG_DEFAULT_LVDS)+= f133_lvds.o
 
 obj-$(CONFIG_RGB_LCD_ST7001S)+= RGB_LCD_ST7001s.o
+obj-$(CONFIG_MIPI_DSI_LCD_ICN9707)+= icn9707_mipi_config.o
+
+
+
 
 

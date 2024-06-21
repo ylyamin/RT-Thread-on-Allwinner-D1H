@@ -231,15 +231,6 @@
 
 /* LVGL: powerful and easy-to-use embedded GUI library */
 
-#define PKG_USING_LVGL
-#define PKG_LVGL_THREAD_PRIO 20
-#define PKG_LVGL_THREAD_STACK_SIZE 4096
-#define PKG_LVGL_DISP_REFR_PERIOD 5
-#define PKG_LVGL_USING_EXAMPLES
-#define PKG_LVGL_USING_DEMOS
-#define PKG_LVGL_USING_V080311
-#define PKG_LVGL_VER_NUM 0x080311
-#define PKG_USING_GUI_GUIDER_DEMO
 
 /* u8g2: a monochrome graphic library */
 
@@ -328,7 +319,6 @@
 /* Uncategorized */
 
 #define BOARD_allwinnerd1
-#define ENABLE_FPU
 #define __STACKSIZE__ 16384
 
 /* General Drivers Configuration */
@@ -376,7 +366,7 @@
 
 /* LCD panels select */
 
-#define LCD_SUPPORT_ST7701S_RGB
+#define LCD_SUPPORT_ICN9707_480x1280
 
 /* Display engine feature select */
 
@@ -386,7 +376,7 @@
 
 /* Board Select */
 
-#define RGB_LCD_ST7001S
+#define MIPI_DSI_LCD_ICN9707
 
 /* Soc Select */
 

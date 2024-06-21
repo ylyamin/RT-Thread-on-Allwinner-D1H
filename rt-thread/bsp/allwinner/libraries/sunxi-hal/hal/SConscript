@@ -122,7 +122,6 @@ disp2_src = Split('''
 ./source/disp2/disp/lcd/default_panel.c
 ./source/disp2/disp/lcd/lcd_source.c
 ./source/disp2/disp/lcd/panels.c
-./source/disp2/disp/lcd/st7701s_rgb.c
 ./source/disp2/disp/disp_sys_intf.c
 ./source/disp2/disp/dev_disp.c
 ./source/disp2/disp/disp_debug.c
@@ -133,12 +132,22 @@ disp2_src = Split('''
 if GetDepend('LCD_SUPPORT_TFTRGB'):
     if not GetDepend('LCD_USING_XML_CONFIG'):
         disp2_src += ['./source/disp2/soc/rgb_config.c']
+
 if GetDepend('LCD_SUPPORT_TFT08006'):
     # disp2_src += ['./source/disp2/soc/tft08006_mipi_config.c']
     disp2_src += ['./source/disp2/disp/lcd/tft08006.c']
 
+if GetDepend('LCD_SUPPORT_ST7701S_RGB'):
+    disp2_src += ['./source/disp2/disp/lcd/st7701s_rgb.c']
+
 if GetDepend('RGB_LCD_ST7001S'):
     disp2_src += ['./source/disp2/soc/RGB_LCD_ST7001s.c']
+
+if GetDepend('LCD_SUPPORT_ICN9707_480x1280'):
+    disp2_src += ['./source/disp2/disp/lcd/icn9707_480x1280.c']
+
+if GetDepend('MIPI_DSI_LCD_ICN9707'):
+    disp2_src += ['./source/disp2/soc/icn9707_mipi_config.c']
 
 sdmmc_src = Split('''
 source/sdmmc/core.c

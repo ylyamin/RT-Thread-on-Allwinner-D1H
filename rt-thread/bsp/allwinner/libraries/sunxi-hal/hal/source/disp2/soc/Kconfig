@@ -48,6 +48,12 @@ config RGB_LCD_ST7001S
     ---help---
       4.3 inch RGB LCD display 043026-N6(ML) with ST7001s (SPI)
 
+config MIPI_DSI_LCD_ICN9707
+    bool "Clockworkpi Devterm R01 board with MIPI DSI display ICN9707"
+    default n
+    ---help---
+      Clockworkpi Devterm R01 board with MIPI DSI display ICN9707
+
 endmenu
 
 menu "Soc Select"

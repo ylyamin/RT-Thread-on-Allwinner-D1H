@@ -74,18 +74,27 @@ _RET:
 
     init_state = 2;
     _config_item = _lcd_property_find("lcd_x", g_lcd0_config, g_lcd0_config_len);
-    _panel_info.width = _config_item->v.value;
+    if(_config_item != NULL)
+    {
+        _panel_info.width = _config_item->v.value;
+    }    
     _config_item = _lcd_property_find("lcd_y", g_lcd0_config, g_lcd0_config_len);
-    _panel_info.height = _config_item->v.value;
-
+    if(_config_item != NULL)
+    {
+        _panel_info.height = _config_item->v.value;
+    }
     _config_item = _lcd_property_find("bl_pin", g_lcd0_config, g_lcd0_config_len);
-    _panel_info.bl_pin = _config_item->v.value;
-    _panel_info.bl_gpio_pin = _config_item->v.value;
-
+    if(_config_item != NULL)
+    {
+        _panel_info.bl_pin = _config_item->v.value;
+        _panel_info.bl_gpio_pin = _config_item->v.value;
+    }
     _config_item = _lcd_property_find("bl_level", g_lcd0_config, g_lcd0_config_len);
-    _panel_info.bl_level = _config_item->v.value;
-    _panel_info.bl_gpio_level = _config_item->v.value;
-
+    if(_config_item != NULL)
+    { 
+        _panel_info.bl_level = _config_item->v.value;
+        _panel_info.bl_gpio_level = _config_item->v.value;
+    }
     _panel_info.bl_mode = 0;
     _panel_info.pwr_pin = -1;
 

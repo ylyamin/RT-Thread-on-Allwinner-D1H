@@ -97,7 +97,7 @@ Windows 10 64x was used as a host with IDE VSCode and Ubuntu 22.04.3 64x virtual
 
 Ar guest ubuntu need to install make enviroment:
 ```sh
-sudo apt install git make build-essential libusb-1.0-0-dev
+sudo apt install git make build-essential scons libusb-1.0-0-dev libncurses5-dev
 ```
 Repo was downloaded to a shared folder in Windows mounted in Ubuntu, /etc/fstab example
 ```sh
@@ -170,9 +170,9 @@ For flash firmware to Sipeed RV-Debuggr Plus - Press and hold the boot pin then 
 ```sh
 make debug-burn
 ```
-To start GDB session in device that have FEL button (Sipeed Lichee RV) - press and hold the FEL button then press RESET button to go to the FEL mode, then execte command:
+To start GDB session need to use FEL button but surprisedly this works even without it somehow just after power up. Anyway in device that have FEL button (Sipeed Lichee RV) - press and hold the FEL button then press RESET button to go to the FEL mode, then execte command or just execute command (for Clockwork Devterm):
 ```sh
-make debug-fel
+make debug
 ```
 Should see at the output the like this:
 ```
@@ -193,7 +193,7 @@ GDB connection command for CPUs(CPU0):
 0x000000000000a22a in ?? ()
 Restoring binary file bootloaders/opensbi/build/platform/generic/firmware/fw_dynamic.bin into memory (0x40000000 to 0x40042790)
 Restoring binary file build/sun20i-d1-lichee-rv-dock.dtb into memory (0x40200000 to 0x40207b23)
-Breakpoint 1 at 0x40449dae: file applications/main.c, line 15.
+Restoring binary file rt-thread/bsp/allwinner/d1s_d1h/rtthread.bin into memory (0x40400000 to 0x404f0840)
 ```
 
 ## Hardware
@@ -220,12 +220,8 @@ https://linux-sunxi.org/Allwinner_Nezha
 https://andreas.welcomes-you.com/boot-sw-debian-risc-v-lichee-rv-2/  
 
 ## TODO
-Sipeed:
-- Move LCD config to disp2/soc folder
-- Build RTT gui
-
-devterm:
-- Debug without fel
+- Two board conf, make, sd img
 - Twi power control
 - Mipi dsi
-- Keyboard
+- Keyboard, trackball
+- Build env and RTT gui

@@ -121,7 +121,7 @@ debug-burn: $(DEBUGGER_INSTALL_DIR)/blisp
 	@echo "${RED}Press and hold the boot pin then plug the usb in the computer to go to the boot mode.${NC}"
 	$(DEBUGGER_INSTALL_DIR)/blisp iot -c bl70x --reset -s $(DEBUGGER_INSTALL_DIR)/bl702_cklink_whole_img_v2.2.bin -l 0x0
 
-debug-fel:
+debug:
 	@echo "${RED}Press and hold the FEL pin then press RESET pin to go to the FEL mode.${NC}"
 	xfel ddr d1
 	xfel jtag

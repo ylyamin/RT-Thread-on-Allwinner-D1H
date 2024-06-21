@@ -114,6 +114,10 @@ struct __lcd_panel *panel_array[] = {
     &tft08006_panel,
 #endif
 
+#ifdef CONFIG_LCD_SUPPORT_ICN9707_480x1280
+    &icn9707_480x1280_panel,
+#endif
+
     NULL,
 };
 

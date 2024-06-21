@@ -13,11 +13,5 @@
 int main(void)
 {
     printf("Hello RISC-V\n");
-/*
-#ifdef BSP_USING_LCD
-    extern int rt_hw_lcd_init(void);
-    rt_hw_lcd_init();
-#endif // BSP_USING_LCD
-*/
     return 0;
 }
