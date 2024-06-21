@@ -131,6 +131,9 @@
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V2
 #define RT_USING_TTY
+#define RT_USING_I2C
+#define RT_I2C_DEBUG
+#define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
 #define RT_USING_NULL
 #define RT_USING_ZERO
@@ -323,13 +326,15 @@
 
 /* General Drivers Configuration */
 
-#define BSP_USING_SIPEED_LICHEE_RV
+#define BSP_USING_CWP_DT_R01
 
 /* General Purpose UARTs */
 
 #define BSP_USING_UART0
 #define UART0_TX_USING_GPIOB8
 #define UART0_RX_USING_GPIOB9
+#define BSP_USING_I2C
+#define BSP_USING_I2C0
 #define BSP_USING_PWM
 #define BSP_USING_SDMMC
 #define SD_CARD_CHECK
@@ -366,7 +371,7 @@
 
 /* LCD panels select */
 
-#define LCD_SUPPORT_ST7701S_RGB
+#define LCD_SUPPORT_ICN9707_480x1280
 
 /* Display engine feature select */
 
@@ -376,7 +381,7 @@
 
 /* Board Select */
 
-#define RGB_LCD_ST7001S
+#define MIPI_DSI_LCD_ICN9707
 
 /* Soc Select */
 

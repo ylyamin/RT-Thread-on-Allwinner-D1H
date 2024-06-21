@@ -51,6 +51,7 @@ struct rt_i2c_bus_device *rt_i2c_bus_device_find(const char *bus_name)
     return bus;
 }
 
+
 rt_ssize_t rt_i2c_transfer(struct rt_i2c_bus_device *bus,
                           struct rt_i2c_msg         msgs[],
                           rt_uint32_t               num)

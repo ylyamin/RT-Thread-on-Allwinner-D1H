@@ -255,3 +255,40 @@ struct __lcd_panel icn9707_480x1280_panel = {
         .lcd_user_defined_func = LCD_user_defined_func,
     },
 };
+
+
+/*
+https://www.zhunyidisplay.com/products/z686006-bar-type-6.86-inch-lcd-screen-panel-480-1280-full-view-angle-mipi-interface/
+
+
+PIN NO.	    PIN DEF.    FUNCTION DESC.
+
+1-2	        VCC	        POWER SUPPLY（3.3V）
+3	        IOVCC	    I/O POWER SUPPLY（1.8V）
+4	        GND	        Ground
+5	        RESET	    LCM RESET PIN
+6	        IOVCC	    I/O POWER SUPPLY（1.8V）
+7	        NC	        No Connection
+8	        ID2	        LCM ID PIN
+9	        ID1	        LCM ID PIN
+10-15	    NC	        No Connection
+16	        GND	        Ground
+17	        D3N	        Negative MIPI differential data input
+18	        D3P	        Positive MIPI differential data input
+19	        GND	        Ground
+20	        D2N	        Negative MIPI differential data input
+21	        D2P	        Positive MIPI differential data input
+22	        GND	        Ground
+23	        CLKN	    Negative MIPI differential CLOCK input
+24	        CLKP	    Positive MIPI differential CLOCK input
+25	        GND	        Ground
+26	        D1N	        Negative MIPI differential data input
+27	        D1P	        Positive MIPI differential data input
+28	        GND	        Ground
+29	        D0N	        Negative MIPI differential data input
+30	        D0P	        Positive MIPI differential data input
+31-32	    GND	        Ground
+33-36	    LEDK	    POWER SUPPLY- FOR BACKLIGHT CATHODE
+37	        NC	        No Connection
+38-40	    LEDA	    POWER SUPPLY- FOR BACKLIGHT ANODE
+*/

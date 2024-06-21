@@ -111,7 +111,38 @@ static struct hal_i2c_bus _i2c_bus_3 = {
 
 #define CFG_GPIO_PORT(p) ((p) - 'A' + 1)
 
+/*
+https://github.com/clockworkpi/DevTerm/blob/main/Code/patch/d1/board.dts
+https://github.com/cuu/last_linux-5.4/blob/master/arch/riscv/boot/dts/sunxi/sun20iw1p1.dtsi
+
+Devterm AXP228              D1
+PMU-SCK        PB-10   TWI0-SCK
+PMU-SDA        PB-11   TWI0-SDA
+*/
+
 static const user_gpio_set_t _i2c_gpio_cfg[][2] = {
+#ifdef BSP_USING_CWP_DT_R01
+    {// twi0
+        {
+            .gpio_name = "twi0.sck",
+            .port = CFG_GPIO_PORT('B'),
+            .port_num = 10, // PB10
+            .mul_sel = 4,
+            .pull = 1, // pull up
+            .drv_level = 3,
+            .data = 1,
+        },
+        {
+            .gpio_name = "twi0.sda",
+            .port = CFG_GPIO_PORT('B'),
+            .port_num = 11, // PB11
+            .mul_sel = 4,
+            .pull = 1, // pull up
+            .drv_level = 3,
+            .data = 1,
+        }
+    },
+#else
     {// twi0
         {
             .gpio_name = "twi0.sck",
@@ -132,6 +163,7 @@ static const user_gpio_set_t _i2c_gpio_cfg[][2] = {
             .data = 1,
         }
     },
+#endif
     {// twi1
         {
             .gpio_name = "twi1.sck",
@@ -289,10 +321,10 @@ static void _i2c_test(int argc, char *args[])
 
     if (argc < 2) return;
 
-    i2c_bus = (struct rt_i2c_bus_device*)rt_device_find("i2c2");
+    i2c_bus = (struct rt_i2c_bus_device*)rt_device_find("i2c0");
     if (!i2c_bus)
     {
-        rt_kprintf("i2c2 not found\n");
+        rt_kprintf("i2c0 not found\n");
         return;
     }
 
@@ -335,7 +367,6 @@ static void _pin_test(void)
 MSH_CMD_EXPORT_ALIAS(_pin_test, pin_test, gpio pin test);
 
 /*@}*/
-
 
 
 

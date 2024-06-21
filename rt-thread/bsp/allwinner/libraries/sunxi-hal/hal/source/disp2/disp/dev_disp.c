@@ -732,7 +732,6 @@ static s32 parser_disp_init_para(struct disp_init_para *init_para)
 
 static void start_work(hal_work *work, void* work_data)
 {
-    rt_kprintf("start_work\n");
     int num_screens;
     int screen_id;
     int count = 0;

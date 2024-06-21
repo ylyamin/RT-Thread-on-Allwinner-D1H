@@ -7,6 +7,8 @@ The intention is to easily run peripherals in D1, exactly Display. RT-Thread OS 
 
 At the original repository [RT-Thread](https://github.com/RT-Thread/rt-thread) the compilation is not streamlined for D1H [issue 9063](https://github.com/RT-Thread/rt-thread/issues/9063). So was performed fork from [v5.0.2](https://github.com/RT-Thread/rt-thread/releases/tag/v5.0.2) and introduced several changes to make it runnable in D1H. Added also bootloaders, compiler, debugger, build system.
 
+Introduced code changes described in [Code_changes](documentation/Code_changes.md) document.
+
 ## Current progress
 RT-Thread could run in Sipeed Lichee RV and manage RGB LCD Display  
 
@@ -66,7 +68,7 @@ RT-Thread-on-Allwinner-D1H
     ├── bootloaders
     │   ├── opensbi
     │   ├── sun20i_d1_spl
-    │   ├── u-boot
+    │   ├── u-boot (will be created by make !)
     │   └── xfel
     │   ├── opensbi_config
     ├── build
@@ -80,9 +82,11 @@ RT-Thread-on-Allwinner-D1H
     ├── documentation
     │   ├── Allwinner_D1H
     │   ├── ClockworkPi_DevTerm
+    │   ├── RISC-V    
     │   └── Sipeed_Lichee_RV
     ├── image
-    │   └── sd_image.img
+    │   ├── sd_image_devterm.img
+    │   └── sd_image_lichee.img
     ├── rt-thread
     │   ├── bsp/allwinner/d1s_d1h/
     │   ...
@@ -92,6 +96,7 @@ RT-Thread-on-Allwinner-D1H
     │   └── T-HEAD_DebugServer
     ├── Makefile
     ├── environment.sh
+    ├── LICENSE
     └── README.md
 ```
 ## Environment

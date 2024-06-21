@@ -71,6 +71,8 @@
 #include "st7701s_rgb.h"
 #include "default_panel.h"
 
+//https://github.com/Tina-Linux/LCD_Panel_Driver/tree/master/LCD/BH040I-01_ST7701s_RGB_480x480
+
 //s32 sunxi_lcd_gpio_set_value(u32 screen_id, u32 io_index, u32 value)
 
     //PG13_LCD_RESET

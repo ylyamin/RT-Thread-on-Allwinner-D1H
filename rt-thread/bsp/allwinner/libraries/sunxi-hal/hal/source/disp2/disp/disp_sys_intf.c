@@ -462,7 +462,7 @@ int disp_sys_pin_set_state(char *dev_name, char *name)
     p_list = disp_get_all_pin_property(dev_name, &len);
 
     if (!p_list || !len) {
-        DE_WRN("No pin to be configureed!\n");
+        DE_INF("No pin to be configureed!\n");
         return 0;
     }
     for (i = 0; i < len; ++i) {
