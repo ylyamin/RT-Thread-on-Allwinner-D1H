@@ -10,7 +10,7 @@ SD_MOUNT = /dev/sdb
 RED=\033[0;31m
 NC=\033[0m
 
-.PHONY: all clean test
+.PHONY: all clean
 all: sd
 
 #Toolcahin
@@ -71,14 +71,9 @@ sun20i_d1_spl-clean: toolchain
 xfel:
 	cd bootloaders/xfel/ && make && sudo make install
 
-U_BOOT_INSTALL_DIR_ORIGIN = $(shell pwd)/bootloaders/u-boot
 $(U_BOOT_INSTALL_DIR):
-    #ifneq ($(U_BOOT_INSTALL_DIR_ORIGIN),$(U_BOOT_INSTALL_DIR))
-	#mkdir -p $(U_BOOT_INSTALL_DIR)
-	#cd $(U_BOOT_INSTALL_DIR_ORIGIN) && tar cf - . | tar xf - -C $(U_BOOT_INSTALL_DIR) #Not make after this don't know why
 	git clone https://github.com/smaeul/u-boot $(U_BOOT_INSTALL_DIR)
 	cd $(U_BOOT_INSTALL_DIR) && git checkout d1-2022-04-05
-    #endif
 
 u-boot: $(U_BOOT_INSTALL_DIR) toolchain
 	cd $(U_BOOT_INSTALL_DIR) && make CROSS_COMPILE=$(RISCV64_GLIBC_GCC_BIN) lichee_rv_defconfig
