@@ -142,6 +142,12 @@ Will be installed:
 - xfel (used for debug in when platform in FEL mode)
 
 ## Build RT-Thread
+For configure:
+```sh
+make rt-conf
+```
+In menuconfig chooses "General Drivers Configuration" -> "Choose Board" and then choose "Sipeed Lichee RV board" or "ClockworkPi DevTerm R01 board" depend what board do you use.
+
 To compile RT-Thread use command:
 ```sh
 make rt
@@ -150,12 +156,6 @@ For clean:
 ```sh
 make rt-clean
 ```
-For configure:
-```sh
-make rt-conf
-```
-In menuconfig chooses "General Drivers Configuration" -> "Choose Board" and then choose "Sipeed Lichee RV board" or "ClockworkPi DevTerm R01 board" depend what board do you use.
-
 ## Build SD card image
 To create SD card image in image/sd_image.img:
 ```sh
@@ -163,7 +163,7 @@ make sd
 ```
 For flash to SD card:
 ```sh
-sd_burn:
+make sd_burn
 ```
 
 ## Debugging
@@ -220,14 +220,15 @@ I figureout that integrated UART work very unstable. Acording [discussion](https
 ![Devterm_R01_uart](documentation/Devterm_R01_uart.png)
 
 ## Links
-https://linux-sunxi.org/Allwinner_Nezha  
-https://andreas.welcomes-you.com/boot-sw-debian-risc-v-lichee-rv-2/  
+- https://linux-sunxi.org/Allwinner_Nezha  
+- https://andreas.welcomes-you.com/boot-sw-debian-risc-v-lichee-rv-2/  
 
 ## TODO
 - Twi power control
 - Mipi dsi
 - Keyboard, trackball
 - Build env and RTT gui
+- software changes paragraph
 
 
 
