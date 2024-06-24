@@ -11,7 +11,7 @@ static void LCD_panel_exit(u32 sel);
 
 static void LCD_cfg_panel_info(struct panel_extend_para * info)
 {
-
+/*
     printk("raoyiming +++LCD_cfg_panel_info\n");
     return;
     u32 i = 0, j=0;
@@ -104,6 +104,7 @@ static void LCD_cfg_panel_info(struct panel_extend_para * info)
     info->lcd_bright_curve_tbl[255] = lcd_bright_curve_tbl[items-1][1];
 
     memcpy(info->lcd_cmap_tbl, lcd_cmap_tbl, sizeof(lcd_cmap_tbl));
+    */
 }
 
 static s32 LCD_open_flow(u32 sel)
@@ -113,7 +114,7 @@ static s32 LCD_open_flow(u32 sel)
     LCD_OPEN_FUNC(sel, LCD_panel_init, 200);   //open lcd power, than delay 200ms
     LCD_OPEN_FUNC(sel, sunxi_lcd_tcon_enable, 200);     //open lcd controller, and delay 100ms
     LCD_OPEN_FUNC(sel, LCD_bl_open, 0);     //open lcd backlight, and delay 0ms
-
+    printk("raoyiming +++ LCD_open_flow finish\n");
     return 0;
 }
 
@@ -227,7 +228,8 @@ static void LCD_panel_init(u32 sel)
         }
     }
 
-   sunxi_lcd_dsi_clk_enable(sel);
+    sunxi_lcd_dsi_clk_enable(sel);
+    printk("<0>raoyiming +++ LCD_panel_init finish\n");
 
     return;
 }
@@ -255,40 +257,3 @@ struct __lcd_panel icn9707_480x1280_panel = {
         .lcd_user_defined_func = LCD_user_defined_func,
     },
 };
-
-
-/*
-https://www.zhunyidisplay.com/products/z686006-bar-type-6.86-inch-lcd-screen-panel-480-1280-full-view-angle-mipi-interface/
-
-
-PIN NO.	    PIN DEF.    FUNCTION DESC.
-
-1-2	        VCC	        POWER SUPPLY（3.3V）
-3	        IOVCC	    I/O POWER SUPPLY（1.8V）
-4	        GND	        Ground
-5	        RESET	    LCM RESET PIN
-6	        IOVCC	    I/O POWER SUPPLY（1.8V）
-7	        NC	        No Connection
-8	        ID2	        LCM ID PIN
-9	        ID1	        LCM ID PIN
-10-15	    NC	        No Connection
-16	        GND	        Ground
-17	        D3N	        Negative MIPI differential data input
-18	        D3P	        Positive MIPI differential data input
-19	        GND	        Ground
-20	        D2N	        Negative MIPI differential data input
-21	        D2P	        Positive MIPI differential data input
-22	        GND	        Ground
-23	        CLKN	    Negative MIPI differential CLOCK input
-24	        CLKP	    Positive MIPI differential CLOCK input
-25	        GND	        Ground
-26	        D1N	        Negative MIPI differential data input
-27	        D1P	        Positive MIPI differential data input
-28	        GND	        Ground
-29	        D0N	        Negative MIPI differential data input
-30	        D0P	        Positive MIPI differential data input
-31-32	    GND	        Ground
-33-36	    LEDK	    POWER SUPPLY- FOR BACKLIGHT CATHODE
-37	        NC	        No Connection
-38-40	    LEDA	    POWER SUPPLY- FOR BACKLIGHT ANODE
-*/

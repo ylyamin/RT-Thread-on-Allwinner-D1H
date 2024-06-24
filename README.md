@@ -17,8 +17,8 @@ RT-Thread could run in Sipeed Lichee RV and manage RGB LCD Display
 
 # Installation
 In repository exist prebuilded images for SD card in folder [image](image), need to flash it to SD card and install to device.
-- If Sipeed Lichee RV board is used please use [image/sd_image_lichee.img](image/sd_image_lichee.img)
-- If ClockworkPi DevTerm R01 board is used please use [image/sd_image_devterm.img](image/sd_image_devterm.img)
+- For Sipeed Lichee RV board please use [image/sd_image_lichee.img](image/sd_image_lichee.img)
+- For ClockworkPi DevTerm R01 board please use [image/sd_image_devterm.img](image/sd_image_devterm.img)
 
 ## Windows
 Could use https://etcher.balena.io/#download-etcher for flash image to SD card.
@@ -100,27 +100,27 @@ RT-Thread-on-Allwinner-D1H
     └── README.md
 ```
 ## Environment
-Windows 10 64x was used as a host with IDE VSCode and Ubuntu 22.04.3 64x virtual machine as a guest for compilation.
-
-Ar guest ubuntu need to install make enviroment:
+Tested on Ubuntu 22.04.3 64x. On machine need to be installed make enviroment:
 ```sh
 sudo apt install git make build-essential scons libusb-1.0-0-dev libncurses5-dev
 ```
+If needed to specify installation folders for toolchain and u-boot please modify environment.sh script to specify this variables 
+- TOOLCHAIN_INSTALL_DIR - path for installation dir for toolchain ex.: $HOME/toolchain
+- U_BOOT_INSTALL_DIR - path for installation dir for u-boot bootloader ex.: $HOME/u-boot   
+
+Then execute due each session:
+```sh
+ source ./environment.sh
+```
+### Enviroment setup with virtual machine
+In my case I was use Windows 10 64x as a host with IDE VSCode and Ubuntu 22.04.3 64x virtual machine as a guest for compilation.   
 Repo was downloaded to a shared folder in Windows mounted in Ubuntu, /etc/fstab example
 ```sh
 .host:/ /mnt/hgfs       fuse.vmhgfs-fuse    defaults,allow_other    0    0
 ```
-Notice: in a virtual machine with a mounted shared folder, it isn't possible to create hard links. 
-So as toolchain and u-boot use hard links is impossible to extract files to this folder. Need to use internal filesystem in a virtual machine.
-
-For this case need to provide variables
-- TOOLCHAIN_INSTALL_DIR - path for installation dir for toolchain ex.: $HOME/toolchain
-- U_BOOT_INSTALL_DIR - path for installation dir for u-boot bootloader ex.: $HOME/u-boot
-
-Please modify environment.sh script to specify this variables and execute:
-```sh
- source ./environment.sh
-```
+Notice: in a virtual machine with a mounted shared folder, it isn't possible to create hard links.   
+So as toolchain and u-boot use hard links it is impossible to extract toolchain and u-boot files to this mounted folder. Need to use internal filesystem in a virtual machine.   
+For this was provided installation folders in environment.sh script described above.
 
 ## Build toolchain
 Installing toolchain
@@ -144,10 +144,10 @@ Will be installed:
 - sun20i_d1_spl (first bootloader after BROM, used for init DRAM and load TOC image from MMC)
 - u-boot (could used to load Linux image but now just tool to creat TOC image)
 - opensbi (Supervisor Binary Interface for platform in M mode)
-- xfel (used for debug in when platform in FEL mode)
+- xfel (used for debug when platform in FEL mode)
 
 ## Build RT-Thread
-For configure:
+For configure RT-Thread:
 ```sh
 make rt-conf
 ```
@@ -162,7 +162,7 @@ For clean:
 make rt-clean
 ```
 ## Build SD card image
-To create SD card image in image/sd_image.img:
+To create SD card image in [image](image) folder:
 ```sh
 make sd
 ```
@@ -172,8 +172,8 @@ make sd_burn
 ```
 
 ## Debugging
-For debbugging used Sipeed RV-Debuggr Plus with [T-Head CKLink firmware](https://github.com/bouffalolab/bouffalo_sdk/tree/master/tools/cklink_firmware). 
-To connect debugger to board need use MicroSD brakout board as in D1H JTAG pins mapped to SD Card [pins](https://linux-sunxi.org/JTAG) as shown in [Hardware section](#hardware).  
+For debbugging used Sipeed RV-Debuggr Plus with [T-Head CKLink firmware](https://github.com/bouffalolab/bouffalo_sdk/tree/master/tools/cklink_firmware).   
+To connect debugger to board need use MicroSD brakout board because in D1H JTAG pins mapped to SD Card [pins](https://linux-sunxi.org/JTAG) as shown in [Hardware section](#hardware).  
 
 For flash firmware to Sipeed RV-Debuggr Plus - Press and hold the boot pin then plug the usb in the computer to go to the boot mode. And execte command:
 ```sh
@@ -233,7 +233,5 @@ I figureout that integrated UART work very unstable. Acording [discussion](https
 - Mipi dsi
 - Keyboard, trackball
 - Build env and RTT gui
-- software changes paragraph
-
 
 

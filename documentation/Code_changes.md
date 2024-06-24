@@ -1,15 +1,14 @@
 # Introduction
-This document describes the new changes made to the code copmare of to the original repo.  
-At the original repository [RT-Thread](https://github.com/RT-Thread/rt-thread) the compilation is not streamlined for D1H [issue 9063](https://github.com/RT-Thread/rt-thread/issues/9063). So was performed fork from [v5.0.2](https://github.com/RT-Thread/rt-thread/releases/tag/v5.0.2) and introduced several changes to make it runnable in D1H. 
-
-To show code changes used comands
+This document describes changes in the code copmare of to the original repo.  
+History of comands to show code changes:
 ```
 git diff f40e63c...16181b0 > diff1.patch
 (ed7bdc7 excluded as just rename folder)
 git diff bde29ac...36594b5 rt-thread/ > diff2.patch
 ```
-## In the original repo, did trying to compile for D1H:
-### On [Master](https://github.com/RT-Thread/rt-thread/commit/2866da37a02dae72200e02ad87480718002760a5) or [v5.1.0](https://github.com/RT-Thread/rt-thread/releases/tag/v5.1.0)
+## First of all was trying to compile RT-Thread for D1H platform:
+
+#### RT-Thread [Master](https://github.com/RT-Thread/rt-thread/commit/2866da37a02dae72200e02ad87480718002760a5) or [v5.1.0](https://github.com/RT-Thread/rt-thread/releases/tag/v5.1.0)
 1) bsp/allwinner/d1/ - not compiled looks outdated
 ```
 board/board.c:45:5: error: unknown type name 'rt_mmu_info'
@@ -23,7 +22,7 @@ board/board.c:45:5: error: unknown type name 'rt_mmu_info'
       |                              ^~~
       |                              fops
 ```  
-### On [v5.0.2](https://github.com/RT-Thread/rt-thread/releases/tag/v5.0.2):  
+#### RT-Thread [v5.0.2](https://github.com/RT-Thread/rt-thread/releases/tag/v5.0.2):  
 3) bsp/allwinner/d1/ - not compiled looks outdated
 ```
 board/board.c:45:5: error: unknown type name 'rt_mmu_info'
@@ -32,20 +31,24 @@ board/board.c:45:5: error: unknown type name 'rt_mmu_info'
 ```
 4) bsp/allwinner/d1s/ - compiled, but no output to UART. 
 
-## Not succseed for D1H so was performed fork from v5.0.2
+## Conclude that at the original repository [RT-Thread](https://github.com/RT-Thread/rt-thread) the compilation is not streamlined for D1H [issue 9063](https://github.com/RT-Thread/rt-thread/issues/9063).  
+So was performed fork from [v5.0.2](https://github.com/RT-Thread/rt-thread/releases/tag/v5.0.2) and introduced several changes to make it runnable in D1H. 
+- All rt-thread folders moved to sub-folder rt-thread, also created folders for boorloaders, debugger, etc..
+- bsp/allwinner/d1s/ was taken as base to development and renamed to bsp/allwinner/d1s_d1h/
+- Other bsp was removed
 
-bsp/allwinner/d1s/ taken as base and renamed to bsp/allwinner/d1s_d1h/
+## Change bootloaders
 
-Existing bootloaders not show anything at uart
-- bsp\allwinner\d1s\tools\boot0_sdcard_sun20iw1p1_d1s.bin 
-- bsp\allwinner\d1s\sbi.bin 
+Existing bootloaders not show anything at UART, looks like targeted to D1s UART pins.
+- bsp/allwinner/d1s/tools/boot0_sdcard_sun20iw1p1_d1s.bin 
+- bsp/allwinner/d1s/sbi.bin 
 
-Created own Makefile with relevant bootloaders:
+Created own Makefile with build relevant bootloaders:
 - https://github.com/smaeul/sun20i_d1_spl.git
 - https://github.com/riscv-software-src/opensbi
 - https://github.com/smaeul/u-boot
 
-## Extend cvonfig to support D1H SOC
+## Extend cvonfig to support simultaneously D1S and D1H SOC
 ```patch
 diff --git a/bsp/allwinner/d1s_d1h/Kconfig b/bsp/allwinner/d1s_d1h/Kconfig
 index e5306596d..d11a63db0 100644
@@ -112,11 +115,20 @@ index 18956e5e8..7b7efb7c4 100644
 ## Problem SD card
 
 After this changes board started and shown out to UART.
-But loading frosen in rt_thread_mdelay function in files
+But loading frosen after "card_detect insert" message:
+```
+ \ | /
+- RT -     Thread Smart Operating System
+ / | \     5.0.2 build Jun  9 2024 17:11:05
+ 2006 - 2022 Copyright by RT-Thread team
+hal_sdc_create 0
+card_detect insert
+```
+Looks like is frozen on rt_thread_mdelay function by some reason in files
 - bsp/allwinner/libraries/drivers/sdmmc/drv_sdmmc.c
 - bsp/allwinner/libraries/sunxi-hal/include/hal/sdmmc/osal/RT-Thread/_os_time.h
 
-Chnage it to rt_hw_us_delay function  
+Chnage it to rt_hw_us_delay function:  
 ```patch
 diff --git a/bsp/allwinner/libraries/drivers/sdmmc/drv_sdmmc.c b/bsp/allwinner/libraries/drivers/sdmmc/drv_sdmmc.c
 index 4b64354f8..f8bc5b204 100644
@@ -182,9 +194,9 @@ msh />Mount "sd0p0" on "/" fail
 msh />
 msh />
 ```
-# LCD Display driver
+## LCD Display driver
  
-When driver init as a application inside main is impossible to debug it in GDB as is executed in RTT thread so change it to init as device.
+In original repo LCD driver init as a application inside main function, in this case is impossible to debug it in GDB as is executed in RTT thread so change it to init as device that executed before sheduler start.
 ```patch
 diff --git a/rt-thread/bsp/allwinner/d1s_d1h/applications/main.c b/rt-thread/bsp/allwinner/d1s_d1h/applications/main.c
 index 902db7082..994011733 100644
@@ -222,75 +234,97 @@ index 327aa777f..0b1737df2 100644
 +     *((uint32_t *)lcd_drv->framebuffer + lcd_drv->lcd_info.width * y + x) = 0xffff0000;
 -    // *((uint32_t *)lcd->framebuffer + lcd_drv->lcd_info.width * y + x + 2) = 0xff00ff00;
 ```
-# Add LCD Display driver for RGB Display
+## Add LCD Display driver for RGB Display
 
-From https://github.com/Tina-Linux/LCD_Panel_Driver/tree/master/LCD/BH040I-01_ST7701s_RGB_480x480
-https://github.com/xboot/xboot/blob/master/src/arch/riscv64/mach-lichee86p/driver/fb-d1-rgb.c
+Im my setup I use Sipeed Lichee RV + Dock + Lichee RV Dock extension LCD adapter board + 4.3 RGB LCD Display (043026-N6(ML)) with IC ST7001s (SPI)   
+Use ST7001s SPI driver from https://github.com/Tina-Linux/LCD_Panel_Driver/tree/master/LCD/BH040I-01_ST7701s_RGB_480x480   
+Also cross check with this implementation https://github.com/xboot/xboot/blob/master/src/arch/riscv64/mach-lichee86p/driver/fb-d1-rgb.c   
 ```patch
 +++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/lcd/st7701s_rgb.c
 +++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/lcd/st7701s_rgb.h
 ```
-According https://github.com/xboot/xboot/blob/master/src/arch/riscv64/mach-lichee86p/romdisk/boot/lichee86p.json
+According https://github.com/xboot/xboot/blob/master/src/arch/riscv64/mach-lichee86p/romdisk/boot/lichee86p.json created configuration for this particular LCD board:
 ```patch
 +++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/soc/RGB_LCD_ST7001s.c
 ```
-## Pinout:
+#### According this image:   
+![display_pinout](Sipeed_Lichee_RV\20181022143917_27009.jpg)
 
-LCD             RV_Dock_EXT_3517    GPIO Function
+#### Pinout for 4.3 RGB LCD Display:
 
-1   LEDK    -   pd22_rgn_bl (5v)
-2   LEDA
-3   GND
-4   VCC     -   out 3.3V
-5   R0      -       (gnd)
-6   R1      -       (gnd)
-7   R2      -   pd12        -   LCD0-D18
-8   R3          .
-9   R4          .
-10  R5          .
-11  R6          .
-12  R7      -   pd17        -   LCD0-D23
-13  G0      -       (gnd)
-14  G1      -       (gnd)
-15  G2      -   pd6         -   LCD0-D10
-16  G3          .
-17  G4          .
-18  G5          .
-19  G6          .
-20  G7      -   pd11        -   LCD0-D15
-21  B0      -       (gnd)
-22  B1      -       (gnd)
-23  B2      -   pd0         -   LCD0-D2
-24  B3          .
-25  B4          .
-26  B5          .
-27  B6          .
-28  B7      -   pd5         -   LCD0-D7
-29  GND
-30  CLK     -   pd18        -   LCD0-CLK
-31  DISP    -   (NC)
-32  Hsync   -   pd20        -   LCD0-HSYNK
-33  Vsync   -   pd21        -   LCD0-VSYNK
-34  DEN     -   pd19        -   LCD0-DE
-35  NC      -   (NC)
-36  GND
-37  XR      -   pg13        -   Reset ?
-38  YD      -   pe12
-39  XL      -   pe15
-40  YU      -   pe16
+| LCD         |   RV_Dock_EXT_3517   |  GPIO Function  |
+|:---         |:---                  |:---             |
+| 1   LEDK    |   pd22_bl (5v)       |                 |
+| 2   LEDA    |   pd22_bl (5v)       |                 |
+| 3   GND     |                      |                 |
+| 4   VCC     |   out 3.3V           |                 |
+| 5   R0      |       (gnd)          |                 |
+| 6   R1      |       (gnd)          |                 |
+| 7   R2      |   pd12               |   LCD0-D18      |
+| 8   R3      |   .                  |   .             |
+| 9   R4      |   .                  |   .             |
+| 10  R5      |   .                  |   .             |
+| 11  R6      |   .                  |   .             |
+| 12  R7      |   pd17               |   LCD0-D23      |
+| 13  G0      |       (gnd)          |                 |
+| 14  G1      |       (gnd)          |                 |
+| 15  G2      |   pd6                |   LCD0-D10      |
+| 16  G3      |   .                  |   .             |
+| 17  G4      |   .                  |   .             |
+| 18  G5      |   .                  |   .             |
+| 19  G6      |   .                  |   .             |
+| 20  G7      |   pd11               |   LCD0-D15      |
+| 21  B0      |       (gnd)          |                 |
+| 22  B1      |       (gnd)          |                 |
+| 23  B2      |   pd0                |   LCD0-D2       |
+| 24  B3      |   .                  |   .             |
+| 25  B4      |   .                  |   .             |
+| 26  B5      |   .                  |   .             |
+| 27  B6      |   .                  |   .             |
+| 28  B7      |   pd5                |   LCD0-D7       |
+| 29  GND     |                      |                 |
+| 30  CLK     |   pd18               |   LCD0-CLK      |
+| 31  DISP    |   (NC)               |                 |
+| 32  Hsync   |   pd20               |   LCD0-HSYNK    |
+| 33  Vsync   |   pd21               |   LCD0-VSYNK    |
+| 34  DEN     |   pd19               |   LCD0-DE       |
+| 35  NC      |   (NC)               |                 |
+| 36  GND     |                      |                 |
+| 37  XR      |   pg13               |   Reset         |
+| 38  YD      |   pe12               |   SDI           |
+| 39  XL      |   pe15               |   SCL           |
+| 40  YU      |   pe16               |   CS ?          |
 
-# Add LCD Display driver for MIPI DSI Display
-
-From https://github.com/cuu/last_linux-5.4/blob/master/drivers/video/fbdev/sunxi/disp2/disp/lcd/icn9707_480x1280.c
+## Add LCD Display driver for MIPI DSI Display   
+Im my setup I use ClockworkPi DevTerm R01 that use 6.86 inch LCD MIPI DSI Display with inc9707 chip.   
+Use inc9707 driver from https://github.com/cuu/last_linux-5.4/blob/master/drivers/video/fbdev/sunxi/disp2/disp/lcd/icn9707_480x1280.c
 ```patch
 +++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/lcd/icn9707_480x1280.c
 +++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/lcd/icn9707_480x1280.h
 ```
-according https://github.com/clockworkpi/DevTerm/blob/main/Code/patch/d1/board.dts
+According https://github.com/clockworkpi/DevTerm/blob/main/Code/patch/d1/board.dts
+```
+&lcd0 {
+	lcd_used            = <1>;
+
+	lcd_driver_name     = "icn9707_480x1280";
+	lcd_backlight       = <50>;
+	lcd_if              = <4>;
+
+	lcd_x               = <480>;
+	lcd_y               = <1280>;
+	lcd_width           = <60>;
+	lcd_height          = <160>;
+	lcd_dclk_freq       = <55>;
+.
+.
+.
+```
+Created configuration for this particular LCD board:   
 ```patch
 +++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/soc/icn9707_mipi_config.c
 ```
-# Add definitions
+## Add definitions of drivers structures
 ```patch
 diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/lcd/panels.c b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/lcd/panels.c
 index 963f99356..7063c315f 100644
@@ -345,7 +379,7 @@ index 079b6545f..90897c039 100644
  
  #endif
 ```
-# Add configs and makefiles:
+## Add configs and makefiles for drivers:
 ```patch
 diff --git a/rt-thread/bsp/allwinner/libraries/drivers/Kconfig b/rt-thread/bsp/allwinner/libraries/drivers/Kconfig
 index 36cef4f2d..f489985a9 100644
@@ -427,43 +461,6 @@ index b1e7cd7d1..a4a5e1c6c 100644
  endmenu
  
  menu "Soc Select"
-
-diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/SConscript b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/SConscript
-index a22bcdcb1..165cce4ac 100644
---- a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/SConscript
-+++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/SConscript
-@@ -132,10 +132,23 @@ disp2_src = Split('''
- if GetDepend('LCD_SUPPORT_TFTRGB'):
-     if not GetDepend('LCD_USING_XML_CONFIG'):
-         disp2_src += ['./source/disp2/soc/rgb_config.c']
-+
- if GetDepend('LCD_SUPPORT_TFT08006'):
-     # disp2_src += ['./source/disp2/soc/tft08006_mipi_config.c']
-     disp2_src += ['./source/disp2/disp/lcd/tft08006.c']
- 
-+if GetDepend('LCD_SUPPORT_ST7701S_RGB'):
-+    disp2_src += ['./source/disp2/disp/lcd/st7701s_rgb.c']
-+
-+if GetDepend('RGB_LCD_ST7001S'):
-+    disp2_src += ['./source/disp2/soc/RGB_LCD_ST7001s.c']
-+
-+if GetDepend('LCD_SUPPORT_ICN9707_480x1280'):
-+    disp2_src += ['./source/disp2/disp/lcd/icn9707_480x1280.c']
-+
-+if GetDepend('MIPI_DSI_LCD_ICN9707'):
-+    disp2_src += ['./source/disp2/soc/icn9707_mipi_config.c']
-+
- sdmmc_src = Split('''
- source/sdmmc/core.c
- source/sdmmc/hal_sdpin.c
-@@ -271,7 +284,7 @@ if GetDepend('DRVIERS_UART'):
- 
- if GetDepend('DISP2_SUNXI'):
-     CPPPATH += disp2_path
--    src += disp2_src #+ disp2_test_src
-+    src += disp2_src + disp2_test_src
- 
- CPPPATH += rtc_path
  
 diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/kconfig.h b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/kconfig.h
 index 278ea42c9..971fa38b0 100644
@@ -511,8 +508,45 @@ index 17f622d73..25fa3db03 100644
 -CONFIG_LCD_SUPPORT_HE0801A068=y
 +CONFIG_LCD_SUPPORT_ST7701S_RGB=y
 +CONFIG_RGB_LCD_ST7001S=y
-+CONFIG_LCD_SUPPORT_ICN9707_480x1280=y
-+CONFIG_MIPI_DSI_LCD_ICN9707=y
++#CONFIG_LCD_SUPPORT_ICN9707_480x1280 is not set
++#CONFIG_MIPI_DSI_LCD_ICN9707 is not set
+
+diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/SConscript b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/SConscript
+index a22bcdcb1..165cce4ac 100644
+--- a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/SConscript
++++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/SConscript
+@@ -132,10 +132,23 @@ disp2_src = Split('''
+ if GetDepend('LCD_SUPPORT_TFTRGB'):
+     if not GetDepend('LCD_USING_XML_CONFIG'):
+         disp2_src += ['./source/disp2/soc/rgb_config.c']
++
+ if GetDepend('LCD_SUPPORT_TFT08006'):
+     # disp2_src += ['./source/disp2/soc/tft08006_mipi_config.c']
+     disp2_src += ['./source/disp2/disp/lcd/tft08006.c']
+ 
++if GetDepend('LCD_SUPPORT_ST7701S_RGB'):
++    disp2_src += ['./source/disp2/disp/lcd/st7701s_rgb.c']
++
++if GetDepend('RGB_LCD_ST7001S'):
++    disp2_src += ['./source/disp2/soc/RGB_LCD_ST7001s.c']
++
++if GetDepend('LCD_SUPPORT_ICN9707_480x1280'):
++    disp2_src += ['./source/disp2/disp/lcd/icn9707_480x1280.c']
++
++if GetDepend('MIPI_DSI_LCD_ICN9707'):
++    disp2_src += ['./source/disp2/soc/icn9707_mipi_config.c']
++
+ sdmmc_src = Split('''
+ source/sdmmc/core.c
+ source/sdmmc/hal_sdpin.c
+@@ -271,7 +284,7 @@ if GetDepend('DRVIERS_UART'):
+ 
+ if GetDepend('DISP2_SUNXI'):
+     CPPPATH += disp2_path
+-    src += disp2_src #+ disp2_test_src
++    src += disp2_src + disp2_test_src
+ 
+ CPPPATH += rtc_path
 
 diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/Makefile b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/Makefile
 index a919605dc..aa4d40132 100644
@@ -546,7 +580,8 @@ index 7341bfc53..987f7748f 100644
 +obj-$(CONFIG_RGB_LCD_ST7001S)+= RGB_LCD_ST7001s.o
 +obj-$(CONFIG_MIPI_DSI_LCD_ICN9707)+= icn9707_mipi_config.o
 ```
-# Remove hardcoded LCD config replaced to build time inserted config
+## Remove hardcoded LCD config 
+Remove hardcoded LCD config from lcd_cfg.c and replaced it to build time inserted configs from driver files:
 ```patch
 diff --git a/rt-thread/bsp/allwinner/libraries/drivers/lcd_cfg.c b/rt-thread/bsp/allwinner/libraries/drivers/lcd_cfg.c
 index 023b98d06..f79fc8bc0 100644
@@ -612,8 +647,9 @@ index 023b98d06..f79fc8bc0 100644
      return &_panel_info;
  }
 ```
+## LCD driver stuck
+With original implementation board stuck in function hal_msleep() by some reason, replace it to rt_hw_us_delay()
 
-#  With original implementation hal_msleep() board stuck by some reason, replace to rt_hw_us_delay()
 ```patch
 diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/disp_sys_intf.c b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/disp_sys_intf.c
 index 09c64b396..31f370d3d 100644
@@ -644,8 +680,88 @@ index 09c64b396..31f370d3d 100644
 +    rt_hw_us_delay(us);
  }
 ```
+## RGB LCD Display work
+After all modification in code 4.3 RGB LCD Display (043026-N6(ML)) with IC ST7001s (SPI) successfully started, tested by command:
+```sh
+lcd_draw_point 100 100:   
+```
+![lichee_lcd_rgb_work](lichee_lcd_rgb_work.jpg)
 
-# I2C
+## LCD inc9707 chip reset (I2C)
+After all modification in code ClockworkPi DevTerm R01 that use 6.86 inch LCD MIPI DSI Display with inc9707 chip still not started.   
+
+1) Noticed in [ICNL9707_Datasheet.pdf](ClockworkPi_DevTerm\ICNL9707_Datasheet.pdf) that in startup siguence - first off all IOVCC voltage UP then reseted RESET pin.
+![icnl9707_startup](ClockworkPi_DevTerm/icnl9707_startup.png)
+
+But between powered up board, bootloaders, RTT loaded and the moment when the driver calls reset pin obviously more time passes rather than on diagram.    
+Hypotise that it looks like we need to force reset IOVCC before RESET pin. According to pnout:
+![pinout](6.86-inch-IPS-TFT-Stretched-Bar-LCD-MIPI-480x1280-TTW686VVC-01-4.png)
+
+IOVCC connected to LCD pins 18,19 and in Clockwork Mainboard v3.14 powered by 1.8V provided from DCDC3 AXP228 Power Managment chip.
+
+in Devterm R01 AXP228 controlled by TWI interface from D1H:
+| AXP228         | D1H   | Function |
+|:---            |:---   |:---      |
+| PMU-SCK        | PB-10 | TWI0-SCK |
+| PMU-SDA        | PB-11 | TWI0-SDA |
+
+According https://github.com/clockworkpi/DevTerm/blob/main/Code/patch/d1/board.dts
+```yaml
+  	twi0_pins_a: twi0@0 {
+		pins = "PB10", "PB11";	/*sck sda*/
+		function = "twi0";
+		drive-strength = <10>;
+	};
+
+&twi0 {
+	clock-frequency = <400000>;
+	pinctrl-0 = <&twi0_pins_a>;
+	pinctrl-1 = <&twi0_pins_b>;
+	pinctrl-names = "default", "sleep";
+	status = "okay";
+
+axp22x: pmic@34 {
+  interrupt-controller;
+  #interrupt-cells = <1>;
+  compatible = "x-powers,axp221";
+```
+This chip control compatible with axp221 controlled by TWI0 PB10/11
+Notice https://github.com/cuu/last_linux-5.4/blob/master/arch/riscv/boot/dts/sunxi/sun20iw1p1.dtsi
+
+According https://github.com/clockworkpi/DevTerm/blob/main/Code/patch/d1/config
+```conf
+CONFIG_MFD_AXP20X=y
+CONFIG_MFD_AXP20X_I2C=y
+CONFIG_REGULATOR_AXP20X=y
+CONFIG_SUNXI_REGULATOR_PWM=y
+CONFIG_AXP20X_ADC=y
+CONFIG_CHARGER_AXP20X=y
+CONFIG_BATTERY_AXP20X=y
+CONFIG_AXP20X_POWER=y
+```
+https://github.com/cuu/last_linux-5.4
+```Makefile
+drivers/mfd/Makefile
+obj-$(CONFIG_MFD_AXP20X)	+= axp20x.o
+obj-$(CONFIG_MFD_AXP20X_I2C)	+= axp20x-i2c.o
+
+drivers/regulator/Makefile
+obj-$(CONFIG_REGULATOR_AXP20X) += axp20x-regulator.o
+
+drivers/power/supply/Makefile
+obj-$(CONFIG_AXP20X_POWER)	+= axp20x_usb_power.o
+```
+https://github.com/clockworkpi/DevTerm/blob/main/Code/patch/d1/power.patch
+```patch
++++ b/drivers/mfd/axp20x.c
++++ b/drivers/power/supply/axp20x_ac_power.c
++++ b/drivers/power/supply/axp20x_battery.c
+```
+
+
+https://linux-sunxi.org/AXP221
+
+https://github.com/lewisxhe/ESP_IDF_AXP20x_Library
 
 
 

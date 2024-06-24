@@ -111,14 +111,7 @@ static struct hal_i2c_bus _i2c_bus_3 = {
 
 #define CFG_GPIO_PORT(p) ((p) - 'A' + 1)
 
-/*
-https://github.com/clockworkpi/DevTerm/blob/main/Code/patch/d1/board.dts
-https://github.com/cuu/last_linux-5.4/blob/master/arch/riscv/boot/dts/sunxi/sun20iw1p1.dtsi
 
-Devterm AXP228              D1
-PMU-SCK        PB-10   TWI0-SCK
-PMU-SDA        PB-11   TWI0-SDA
-*/
 
 static const user_gpio_set_t _i2c_gpio_cfg[][2] = {
 #ifdef BSP_USING_CWP_DT_R01
