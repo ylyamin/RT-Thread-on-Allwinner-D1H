@@ -1,7 +1,7 @@
 # Overview
 This is an experimentation with the [RT-Thread Operating System](https://www.rt-thread.io/) with the [Allwinner D1H](https://d1.docs.aw-ol.com/en/) RISC-V SOC and a Collection of Bootloaders and Developer environment for programming and debugging.  
 
-Executed at hardware such as [Sipeed Lichee RV + Dock](https://wiki.sipeed.com/hardware/en/lichee/RV/Dock.html) and [ClockworkPi DevTerm R01](https://www.clockworkpi.com/home-devterm).  
+Executed at hardware such as [ClockworkPi DevTerm R01](https://www.clockworkpi.com/home-devterm) and [Sipeed Lichee RV + Dock](https://wiki.sipeed.com/hardware/en/lichee/RV/Dock.html).   
 
 The intention is to easily run peripherals in D1, exactly Display. RT-Thread OS was chosen because it looks like has the most extensive HAL layer for D1, similar to the [Linux kernel](https://github.com/cuu/last_linux-5.4/tree/master/drivers/video/fbdev/sunxi/) but not so overcomplicated.
 
@@ -10,10 +10,12 @@ At the original repository [RT-Thread](https://github.com/RT-Thread/rt-thread) t
 Introduced code changes described in [Code_changes](documentation/Code_changes.md) document.
 
 ## Current progress
-RT-Thread could run in Sipeed Lichee RV and manage RGB LCD Display  
 
-![lichee_lcd_rgb_work](documentation/lichee_lcd_rgb_work.jpg)
+RT-Thread could run in ClockworkPi DevTerm R01 and manage MIPI DSI LCD Display  
 
+![devterm_lcd_mipi_work.jpg](documentation/devterm_lcd_mipi_work.jpg)
+
+Aslso could run in Sipeed Lichee RV and manage RGB LCD Display [lichee_lcd_rgb_work](documentation/lichee_lcd_rgb_work.jpg)
 
 # Installation
 In repository exist prebuilded images for SD card in folder [image](image), need to flash it to SD card and install to device.
@@ -229,8 +231,6 @@ I figureout that integrated UART work very unstable. Acording [discussion](https
 - https://andreas.welcomes-you.com/boot-sw-debian-risc-v-lichee-rv-2/  
 
 ## TODO
-- Twi power control
-- Mipi dsi
 - Keyboard, trackball
 - Build env and RTT gui
 

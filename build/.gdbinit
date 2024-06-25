@@ -18,9 +18,9 @@ restore bootloaders/opensbi/build/platform/generic/firmware/fw_dynamic.bin binar
 restore build/sun20i-d1-lichee-rv-dock.dtb binary $dtb_addr
 restore rt-thread/bsp/allwinner/d1s_d1h/rtthread.bin binary $kernel_addr
 
-file bootloaders/opensbi/build/platform/generic/firmware/fw_dynamic.elf
+#file bootloaders/opensbi/build/platform/generic/firmware/fw_dynamic.elf
 #file bootloaders/opensbi/build/platform/generic/firmware/fw_jump.elf
-file rt-thread/bsp/allwinner/d1s_d1h/rtthread.elf
+#file rt-thread/bsp/allwinner/d1s_d1h/rtthread.elf
 
 #file bootloaders/sun20i_d1_spl/nboot/boot0_sdcard.elf
 #j *0x00000000000203c8

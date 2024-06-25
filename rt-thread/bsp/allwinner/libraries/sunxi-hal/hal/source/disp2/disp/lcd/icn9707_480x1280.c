@@ -1,6 +1,9 @@
 #include "panels.h"
 #include "icn9707_480x1280.h"
 
+#define panel_rst(v)    (sunxi_lcd_gpio_set_value(0, 0, v))
+#define panel_bl_enable(v)    (sunxi_lcd_gpio_set_value(0, 1, v))
+
 static void LCD_power_on(u32 sel);
 static void LCD_power_off(u32 sel);
 static void LCD_bl_open(u32 sel);
@@ -110,8 +113,8 @@ static void LCD_cfg_panel_info(struct panel_extend_para * info)
 static s32 LCD_open_flow(u32 sel)
 {
     printk("raoyiming +++ LCD_open_flow\n");
-    LCD_OPEN_FUNC(sel, LCD_power_on, 100);   //open lcd power, and delay 50ms
-    LCD_OPEN_FUNC(sel, LCD_panel_init, 200);   //open lcd power, than delay 200ms
+   // LCD_OPEN_FUNC(sel, LCD_power_on, 100);   //open lcd power, and delay 50ms
+    LCD_OPEN_FUNC(sel, LCD_panel_init, 0);   //open lcd power, than delay 200ms
     LCD_OPEN_FUNC(sel, sunxi_lcd_tcon_enable, 200);     //open lcd controller, and delay 100ms
     LCD_OPEN_FUNC(sel, LCD_bl_open, 0);     //open lcd backlight, and delay 0ms
     printk("raoyiming +++ LCD_open_flow finish\n");
@@ -204,20 +207,27 @@ static struct lcd_setting_table lcd_init_setting[] = {
 
 };
 
+extern void _axp_ALDO2_DCDC3_control(bool on);
+
 static void LCD_panel_init(u32 sel)
 {
 	
     u32 i;
     printk("<0>raoyiming +++ LCD_panel_init\n");
-	
-    /**/
+	sunxi_lcd_power_enable(sel, 0);
+    sunxi_lcd_pin_cfg(sel, 1);
+    /*all off*/
+    _axp_ALDO2_DCDC3_control(0);
+    sunxi_lcd_delay_ms(100);
+    /*start*/
     panel_rst(1);
+    _axp_ALDO2_DCDC3_control(1);
+    /*T2*/
     sunxi_lcd_delay_ms(10);
     panel_rst(0);
-    sunxi_lcd_delay_ms(50);
-    panel_rst(1);
-    sunxi_lcd_delay_ms(200);
-
+    /*T3*/
+    sunxi_lcd_delay_ms(20);
+    /*init sequence*/
     for (i = 0; ; i++) {
         if(lcd_init_setting[i].cmd == REGFLAG_END_OF_TABLE) {
             break;
@@ -229,8 +239,9 @@ static void LCD_panel_init(u32 sel)
     }
 
     sunxi_lcd_dsi_clk_enable(sel);
+	/* T6 */
+	sunxi_lcd_delay_ms(120);
     printk("<0>raoyiming +++ LCD_panel_init finish\n");
-
     return;
 }
 

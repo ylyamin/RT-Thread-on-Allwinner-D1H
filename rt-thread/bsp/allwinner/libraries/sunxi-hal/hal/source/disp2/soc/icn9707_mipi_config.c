@@ -221,6 +221,19 @@ struct property_t g_lcd0_config_soc[] = {
         .type = PROPERTY_INTGER,
         .v.value = 90,
     },
+    /*
+    // from drv_lcd
+    {
+        .name = "bl_pin",
+        .type = PROPERTY_INTGER,
+        .v.value = GPIO_PD20,
+    },
+    {
+        .name = "bl_level",
+        .type = PROPERTY_INTGER,
+        .v.value = 1,
+    },
+    */
     //gpio
     {
         .name = "lcd_gpio_0",
@@ -228,7 +241,7 @@ struct property_t g_lcd0_config_soc[] = {
         .v.gpio_list = {
             .gpio = GPIOD(19), //LCD_RESET
             .mul_sel = GPIO_DIRECTION_OUTPUT,
-            .pull = 1,
+            .pull = 2,
             .drv_level = 3,
             .data = 1,
         },

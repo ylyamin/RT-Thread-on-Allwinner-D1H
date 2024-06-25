@@ -132,8 +132,6 @@
 #define RT_USING_SERIAL_V2
 #define RT_USING_TTY
 #define RT_USING_I2C
-#define RT_I2C_DEBUG
-#define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
 #define RT_USING_NULL
 #define RT_USING_ZERO
@@ -322,6 +320,7 @@
 /* Uncategorized */
 
 #define BOARD_allwinnerd1
+#define ENABLE_FPU
 #define __STACKSIZE__ 16384
 
 /* General Drivers Configuration */

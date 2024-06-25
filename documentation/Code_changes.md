@@ -2,9 +2,10 @@
 This document describes changes in the code copmare of to the original repo.  
 History of comands to show code changes:
 ```
-git diff f40e63c...16181b0 > diff1.patch
+git diff f40e63c...16181b0 > diff.patch
 (ed7bdc7 excluded as just rename folder)
-git diff bde29ac...36594b5 rt-thread/ > diff2.patch
+git diff bde29ac...36594b5 rt-thread/ > diff.patch
+git diff 36594b5...9ea69d2 rt-thread/ > diff.patch
 ```
 ## First of all was trying to compile RT-Thread for D1H platform:
 
@@ -297,7 +298,8 @@ According https://github.com/xboot/xboot/blob/master/src/arch/riscv64/mach-liche
 
 ## Add LCD Display driver for MIPI DSI Display   
 Im my setup I use ClockworkPi DevTerm R01 that use 6.86 inch LCD MIPI DSI Display with inc9707 chip.   
-Use inc9707 driver from https://github.com/cuu/last_linux-5.4/blob/master/drivers/video/fbdev/sunxi/disp2/disp/lcd/icn9707_480x1280.c
+Use inc9707 driver from https://github.com/cuu/last_
+linux-5.4/blob/master/drivers/video/fbdev/sunxi/disp2/disp/lcd/icn9707_480x1280.c
 ```patch
 +++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/lcd/icn9707_480x1280.c
 +++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/lcd/icn9707_480x1280.h
@@ -681,23 +683,27 @@ index 09c64b396..31f370d3d 100644
  }
 ```
 ## RGB LCD Display work
-After all modification in code 4.3 RGB LCD Display (043026-N6(ML)) with IC ST7001s (SPI) successfully started, tested by command:
+After all modification in code Sipeed Lichee RV - RGB LCD Display successfully started, tested by command:
 ```sh
 lcd_draw_point 100 100:   
 ```
 ![lichee_lcd_rgb_work](lichee_lcd_rgb_work.jpg)
 
 ## LCD inc9707 chip reset (I2C)
-After all modification in code ClockworkPi DevTerm R01 that use 6.86 inch LCD MIPI DSI Display with inc9707 chip still not started.   
+But DevTerm LCD MIPI DSI Display still not started. Lets figure out why.   
 
-1) Noticed in [ICNL9707_Datasheet.pdf](ClockworkPi_DevTerm\ICNL9707_Datasheet.pdf) that in startup siguence - first off all IOVCC voltage UP then reseted RESET pin.
-![icnl9707_startup](ClockworkPi_DevTerm/icnl9707_startup.png)
+Noticed in [ICNL9707_Datasheet.pdf](ClockworkPi_DevTerm\ICNL9707_Datasheet.pdf) that in startup siguence - first off all VCI and IOVCC voltage UP then reseted RESET pin.   
 
-But between powered up board, bootloaders, RTT loaded and the moment when the driver calls reset pin obviously more time passes rather than on diagram.    
-Hypotise that it looks like we need to force reset IOVCC before RESET pin. According to pnout:
-![pinout](6.86-inch-IPS-TFT-Stretched-Bar-LCD-MIPI-480x1280-TTW686VVC-01-4.png)
+![icnl9707_startup](ClockworkPi_DevTerm/icnl9707_startup.png)   
 
-IOVCC connected to LCD pins 18,19 and in Clockwork Mainboard v3.14 powered by 1.8V provided from DCDC3 AXP228 Power Managment chip.
+But between powered up board, bootloaders, RTT loaded and the moment when the driver calls RESET pin obviously more time passes rather than on diagram.    
+Hypotise that it looks like we need to force reset VCI and IOVCC just before RESET pin.  
+
+According to pnout:
+![pinout](ClockworkPi_DevTerm/6.86-inch-IPS-TFT-Stretched-Bar-LCD-MIPI-480x1280-TTW686VVC-01-4.png)   
+
+IOVCC connected to LCD pins 18,19. And in Devterm to IOVCC provided 1.8V from DCDC3 - AXP228 Power Managment chip.   
+VCI   connected to LCD pins 38,39. And in Devterm to VCI   provided 3.3V from ALDO2 - AXP228 Power Managment chip.   
 
 in Devterm R01 AXP228 controlled by TWI interface from D1H:
 | AXP228         | D1H   | Function |
@@ -705,73 +711,130 @@ in Devterm R01 AXP228 controlled by TWI interface from D1H:
 | PMU-SCK        | PB-10 | TWI0-SCK |
 | PMU-SDA        | PB-11 | TWI0-SDA |
 
-According https://github.com/clockworkpi/DevTerm/blob/main/Code/patch/d1/board.dts
-```yaml
-  	twi0_pins_a: twi0@0 {
-		pins = "PB10", "PB11";	/*sck sda*/
-		function = "twi0";
-		drive-strength = <10>;
-	};
+Also confirmed by:
 
-&twi0 {
-	clock-frequency = <400000>;
-	pinctrl-0 = <&twi0_pins_a>;
-	pinctrl-1 = <&twi0_pins_b>;
-	pinctrl-names = "default", "sleep";
+https://github.com/smaeul/linux/blob/d1/all/arch/riscv/boot/dts/allwinner/sun20i-d1-devterm-v3.14.dts
+
+```yaml
+&dsi {
+	pinctrl-0 = <&dsi_4lane_pins>;
+	pinctrl-names = "default";
 	status = "okay";
 
-axp22x: pmic@34 {
-  interrupt-controller;
-  #interrupt-cells = <1>;
-  compatible = "x-powers,axp221";
-```
-This chip control compatible with axp221 controlled by TWI0 PB10/11
-Notice https://github.com/cuu/last_linux-5.4/blob/master/arch/riscv/boot/dts/sunxi/sun20iw1p1.dtsi
-
-According https://github.com/clockworkpi/DevTerm/blob/main/Code/patch/d1/config
-```conf
-CONFIG_MFD_AXP20X=y
-CONFIG_MFD_AXP20X_I2C=y
-CONFIG_REGULATOR_AXP20X=y
-CONFIG_SUNXI_REGULATOR_PWM=y
-CONFIG_AXP20X_ADC=y
-CONFIG_CHARGER_AXP20X=y
-CONFIG_BATTERY_AXP20X=y
-CONFIG_AXP20X_POWER=y
-```
-https://github.com/cuu/last_linux-5.4
-```Makefile
-drivers/mfd/Makefile
-obj-$(CONFIG_MFD_AXP20X)	+= axp20x.o
-obj-$(CONFIG_MFD_AXP20X_I2C)	+= axp20x-i2c.o
-
-drivers/regulator/Makefile
-obj-$(CONFIG_REGULATOR_AXP20X) += axp20x-regulator.o
-
-drivers/power/supply/Makefile
-obj-$(CONFIG_AXP20X_POWER)	+= axp20x_usb_power.o
-```
-https://github.com/clockworkpi/DevTerm/blob/main/Code/patch/d1/power.patch
-```patch
-+++ b/drivers/mfd/axp20x.c
-+++ b/drivers/power/supply/axp20x_ac_power.c
-+++ b/drivers/power/supply/axp20x_battery.c
+	panel@0 {
+		compatible = "clockwork,cwd686";
+		reg = <0>;
+		backlight = <&backlight>;
+		reset-gpios = <&pio 3 19 GPIO_ACTIVE_LOW>; /* PD19/GPIO8 */
+		rotation = <90>;
+		iovcc-supply = <&reg_dcdc3>;
+		vci-supply = <&reg_aldo2>;
+	};
+}
 ```
 
+https://github.com/smaeul/linux/blob/d1/all/arch/riscv/boot/dts/allwinner/sun20i-d1-clockworkpi-v3.14.dts
 
-https://linux-sunxi.org/AXP221
+```yaml
+&i2c0 {
+	pinctrl-0 = <&i2c0_pb10_pins>;
+	pinctrl-names = "default";
+	status = "okay";
 
-https://github.com/lewisxhe/ESP_IDF_AXP20x_Library
+	axp221: pmic@34 {
+		compatible = "x-powers,axp228", "x-powers,axp221";
+		reg = <0x34>;
+...
+
+			reg_dcdc3: dcdc3 {
+				regulator-name = "sys-1v8";
+				regulator-always-on;
+				regulator-min-microvolt = <1800000>;
+				regulator-max-microvolt = <1800000>;
+			};
+
+			reg_aldo2: aldo2 {
+				regulator-name = "disp-3v3";
+				regulator-always-on;
+				regulator-min-microvolt = <3300000>;
+				regulator-max-microvolt = <3300000>;
+			};
+```
+Power siguence defined in DRM driver:
+
+https://github.com/smaeul/linux/blob/d1/all/drivers/gpu/drm/panel/panel-clockwork-cwd686.c
+
+```C
+static int cwd686_prepare(struct drm_panel *panel)
+{
+...
+	err = regulator_enable(ctx->vci);
+	if (err < 0) {
+		dev_err(ctx->dev, "failed to enable vci supply: %d\n", err);
+		return err;
+	}
+	err = regulator_enable(ctx->iovcc);
+	if (err < 0) {
+		dev_err(ctx->dev, "failed to enable iovcc supply: %d\n", err);
+		goto disable_vci;
+	}
+
+	gpiod_set_value_cansleep(ctx->reset_gpio, 0);
+	/* T2 */
+	msleep(10);
+
+	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
+	/* T3 */
+	msleep(20);
+
+	/* Exit sleep mode and power on */
+
+	err = cwd686_init_sequence(ctx);
+	if (err) {
+		dev_err(ctx->dev, "failed to initialize display (%d)\n", err);
+		goto disable_iovcc;
+	}
+
+	err = mipi_dsi_dcs_exit_sleep_mode(dsi);
+	if (err) {
+		dev_err(ctx->dev, "failed to exit sleep mode (%d)\n", err);
+		goto disable_iovcc;
+	}
+	/* T6 */
+	msleep(120);
+
+	err = mipi_dsi_dcs_set_display_on(dsi);
+	if (err) {
+		dev_err(ctx->dev, "failed to turn display on (%d)\n", err);
+		goto disable_iovcc;
+	}
+	msleep(20);
+...
+```
+According AXP 228 documentation [AXP228_V1.1_20130106..pdf](ClockworkPi_DevTerm/AXP228_V1.1_20130106..pdf) chip have control register:
+
+REG 10H: DCDC1/2/3/4/5&ALDO1/2&DC5LDO Enable Set
+
+| Bit  | Description 	   | Value 		  | R/W  | Default |
+| :--- | :---		 	   | :---  		  | :--- |:---     |
+| 7    | ALDO2 Enable Set  | 0: Off 1: On | RW   | X 	   |
+| 6    | ALDO1 Enable Set  | 			  | RW   | X 	   |
+| 5    | DC DC5 Enable Set | 			  | RW   | X 	   |
+| 4    | DC DC4 Enable Set | 			  | RW   | X 	   |
+| 3    | DCDC3 Enable Set  | 			  | RW   | X 	   |
+| 2    | DCDC2 Enable Set  | 			  | RW   | X 	   |
+| 1    | DCDC1 Enable Set  | 			  | RW   | X 	   |
+| 0    | DC5LDO Enable Set | 			  | RW   | X 	   |
+
+So implement a simple driver for control AXP228 - ALDO2 and DCDC3:
 
 
 
+## MIPI DSI LCD Display work
+After all modification in code DevTerm R01 - LCD MIPI DSI Display successfully started, tested by command:
+```sh
+lcd_draw_point 100 100:   
+```
+![devterm_lcd_mipi_work.jpg](devterm_lcd_mipi_work.jpg)
 
-
-
-
-
-
-
-
-
-
+## Devterm Keyboard
