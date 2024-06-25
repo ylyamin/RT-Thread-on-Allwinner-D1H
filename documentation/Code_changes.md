@@ -1033,3 +1033,202 @@ lcd_draw_point 100 100:
 ## Devterm Keyboard
 
 Keyboard chip STM32F103Rx => J502 - DM1/DP1 => GL850G (usb hub) => USB_DP/USB_DM => D1H USB1-DP/USB1-DM A8/B8 => USB2.0 HOST
+
+```patch
+git diff 136cb9c...b254b70 rt-thread/ > diff.patch
+
+diff --git a/rt-thread/bsp/allwinner/d1s_d1h/.config b/rt-thread/bsp/allwinner/d1s_d1h/.config
+index adb50af2f..409e01021 100644
+--- a/rt-thread/bsp/allwinner/d1s_d1h/.config
++++ b/rt-thread/bsp/allwinner/d1s_d1h/.config
+
++CONFIG_DRIVERS_USB=y
++CONFIG_USB_HOST=y
++CONFIG_HAL_TEST_HCI=y
++# CONFIG_USB_STORAGE is not set
++# CONFIG_USB_CAMERA is not set
++CONFIG_USB_HID=y
++# CONFIG_USB_DEVICE is not set
++CONFIG_USB_MANAGER=y
+  
+diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/SConscript b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/SConscript
+index 165cce4ac..70773b048 100644
+--- a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/SConscript
++++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/SConscript
+@@ -237,11 +237,74 @@ if GetDepend('DRIVERS_TWI'):
+     twi_src += ['source/twi/hal_twi.c']
+     twi_path += [cwd + '/source/twi']
+ 
++# USB udc
+ udc_src = Split('''
+ source/usb/platform/sun20iw1/usb_sun20iw1.c
++source/usb/udc/hal_udc.c
++''')
++udc_path = [cwd + '/source/usb/udc']
++udc_path += [cwd + '/source/usb/include']
++
++# USB host
++host_src = Split('''
++source/usb/include/usb_os_platform.c
++source/usb/include/list_head_ext.c
++source/usb/include/usb_gen_dev_mod.c
++source/usb/include/usb_drv_dev_macth.c
++source/usb/include/usb_utils_find_zero_bit.c
++source/usb/platform/sun20iw1/usb_sun20iw1.c
++source/usb/core/usb_virt_bus.c
++source/usb/core/usb_msg_base.c
++source/usb/core/usb_msg.c
++source/usb/core/usb_gen_hub_base.c
++source/usb/core/usb_gen_hub.c
++source/usb/core/usb_gen_hcd_rh.c
++source/usb/core/usb_gen_hcd.c
++source/usb/core/usb_core_interface.c
++source/usb/core/usb_core_init.c
++source/usb/core/usb_core_config.c
++source/usb/core/usb_core_base.c	
++source/usb/core/usb_driver_init.c
++source/usb/core/urb.c
++source/usb/host/ehci-hcd.c
++source/usb/host/sunxi-hci.c
++source/usb/host/ehci-sunxi.c
++source/usb/host/hal_hci.c
++source/usb/hid/Client/KeyBoard/KeyBoard.c
++source/usb/hid/Client/misc_lib.c
++source/usb/hid/Class/Hid.c
++source/usb/hid/Class/HidProtocol.c
++source/usb/hid/Class/HidTransport.c
++source/usb/manager/usb_manager.c
++source/usb/manager/usb_msg_center.c
++source/usb/manager/usb_hw_scan.c
++''')
++#source/usb/hid/Client/Mouse/UsbMouse.c
++#source/usb/hid/Client/Mouse/UsbMouse_DriftControl.c
++
++#source/usb/storage/Class/mscProtocol.c
++#source/usb/storage/Class/mscTransport.c
++#source/usb/storage/Class/mscTransport_i.c
++#source/usb/storage/Class/usb_msc.c
++#source/usb/storage/Disk/BlkDev.c
++#source/usb/storage/Disk/CD.c
++#source/usb/storage/Disk/Disk.c
++#source/usb/storage/Disk/LunMgr.c
++#source/usb/storage/Disk/Scsi2.c
++#source/usb/storage/Misc/usbh_buff_manager.c
++#source/usb/storage/Misc/usbh_disk_info.c
++#source/usb/storage/Misc/usbh_disk_remove_time.c
++
++
++host_test_src = Split('''
++test/usb/host/test_hci.c
++test/usb/host/hci_ed_test.c
+ ''')
+-# source/usb/udc/hal_udc.c
+-udc_path = [cwd + '/source/usb/udc', cwd + '/source/usb/include']
++
++host_path =  [cwd + '/source/usb/include']
++host_path += [cwd + '/source/usb/core']
++host_path += [cwd + '/source/usb/storage/include']
++host_path += [cwd + '/source/usb/hid/Include']
+ 
+ ce_src = Split('''
+ source/ce/ce_common.c
+@@ -314,6 +377,10 @@ if GetDepend('DRIVERS_USB'):
+     if GetDepend('USB_DEVICE'):
+         src += udc_src
+         CPPPATH += udc_path
++    if GetDepend('USB_HOST'):
++        src += host_src + host_test_src
++        CPPPATH += host_path
++
+ 
+ if GetDepend('DRIVERS_CE'):
+     src += ce_src
+diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/kconfig.h b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/kconfig.h
+index 971fa38b0..981b99c95 100644
+--- a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/kconfig.h
++++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/kconfig.h
+@@ -61,7 +61,7 @@
+-#define CONFIG_USB_STORAGE 1
++//#define CONFIG_USB_STORAGE 1
+-#define CONFIG_USB_DEVICE 1
++//#define CONFIG_USB_DEVICE 1
++#define CONFIG_USB_HID 1
+
+diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/test/usb/host/hci_ed_test.c b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/test/usb/host/hci_ed_test.c
+index 75a24ac3c..f7963f603 100644
+--- a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/test/usb/host/hci_ed_test.c
++++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/test/usb/host/hci_ed_test.c
+@@ -40,7 +40,8 @@ static int cmd_hal_hci_ed_test(int argc, const char **argv)
+     return 0;
+ 
+ }
+-FINSH_FUNCTION_EXPORT_CMD(cmd_hal_hci_ed_test, __cmd_hci_ed_test, hci hal ed tests)
++MSH_CMD_EXPORT_ALIAS(cmd_hal_hci_ed_test, cmd_hal_hci_ed_test, cmd_hal_hci_ed_test);
++//FINSH_FUNCTION_EXPORT_CMD(cmd_hal_hci_ed_test, __cmd_hci_ed_test, hci hal ed tests)
+ 
+ static void show_hci_dl_adjust(void)
+ {
+@@ -77,5 +78,6 @@ static int cmd_hci_dl_adjust(int argc, const char **argv)
+     return 0;
+ 
+ }
+-FINSH_FUNCTION_EXPORT_CMD(cmd_hci_dl_adjust, __cmd_hci_dl_adjust, hci driver level adjust)
++MSH_CMD_EXPORT_ALIAS(cmd_hci_dl_adjust, cmd_hci_dl_adjust, cmd_hci_dl_adjust);
++//FINSH_FUNCTION_EXPORT_CMD(cmd_hci_dl_adjust, __cmd_hci_dl_adjust, hci driver level adjust)
+ 
+diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/test/usb/host/test_hci.c b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/test/usb/host/test_hci.c
+index 5895036aa..61ae2a3b4 100644
+--- a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/test/usb/host/test_hci.c
++++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/test/usb/host/test_hci.c
+@@ -17,8 +17,8 @@ static int cmd_test_hci(int argc, const char **argv)
+ 
+     return 0;
+ }
+-
+-FINSH_FUNCTION_EXPORT_CMD(cmd_test_hci, hal_hci, hci hal APIs tests)
++MSH_CMD_EXPORT_ALIAS(cmd_test_hci, cmd_test_hci, cmd_test_hci);
++//FINSH_FUNCTION_EXPORT_CMD(cmd_test_hci, hal_hci, hci hal APIs tests)
+ 
+ static int cmd_test_hci_rm(int argc, const char **argv)
+ {
+@@ -30,5 +30,5 @@ static int cmd_test_hci_rm(int argc, const char **argv)
+ 
+     return 0;
+ }
+-
+-FINSH_FUNCTION_EXPORT_CMD(cmd_test_hci_rm, hal_hci_rm, hci hal APIs tests)
++MSH_CMD_EXPORT_ALIAS(cmd_test_hci_rm, cmd_test_hci_rm, cmd_test_hci_rm);
++//FINSH_FUNCTION_EXPORT_CMD(cmd_test_hci_rm, hal_hci_rm, hci hal APIs tests)
+
+diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/include/hal/sunxi_hal_common.h b/rt-thread/bsp/allwinner/libraries/sunxi-hal/include/hal/sunxi_hal_common.h
+index ab2d8ad10..d6cad7f7f 100644
+--- a/rt-thread/bsp/allwinner/libraries/sunxi-hal/include/hal/sunxi_hal_common.h
++++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/include/hal/sunxi_hal_common.h
+@@ -32,6 +32,26 @@ extern "C"
+ #include <stdio.h>
+ #include <kconfig.h>
+ 
++/* 
++ * Add missing functions for usb hal
++ */
++
++#if (defined(__GNUC__) && (__GNUC__ >= 3))
++#define likely(expr)	(__builtin_expect(!!(expr), 1))
++#define unlikely(expr)	(__builtin_expect(!!(expr), 0))
++#else
++#define likely(expr)	(!!(expr))
++#define unlikely(expr)	(!!(expr))
++#endif
++
++#define ERR_PTR(err)    ((void *)((long)(err)))
++#define PTR_ERR(ptr)    ((long)(ptr))
++#define IS_ERR(ptr)     ((unsigned long)(ptr) > (unsigned long)(-1000))
++/* 
++ * End add missing functions for usb hal
++ */
++
++
+ #undef min
+ #undef max
+ #define min(a, b)  ((a) < (b) ? (a) : (b))
+```
