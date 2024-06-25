@@ -830,8 +830,8 @@ REG 10H: DCDC1/2/3/4/5&ALDO1/2&DC5LDO Enable Set
 ## So lets implement a simple driver for control AXP228 (ALDO2 and DCDC30) by TWI interface:
 
 ```patch
-git diff 36594b5...ab0078d rt-thread/ > diff.patch
- 
+git diff 36594b5...136cb9c rt-thread/ > diff.patch
+                   
 diff --git a/rt-thread/bsp/allwinner/libraries/drivers/SConscript b/rt-thread/bsp/allwinner/libraries/drivers/SConscript
 index 5dcf08dd7..ffafee242 100644
 --- a/rt-thread/bsp/allwinner/libraries/drivers/SConscript
@@ -1031,3 +1031,5 @@ lcd_draw_point 100 100:
 ![devterm_lcd_mipi_work.jpg](devterm_lcd_mipi_work.jpg)
 
 ## Devterm Keyboard
+
+Keyboard chip STM32F103Rx => J502 - DM1/DP1 => GL850G (usb hub) => USB_DP/USB_DM => D1H USB1-DP/USB1-DM A8/B8 => USB2.0 HOST

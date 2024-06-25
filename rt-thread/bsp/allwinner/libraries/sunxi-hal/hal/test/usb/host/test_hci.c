@@ -17,8 +17,8 @@ static int cmd_test_hci(int argc, const char **argv)
 
     return 0;
 }
-
-FINSH_FUNCTION_EXPORT_CMD(cmd_test_hci, hal_hci, hci hal APIs tests)
+MSH_CMD_EXPORT_ALIAS(cmd_test_hci, cmd_test_hci, cmd_test_hci);
+//FINSH_FUNCTION_EXPORT_CMD(cmd_test_hci, hal_hci, hci hal APIs tests)
 
 static int cmd_test_hci_rm(int argc, const char **argv)
 {
@@ -30,5 +30,5 @@ static int cmd_test_hci_rm(int argc, const char **argv)
 
     return 0;
 }
-
-FINSH_FUNCTION_EXPORT_CMD(cmd_test_hci_rm, hal_hci_rm, hci hal APIs tests)
+MSH_CMD_EXPORT_ALIAS(cmd_test_hci_rm, cmd_test_hci_rm, cmd_test_hci_rm);
+//FINSH_FUNCTION_EXPORT_CMD(cmd_test_hci_rm, hal_hci_rm, hci hal APIs tests)

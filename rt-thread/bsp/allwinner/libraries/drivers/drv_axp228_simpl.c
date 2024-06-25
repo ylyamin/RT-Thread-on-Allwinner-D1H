@@ -74,7 +74,7 @@ static void _axp_voltage(void)
         rt_kprintf("Reg name:'%s' addr: %x value: %d\n",dcdc_regs[i].name, dcdc_regs[i].addr, dcdc_regs[i].value);
     }
 }
-MSH_CMD_EXPORT_ALIAS(_axp_voltage, axp_voltage, axp_voltage);
+//MSH_CMD_EXPORT_ALIAS(_axp_voltage, axp_voltage, axp_voltage);
 
 void _axp_ALDO2_DCDC3_control(int on)
 {
@@ -116,6 +116,6 @@ static void _axp_ALDO2_DCDC3_control_cmd(int argc, char *args[])
     rt_kprintf("ALDO2_DCDC3 On/Off %d\n",on);
     _axp_ALDO2_DCDC3_control(on);
 }
-MSH_CMD_EXPORT_ALIAS(_axp_ALDO2_DCDC3_control_cmd, axp_ALDO2_DCDC3_control_cmd, axp_ALDO2_DCDC3_control_cmd);
+//MSH_CMD_EXPORT_ALIAS(_axp_ALDO2_DCDC3_control_cmd, axp_ALDO2_DCDC3_control_cmd, axp_ALDO2_DCDC3_control_cmd);
 
 

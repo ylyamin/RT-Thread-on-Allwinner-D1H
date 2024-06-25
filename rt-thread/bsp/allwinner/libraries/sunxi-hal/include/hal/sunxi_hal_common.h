@@ -32,6 +32,26 @@ extern "C"
 #include <stdio.h>
 #include <kconfig.h>
 
+/* 
+ * Add missing functions for usb hal
+ */
+
+#if (defined(__GNUC__) && (__GNUC__ >= 3))
+#define likely(expr)	(__builtin_expect(!!(expr), 1))
+#define unlikely(expr)	(__builtin_expect(!!(expr), 0))
+#else
+#define likely(expr)	(!!(expr))
+#define unlikely(expr)	(!!(expr))
+#endif
+
+#define ERR_PTR(err)    ((void *)((long)(err)))
+#define PTR_ERR(ptr)    ((long)(ptr))
+#define IS_ERR(ptr)     ((unsigned long)(ptr) > (unsigned long)(-1000))
+/* 
+ * End add missing functions for usb hal
+ */
+
+
 #undef min
 #undef max
 #define min(a, b)  ((a) < (b) ? (a) : (b))

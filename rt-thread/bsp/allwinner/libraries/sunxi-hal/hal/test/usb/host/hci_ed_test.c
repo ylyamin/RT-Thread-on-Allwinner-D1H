@@ -40,7 +40,8 @@ static int cmd_hal_hci_ed_test(int argc, const char **argv)
     return 0;
 
 }
-FINSH_FUNCTION_EXPORT_CMD(cmd_hal_hci_ed_test, __cmd_hci_ed_test, hci hal ed tests)
+MSH_CMD_EXPORT_ALIAS(cmd_hal_hci_ed_test, cmd_hal_hci_ed_test, cmd_hal_hci_ed_test);
+//FINSH_FUNCTION_EXPORT_CMD(cmd_hal_hci_ed_test, __cmd_hci_ed_test, hci hal ed tests)
 
 static void show_hci_dl_adjust(void)
 {
@@ -77,5 +78,6 @@ static int cmd_hci_dl_adjust(int argc, const char **argv)
     return 0;
 
 }
-FINSH_FUNCTION_EXPORT_CMD(cmd_hci_dl_adjust, __cmd_hci_dl_adjust, hci driver level adjust)
+MSH_CMD_EXPORT_ALIAS(cmd_hci_dl_adjust, cmd_hci_dl_adjust, cmd_hci_dl_adjust);
+//FINSH_FUNCTION_EXPORT_CMD(cmd_hci_dl_adjust, __cmd_hci_dl_adjust, hci driver level adjust)
 

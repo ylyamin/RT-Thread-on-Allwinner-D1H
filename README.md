@@ -216,9 +216,6 @@ Restoring binary file rt-thread/bsp/allwinner/d1s_d1h/rtthread.bin into memory (
 - Sipeed RV-Debuggr Plus
 - MicroSD_Sniffer
 
-### Sipeed Lichee RV assembly
-![Lichee_RV_assembly](documentation/Lichee_RV_assembly.png)
-
 ### ClockworkPi DevTerm R01 assembly
 ![Devterm_R01_assembly](documentation/Devterm_R01_assembly.png)
 
@@ -226,9 +223,14 @@ I figureout that integrated UART work very unstable. Acording [discussion](https
 "The problem is that the CH340C provides 5 V logic levels, whereas the D1 only supports 3.3 V I/O...A better solution would be to solder wires to pins 2 and 3 of the CH340C and use a different USB-UART adapter that runs at the correct voltage." So I do this:
 ![Devterm_R01_uart](documentation/Devterm_R01_uart.png)
 
+### Sipeed Lichee RV assembly
+![Lichee_RV_assembly](documentation/Lichee_RV_assembly.png)
+
 ## Links
 - https://linux-sunxi.org/Allwinner_Nezha  
-- https://andreas.welcomes-you.com/boot-sw-debian-risc-v-lichee-rv-2/  
+- https://andreas.welcomes-you.com/boot-sw-debian-risc-v-lichee-rv-2/
+- https://github.com/clockworkpi/DevTerm/tree/main/Code/patch/d1
+- https://github.com/smaeul/linux/tree/d1/all
 
 ## TODO
 - Keyboard, trackball

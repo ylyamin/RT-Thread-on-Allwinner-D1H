@@ -408,6 +408,17 @@
 /* G2D Devices */
 
 #define DRIVERS_G2D
+#define DRIVERS_USB
+
+/* USB HOST */
+
+#define USB_HOST
+#define HAL_TEST_HCI
+#define USB_HID
+
+/* USB DEVICE */
+
+#define USB_MANAGER
 
 /* CE Devices */
 
