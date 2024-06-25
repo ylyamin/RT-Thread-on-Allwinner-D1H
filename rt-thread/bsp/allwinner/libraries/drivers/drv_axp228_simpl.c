@@ -1,12 +1,6 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
- *
- * SPDX-License-Identifier: Apache-2.0
- *
- * Change Logs:
- * 2021-11-19     xieyangrun     first version
+ * Copyright (c) ylyamin
  */
-
 #include <rthw.h>
 #include <rtdevice.h>
 

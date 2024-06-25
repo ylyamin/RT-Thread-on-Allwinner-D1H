@@ -1,12 +1,6 @@
 # Introduction
 This document describes changes in the code copmare of to the original repo.  
-History of comands to show code changes:
-```
-git diff f40e63c...16181b0 > diff.patch
-(ed7bdc7 excluded as just rename folder)
-git diff bde29ac...36594b5 rt-thread/ > diff.patch
-git diff 36594b5...9ea69d2 rt-thread/ > diff.patch
-```
+
 ## First of all was trying to compile RT-Thread for D1H platform:
 
 #### RT-Thread [Master](https://github.com/RT-Thread/rt-thread/commit/2866da37a02dae72200e02ad87480718002760a5) or [v5.1.0](https://github.com/RT-Thread/rt-thread/releases/tag/v5.1.0)
@@ -51,6 +45,8 @@ Created own Makefile with build relevant bootloaders:
 
 ## Extend cvonfig to support simultaneously D1S and D1H SOC
 ```patch
+git diff f40e63c...16181b0 > diff.patch
+
 diff --git a/bsp/allwinner/d1s_d1h/Kconfig b/bsp/allwinner/d1s_d1h/Kconfig
 index e5306596d..d11a63db0 100644
 --- a/bsp/allwinner/d1s_d1h/Kconfig
@@ -199,6 +195,8 @@ msh />
  
 In original repo LCD driver init as a application inside main function, in this case is impossible to debug it in GDB as is executed in RTT thread so change it to init as device that executed before sheduler start.
 ```patch
+git diff bde29ac...36594b5 rt-thread/ > diff.patch
+
 diff --git a/rt-thread/bsp/allwinner/d1s_d1h/applications/main.c b/rt-thread/bsp/allwinner/d1s_d1h/applications/main.c
 index 902db7082..994011733 100644
 --- a/rt-thread/bsp/allwinner/d1s_d1h/applications/main.c
@@ -689,8 +687,8 @@ lcd_draw_point 100 100:
 ```
 ![lichee_lcd_rgb_work](lichee_lcd_rgb_work.jpg)
 
-## LCD inc9707 chip reset (I2C)
-But DevTerm LCD MIPI DSI Display still not started. Lets figure out why.   
+## LCD inc9707 chip reset
+DevTerm LCD MIPI DSI Display still not started. Lets figure out why.   
 
 Noticed in [ICNL9707_Datasheet.pdf](ClockworkPi_DevTerm\ICNL9707_Datasheet.pdf) that in startup siguence - first off all VCI and IOVCC voltage UP then reseted RESET pin.   
 
@@ -702,10 +700,13 @@ Hypotise that it looks like we need to force reset VCI and IOVCC just before RES
 According to pnout:
 ![pinout](ClockworkPi_DevTerm/6.86-inch-IPS-TFT-Stretched-Bar-LCD-MIPI-480x1280-TTW686VVC-01-4.png)   
 
-IOVCC connected to LCD pins 18,19. And in Devterm to IOVCC provided 1.8V from DCDC3 - AXP228 Power Managment chip.   
-VCI   connected to LCD pins 38,39. And in Devterm to VCI   provided 3.3V from ALDO2 - AXP228 Power Managment chip.   
+IOVCC connected to LCD pins 18,19.  
+And in Devterm to IOVCC provided 1.8V from DCDC3 - AXP228 Power Managment chip.   
+VCI   connected to LCD pins 38,39.   
+And in Devterm to VCI   provided 3.3V from ALDO2 - AXP228 Power Managment chip.   
 
 in Devterm R01 AXP228 controlled by TWI interface from D1H:
+
 | AXP228         | D1H   | Function |
 |:---            |:---   |:---      |
 | PMU-SCK        | PB-10 | TWI0-SCK |
@@ -811,7 +812,7 @@ static int cwd686_prepare(struct drm_panel *panel)
 	msleep(20);
 ...
 ```
-According AXP 228 documentation [AXP228_V1.1_20130106..pdf](ClockworkPi_DevTerm/AXP228_V1.1_20130106..pdf) chip have control register:
+According AXP 228 documentation [AXP228_V1.1_20130106..pdf](ClockworkPi_DevTerm/AXP228_V1.1_20130106..pdf) chip culd be ontrolled by TWI interface (I2C) and have control register:
 
 REG 10H: DCDC1/2/3/4/5&ALDO1/2&DC5LDO Enable Set
 
@@ -826,10 +827,202 @@ REG 10H: DCDC1/2/3/4/5&ALDO1/2&DC5LDO Enable Set
 | 1    | DCDC1 Enable Set  | 			  | RW   | X 	   |
 | 0    | DC5LDO Enable Set | 			  | RW   | X 	   |
 
-So implement a simple driver for control AXP228 - ALDO2 and DCDC3:
+## So lets implement a simple driver for control AXP228 (ALDO2 and DCDC30) by TWI interface:
 
+```patch
+git diff 36594b5...ab0078d rt-thread/ > diff.patch
+ 
+diff --git a/rt-thread/bsp/allwinner/libraries/drivers/SConscript b/rt-thread/bsp/allwinner/libraries/drivers/SConscript
+index 5dcf08dd7..ffafee242 100644
+--- a/rt-thread/bsp/allwinner/libraries/drivers/SConscript
++++ b/rt-thread/bsp/allwinner/libraries/drivers/SConscript
+@@ -15,6 +15,7 @@ if GetDepend('BSP_USING_RTC'):
+ 
+ if GetDepend('BSP_USING_I2C'):
+     src += ['drv_i2c.c']
++    src += ['drv_axp228_simpl.c']
+ 
+diff --git a/rt-thread/bsp/allwinner/libraries/drivers/drv_axp228_simpl.c b/rt-thread/bsp/allwinner/libraries/drivers/drv_axp228_simpl.c
+new file mode 100644
+index 000000000..f8339d8cc
+--- /dev/null
++++ b/rt-thread/bsp/allwinner/libraries/drivers/drv_axp228_simpl.c
+@@ -0,0 +1,127 @@
++/*
++ * Copyright (c) ylyamin
++ */
++#include <rthw.h>
++#include <rtdevice.h>
++
++#include "sunxi_hal_twi.h"
++
++#define DBG_LVL DBG_WARNING
++#define DBG_TAG "drv/axp"
++#include <rtdbg.h>
++
++void _axp_ALDO2_DCDC3_control(int on)
++{
++    struct rt_i2c_bus_device *i2c_bus;
++    struct rt_i2c_msg msg[2];
++
++    uint8_t reg_addr_buf[2];
++    
++    if (on)
++    {
++        reg_addr_buf[0] = 0x10;
++        reg_addr_buf[1] = 0x8B; //ALDO2 and DCDC3 Enable
++    }else
++    {
++        reg_addr_buf[0] = 0x10;
++        reg_addr_buf[1] = 0x3;  //ALDO2 and DCDC3 Disble
++    }
++    
++    i2c_bus = (struct rt_i2c_bus_device*)rt_device_find("i2c0");
++
++    if (!i2c_bus)
++    {
++        rt_kprintf("i2c0 not found\n");
++        return;
++    }
++
++    msg[0].addr = (0x69 >> 1);
++    msg[0].flags = 0;
++    msg[0].buf = reg_addr_buf;
++    msg[0].len = sizeof(reg_addr_buf);
++
++    rt_i2c_transfer(i2c_bus, &msg[0], 1);
++}
+```
+## Enable I2C and configure TWI pins:
 
+```patch
 
+diff --git a/rt-thread/bsp/allwinner/d1s_d1h/.config b/rt-thread/bsp/allwinner/d1s_d1h/.config
+index 25fa3db03..adb50af2f 100644
+--- a/rt-thread/bsp/allwinner/d1s_d1h/.config
++++ b/rt-thread/bsp/allwinner/d1s_d1h/.config
+@@ -189,7 +189,9 @@ CONFIG_RT_USING_TTY=y
++CONFIG_RT_USING_I2C=y
++CONFIG_BSP_USING_I2C=y
++CONFIG_BSP_USING_I2C0=y
+
+diff --git a/rt-thread/bsp/allwinner/libraries/drivers/drv_i2c.c b/rt-thread/bsp/allwinner/libraries/drivers/drv_i2c.c
+index ad4515d8f..edcca13c4 100644
+--- a/rt-thread/bsp/allwinner/libraries/drivers/drv_i2c.c
++++ b/rt-thread/bsp/allwinner/libraries/drivers/drv_i2c.c
+@@ -111,7 +111,31 @@ static struct hal_i2c_bus _i2c_bus_3 = {
+ 
+ #define CFG_GPIO_PORT(p) ((p) - 'A' + 1)
+ 
++
++
+ static const user_gpio_set_t _i2c_gpio_cfg[][2] = {
++#ifdef BSP_USING_CWP_DT_R01
++    {// twi0
++        {
++            .gpio_name = "twi0.sck",
++            .port = CFG_GPIO_PORT('B'),
++            .port_num = 10, // PB10
++            .mul_sel = 4,
++            .pull = 1, // pull up
++            .drv_level = 3,
++            .data = 1,
++        },
++        {
++            .gpio_name = "twi0.sda",
++            .port = CFG_GPIO_PORT('B'),
++            .port_num = 11, // PB11
++            .mul_sel = 4,
++            .pull = 1, // pull up
++            .drv_level = 3,
++            .data = 1,
++        }
++    },
++#else
+     {// twi0
+         {
+             .gpio_name = "twi0.sck",
+@@ -132,6 +156,7 @@ static const user_gpio_set_t _i2c_gpio_cfg[][2] = {
+             .data = 1,
+         }
+     },
++#endif
+
+```
+## Modify LCD driver
+
+```patch
+diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/lcd/icn9707_480x1280.c b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/lcd/icn9707_480x1280.c
+index f0ea916dd..835a8c888 100644
+--- a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/lcd/icn9707_480x1280.c
++++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/lcd/icn9707_480x1280.c
+ 
+ static s32 LCD_open_flow(u32 sel)
+ {
+     printk("raoyiming +++ LCD_open_flow\n");
+-    LCD_OPEN_FUNC(sel, LCD_power_on, 100);   //open lcd power, and delay 50ms
+-    LCD_OPEN_FUNC(sel, LCD_panel_init, 200);   //open lcd power, than delay 200ms
++   // LCD_OPEN_FUNC(sel, LCD_power_on, 100);   //open lcd power, and delay 50ms
++    LCD_OPEN_FUNC(sel, LCD_panel_init, 0);   //open lcd power, than delay 200ms
+     LCD_OPEN_FUNC(sel, sunxi_lcd_tcon_enable, 200);     //open lcd controller, and delay 100ms
+     LCD_OPEN_FUNC(sel, LCD_bl_open, 0);     //open lcd backlight, and delay 0ms
+     printk("raoyiming +++ LCD_open_flow finish\n");
+     return 0;
+ }
+ 
+@@ -203,20 +207,27 @@ static struct lcd_setting_table lcd_init_setting[] = {
+ 
+ };
+ 
++extern void _axp_ALDO2_DCDC3_control(bool on);
++
+ static void LCD_panel_init(u32 sel)
+ {
+ 	
+     u32 i;
+     printk("<0>raoyiming +++ LCD_panel_init\n");
++	sunxi_lcd_power_enable(sel, 0);
++    sunxi_lcd_pin_cfg(sel, 1);
++    /*all off*/
++    _axp_ALDO2_DCDC3_control(0);
++    sunxi_lcd_delay_ms(100);
++    /*start*/
+     panel_rst(1);
++    _axp_ALDO2_DCDC3_control(1);
++    /*T2*/
+     sunxi_lcd_delay_ms(10);
+     panel_rst(0);
++    /*T3*/
++    sunxi_lcd_delay_ms(20);
++    /*init sequence*/
+     for (i = 0; ; i++) {
+         if(lcd_init_setting[i].cmd == REGFLAG_END_OF_TABLE) {
+             break;
+@@ -227,8 +238,10 @@ static void LCD_panel_init(u32 sel)
+         }
+     }
++    sunxi_lcd_dsi_clk_enable(sel);
++	/* T6 */
++	sunxi_lcd_delay_ms(120);
++    printk("<0>raoyiming +++ LCD_panel_init finish\n");
+     return;
+ }
+ 
+diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/soc/icn9707_mipi_config.c b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/soc/icn9707_mipi_config.c
+index 20cdaed52..a773d6b23 100644
+--- a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/soc/icn9707_mipi_config.c
++++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/soc/icn9707_mipi_config.c
+
+@@ -228,7 +241,7 @@ struct property_t g_lcd0_config_soc[] = {
+         .v.gpio_list = {
+             .gpio = GPIOD(19), //LCD_RESET
+             .mul_sel = GPIO_DIRECTION_OUTPUT,
+-            .pull = 1,
++            .pull = 2,
+             .drv_level = 3,
+             .data = 1,
+         },
+```
 ## MIPI DSI LCD Display work
 After all modification in code DevTerm R01 - LCD MIPI DSI Display successfully started, tested by command:
 ```sh
