@@ -19,8 +19,8 @@ Aslso could run in Sipeed Lichee RV and manage RGB LCD Display [lichee_lcd_rgb_w
 
 # Installation
 In repository exist prebuilded images for SD card in folder [image](image), need to flash it to SD card and install to device.
-- For Sipeed Lichee RV board please use [image/sd_image_lichee.img](image/sd_image_lichee.img)
 - For ClockworkPi DevTerm R01 board please use [image/sd_image_devterm.img](image/sd_image_devterm.img)
+- For Sipeed Lichee RV board please use [image/sd_image_lichee.img](image/sd_image_lichee.img)
 
 ## Windows
 Could use https://etcher.balena.io/#download-etcher for flash image to SD card.
@@ -153,7 +153,7 @@ For configure RT-Thread:
 ```sh
 make rt-conf
 ```
-In menuconfig chooses "General Drivers Configuration" -> "Choose Board" and then choose "Sipeed Lichee RV board" or "ClockworkPi DevTerm R01 board" depend what board do you use.
+In menuconfig chooses "General Drivers Configuration" -> "Choose Board" and then choose "ClockworkPi DevTerm R01 board" or "Sipeed Lichee RV board" depend what board do you use.
 
 To compile RT-Thread use command:
 ```sh
@@ -208,10 +208,10 @@ Restoring binary file rt-thread/bsp/allwinner/d1s_d1h/rtthread.bin into memory (
 ```
 
 ## Hardware
+- [ClockworkPi DevTerm R01](https://www.clockworkpi.com/home-devterm)
 - [Sipeed Lichee RV + Dock](https://wiki.sipeed.com/hardware/en/lichee/RV/Dock.html)
 - Lichee RV Dock extension LCD adapter board
 - 4.3 RGB LCD Display (043026-N6(ML)) with IC ST7001s (SPI)
-- [ClockworkPi DevTerm R01](https://www.clockworkpi.com/home-devterm)
 - FTDI 2248-c USB/UART adapter
 - Sipeed RV-Debuggr Plus
 - MicroSD_Sniffer
