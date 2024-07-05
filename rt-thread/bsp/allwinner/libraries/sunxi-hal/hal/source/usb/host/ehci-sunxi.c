@@ -318,7 +318,11 @@ int sunxi_ehci_hcd_init(int hci_num)
         sprintf(sunxi_ehci->hci_name, "%s", hci_table[hci_num].name);
 
         hci_clock_init(sunxi_ehci);
+        /* 
+         * As in system we dont have USB config, 
+         * and seems this configuration related to GPIO that not used, comment this function
         sunxi_hci_get_config_param(sunxi_ehci);
+        */
 
         sunxi_ehci->open_clock          = open_clock;
         sunxi_ehci->close_clock         = close_clock;

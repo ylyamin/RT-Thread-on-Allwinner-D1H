@@ -70,3 +70,6 @@ msh />
 This my changes https://github.com/RT-Thread/rt-thread/commit/ec2c0f10894bca703354e7e1d4c23fbaed5a034b
 
 ### Please could you make it compiled properly in master and figure out what happened with SDMMC driver?
+
+I can maintain D1 bsp, can create pull requests.
+But since I’m not an expert in RTT, someone needs to review it. My current solution to just replace thread_delay to hw_delay doesn't seem quite right.

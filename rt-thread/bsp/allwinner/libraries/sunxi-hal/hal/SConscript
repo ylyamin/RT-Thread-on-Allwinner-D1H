@@ -245,6 +245,12 @@ source/usb/udc/hal_udc.c
 udc_path = [cwd + '/source/usb/udc']
 udc_path += [cwd + '/source/usb/include']
 
+udc_test_src = Split('''
+test/usb/udc/usb_msg.c
+test/usb/udc/main.c
+test/usb/udc/ed_test.c
+''')
+
 # USB host
 host_src = Split('''
 source/usb/include/usb_os_platform.c
@@ -278,6 +284,8 @@ source/usb/hid/Class/HidTransport.c
 source/usb/manager/usb_manager.c
 source/usb/manager/usb_msg_center.c
 source/usb/manager/usb_hw_scan.c
+source/usb/hid/Client/Mouse/UsbMouse.c
+source/usb/hid/Client/Mouse/UsbMouse_DriftControl.c
 ''')
 #source/usb/hid/Client/Mouse/UsbMouse.c
 #source/usb/hid/Client/Mouse/UsbMouse_DriftControl.c
@@ -295,7 +303,6 @@ source/usb/manager/usb_hw_scan.c
 #source/usb/storage/Misc/usbh_disk_info.c
 #source/usb/storage/Misc/usbh_disk_remove_time.c
 
-
 host_test_src = Split('''
 test/usb/host/test_hci.c
 test/usb/host/hci_ed_test.c
@@ -305,6 +312,7 @@ host_path =  [cwd + '/source/usb/include']
 host_path += [cwd + '/source/usb/core']
 host_path += [cwd + '/source/usb/storage/include']
 host_path += [cwd + '/source/usb/hid/Include']
+host_path += [cwd + '/source/usb/host']
 
 ce_src = Split('''
 source/ce/ce_common.c
@@ -375,12 +383,11 @@ if GetDepend('DRIVERS_G2D'):
 
 if GetDepend('DRIVERS_USB'):
     if GetDepend('USB_DEVICE'):
-        src += udc_src
+        src += udc_src + udc_test_src
         CPPPATH += udc_path
     if GetDepend('USB_HOST'):
         src += host_src + host_test_src
         CPPPATH += host_path
-
 
 if GetDepend('DRIVERS_CE'):
     src += ce_src

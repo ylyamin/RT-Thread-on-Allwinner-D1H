@@ -404,6 +404,7 @@ struct usb_endpoint_descriptor {
 
 
 /* USB_DT_DEVICE_QUALIFIER: Device Qualifier descriptor */
+#ifndef RT_USING_USB 
 struct __attribute__((packed)) usb_qualifier_descriptor
 {
     uint8_t  bLength;
@@ -417,6 +418,7 @@ struct __attribute__((packed)) usb_qualifier_descriptor
     uint8_t  bNumConfigurations;
     uint8_t  bRESERVED;
 };
+#endif
 
 
 #define USB_DT_ENDPOINT_SIZE        7
@@ -544,15 +546,20 @@ enum usb_device_speed {
     USB_SPEED_SUPER,            /* usb 3.0 */
     USB_SPEED_SUPER_PLUS,           /* usb 3.1 */
 };
+#ifndef RT_USING_USB 
 enum usb_device_state {
     USB_STATE_NOTATTACHED = 0,
     USB_STATE_ATTACHED,
-    USB_STATE_POWERED,          /* wired */
-    USB_STATE_RECONNECTING,         /* auth */
-    USB_STATE_UNAUTHENTICATED,      /* auth */
-    USB_STATE_DEFAULT,          /* limited function */
+    USB_STATE_POWERED,          // wired
+    USB_STATE_RECONNECTING,         // auth 
+    USB_STATE_UNAUTHENTICATED,      // auth 
+    USB_STATE_DEFAULT,          // limited function 
     USB_STATE_ADDRESS,
-    USB_STATE_CONFIGURED,           /* most functions */
+    USB_STATE_CONFIGURED,           // most functions 
     USB_STATE_SUSPENDED
 };
+#else
+#include <drivers/usb_common.h>
+#endif
+
 #endif /*__USB_CH9_H__*/

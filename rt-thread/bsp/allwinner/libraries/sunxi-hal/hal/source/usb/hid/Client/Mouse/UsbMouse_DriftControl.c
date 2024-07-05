@@ -35,6 +35,7 @@
 #include "HidFunDrv.h"
 #include "UsbMouse.h"
 #include "UsbMouse_DriftControl.h"
+#include <sunxi_hal_common.h>
 
 /*
 *******************************************************************************
@@ -444,7 +445,7 @@ static int UsbMouse_DriftControl(UsbMouseDriftControl_t *Drift)
         EXIT_CRITICAL(cup_sr);
 
         if(Drift->usbMouse->CallBack){
-            esKRNL_CallBack((__pCBK_t)Drift->usbMouse->CallBack, (void *)&Drift->usbMouse->MouseEvent);
+            //esKRNL_CallBack((__pCBK_t)Drift->usbMouse->CallBack, (void *)&Drift->usbMouse->MouseEvent);
         }
     }
 
@@ -551,11 +552,11 @@ int UsbMouse_DriftControl_Init(usbMouse_t *usbMouse)
     Drift->ThreadId = kthread_create((void *)UsbMouse_DriftThread,
                                       (void *)Drift,
                                       "UsbMouse_DriftThread");
-    if(Drift->ThreadId == OS_NO_ERR){
+/*     if(Drift->ThreadId == OS_NO_ERR){
         hal_log_err("ERR: create MainThreadId failed\n");
         status = USB_ERR_CREATE_THREAD_FAILED;
         goto err2;
-    }
+    } */
 
     hal_sem_wait(Drift->notify_complete);
 

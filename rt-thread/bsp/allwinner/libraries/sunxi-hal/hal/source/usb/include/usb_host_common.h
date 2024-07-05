@@ -183,7 +183,11 @@ struct usb_host_virt_dev
     hal_sem_t    usb_virt_dev_semi;
 
     int devnum;                     /* Address on USB bus */
-    enum usb_device_state   state;  /* 设备当前的state,configured, not attached */
+    #ifdef RT_USING_USB 
+    udevice_state_t   state;  /* 设备当前的state,configured, not attached */
+    #else
+    enum usb_device_state   state; 
+    #endif
     enum usb_device_speed   speed;  /* 设备的当前速度 */
     int     ttport;                 /* device port on that tt hub  */
 

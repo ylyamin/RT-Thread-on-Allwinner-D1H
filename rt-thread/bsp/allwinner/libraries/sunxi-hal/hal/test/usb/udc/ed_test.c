@@ -27,7 +27,7 @@ static int cmd_hal_udc_ed_test(int argc, const char **argv)
     return 0;
 
 }
-FINSH_FUNCTION_EXPORT_CMD(cmd_hal_udc_ed_test, __cmd_hal_udc_ed_test, udc hal ed tests)
+//FINSH_FUNCTION_EXPORT_CMD(cmd_hal_udc_ed_test, __cmd_hal_udc_ed_test, udc hal ed tests)
 
 static void show_hal_udc_dl_adjust_help(void)
 {
@@ -56,4 +56,4 @@ static int cmd_hal_udc_dl_adjust(int argc, const char **argv)
     return 0;
 
 }
-FINSH_FUNCTION_EXPORT_CMD(cmd_hal_udc_dl_adjust, __cmd_hal_udc_dl_adjust, udc hal driverlevel adjust)
+//FINSH_FUNCTION_EXPORT_CMD(cmd_hal_udc_dl_adjust, __cmd_hal_udc_dl_adjust, udc hal driverlevel adjust)

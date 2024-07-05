@@ -14,12 +14,10 @@ set $dyninfo_addr = 0x43000000
 #restore bootloaders/sun20i_d1_spl/nboot/boot0_sdcard_sun20iw1p1.bin binary $spl_addr
 
 restore bootloaders/opensbi/build/platform/generic/firmware/fw_dynamic.bin binary $opensbi_addr
-#restore bootloaders/opensbi/build/platform/generic/firmware/fw_jump.bin binary $opensbi_addr
 restore build/sun20i-d1-lichee-rv-dock.dtb binary $dtb_addr
 restore rt-thread/bsp/allwinner/d1s_d1h/rtthread.bin binary $kernel_addr
 
 #file bootloaders/opensbi/build/platform/generic/firmware/fw_dynamic.elf
-#file bootloaders/opensbi/build/platform/generic/firmware/fw_jump.elf
 #file rt-thread/bsp/allwinner/d1s_d1h/rtthread.elf
 
 #file bootloaders/sun20i_d1_spl/nboot/boot0_sdcard.elf
@@ -43,5 +41,5 @@ set *(unsigned long *)($dyninfo_addr + 32) = 0
 set *(unsigned long *)($dyninfo_addr + 40) = 0
 set $a2 = $dyninfo_addr
 
-#b bsp_disp_init
+#b sunxi_ehci_hcd_init
 j *$opensbi_addr

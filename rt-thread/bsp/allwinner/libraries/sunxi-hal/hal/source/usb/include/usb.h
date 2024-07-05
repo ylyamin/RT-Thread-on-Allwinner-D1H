@@ -465,7 +465,11 @@ struct usb_device {
     int     devnum;
     char        devpath[16];
     u32     route;
+    #ifdef RT_USING_USB 
+    udevice_state_t   state;
+    #else
     enum usb_device_state   state;
+    #endif
     enum usb_device_speed   speed;
 
     struct usb_tt   *tt;

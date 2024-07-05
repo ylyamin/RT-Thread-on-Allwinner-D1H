@@ -19,5 +19,6 @@ static int cmd_gadget_test(int argc, const char **argv)
     return 0;
 
 }
-FINSH_FUNCTION_EXPORT_CMD(cmd_gadget_test, hal_udc, udc hal APIs tests)
+MSH_CMD_EXPORT_ALIAS(cmd_gadget_test, cmd_gadget_test, cmd_gadget_test);
+//FINSH_FUNCTION_EXPORT_CMD(cmd_gadget_test, hal_udc, udc hal APIs tests)
 

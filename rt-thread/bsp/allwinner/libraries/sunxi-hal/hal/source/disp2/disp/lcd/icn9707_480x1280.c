@@ -207,7 +207,7 @@ static struct lcd_setting_table lcd_init_setting[] = {
 
 };
 
-extern void _axp_ALDO2_DCDC3_control(bool on);
+extern void _axp_LCD_control(bool on);
 
 static void LCD_panel_init(u32 sel)
 {
@@ -216,17 +216,22 @@ static void LCD_panel_init(u32 sel)
     printk("<0>raoyiming +++ LCD_panel_init\n");
 	sunxi_lcd_power_enable(sel, 0);
     sunxi_lcd_pin_cfg(sel, 1);
+
     /*all off*/
-    _axp_ALDO2_DCDC3_control(0);
+    _axp_LCD_control(0);
     sunxi_lcd_delay_ms(100);
+
     /*start*/
     panel_rst(1);
-    _axp_ALDO2_DCDC3_control(1);
+    _axp_LCD_control(1);
+
     /*T2*/
     sunxi_lcd_delay_ms(10);
     panel_rst(0);
+
     /*T3*/
     sunxi_lcd_delay_ms(20);
+
     /*init sequence*/
     for (i = 0; ; i++) {
         if(lcd_init_setting[i].cmd == REGFLAG_END_OF_TABLE) {

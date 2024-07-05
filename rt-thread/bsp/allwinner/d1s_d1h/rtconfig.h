@@ -145,6 +145,12 @@
 
 /* Using USB */
 
+#define RT_USING_USB
+#define RT_USING_USB_HOST
+#define RT_USBH_HID
+#define RT_USBH_HID_MOUSE
+#define RT_USBH_HID_KEYBOARD
+#define RT_USBD_THREAD_STACK_SZ 4096
 
 /* C/C++ and POSIX layer */
 
@@ -339,6 +345,7 @@
 #define SD_CARD_CHECK
 #define BSP_USING_FS
 #define BSP_USING_LCD
+#define BSP_USING_USB
 
 /* Board extended module Drivers */
 
@@ -366,7 +373,6 @@
 
 #define DISP2_SUNXI
 #define SUNXI_DISP2_FB_DISABLE_ROTATE
-#define HAL_TEST_DISP
 
 /* LCD panels select */
 
@@ -394,6 +400,7 @@
 #define DETECT_CARD
 #define SDC_DMA_USED
 #define SDIO_IRQ_SUPPORT
+#define SD_TEST
 #define SDC_DMA_BUF_SIZE 64
 #define DRIVERS_SDC_CDPIN_PRESENT_VAL 0
 
@@ -418,6 +425,8 @@
 
 /* USB DEVICE */
 
+#define USB_DEVICE
+#define HAL_TEST_UDC
 #define USB_MANAGER
 
 /* CE Devices */

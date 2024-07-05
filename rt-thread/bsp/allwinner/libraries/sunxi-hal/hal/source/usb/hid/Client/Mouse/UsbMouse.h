@@ -24,7 +24,7 @@
 #ifndef  __USBMOUSE_H__
 #define  __USBMOUSE_H__
 #include "mod_usbhost.h"
-#include "drivers/sys_device.h"
+//#include "drivers/sys_device.h"
 
 #ifndef DATA_TYPE_X___hdle
 #define DATA_TYPE_X___hdle
@@ -68,7 +68,8 @@ typedef struct _usbMouse{
 
     /* Disk information */
     unsigned int used;                     /* 打开设备计数                    */
-    __dev_devop_t MouseOp;          /* 设备操作函数                   */
+    //__dev_devop_t MouseOp;          /* 设备操作函数                   */
+    struct rt_device MouseOp;
 
     /* Disk manager */
     USB_OS_HANDLE MouseParaHdle;    /* open时的句柄                     */

@@ -1759,7 +1759,12 @@ int32_t hal_udc_init(void)
         log_udc_err("open udc clk failed\n");
         return -1;
     }
+    /*
+    * As in system we dont have USB config, 
+    * and seems this configuration related to GPIO that not used, comment this function
+
     sunxi_udc_get_config_param();
+    */
     udc_init();
 
     return 0;

@@ -12,11 +12,13 @@ choice
         bool "Sipeed Lichee RV board"
         select LCD_SUPPORT_ST7701S_RGB
         select RGB_LCD_ST7001S
+        select ARCH_SUN20IW1
 
     config BSP_USING_CWP_DT_R01
         bool "ClockworkPi DevTerm R01 board"
         select LCD_SUPPORT_ICN9707_480x1280
         select MIPI_DSI_LCD_ICN9707
+        select ARCH_SUN20IW1
 
 endchoice
 
@@ -280,6 +282,10 @@ menuconfig BSP_USING_FS
 menuconfig BSP_USING_LCD
     bool "Enable LCD"
     select BSP_USING_PWM
+    default n
+
+menuconfig BSP_USING_USB
+    bool "Enable USB"
     default n
 
 menu "Board extended module Drivers"

@@ -1,5 +1,5 @@
 # Introduction
-This document describes changes in the code copmare of to the original repo.  
+This document describes changes in the code compare of to the original repo.  
 
 ## First of all was trying to compile RT-Thread for D1H platform:
 
@@ -28,7 +28,7 @@ board/board.c:45:5: error: unknown type name 'rt_mmu_info'
 
 ## Conclude that at the original repository [RT-Thread](https://github.com/RT-Thread/rt-thread) the compilation is not streamlined for D1H [issue 9063](https://github.com/RT-Thread/rt-thread/issues/9063).  
 So was performed fork from [v5.0.2](https://github.com/RT-Thread/rt-thread/releases/tag/v5.0.2) and introduced several changes to make it runnable in D1H. 
-- All rt-thread folders moved to sub-folder rt-thread, also created folders for boorloaders, debugger, etc..
+- All rt-thread folders moved to sub-folder rt-thread, also created folders for bootloaders, debugger, etc..
 - bsp/allwinner/d1s/ was taken as base to development and renamed to bsp/allwinner/d1s_d1h/
 - Other bsp was removed
 
@@ -43,7 +43,7 @@ Created own Makefile with build relevant bootloaders:
 - https://github.com/riscv-software-src/opensbi
 - https://github.com/smaeul/u-boot
 
-## Extend cvonfig to support simultaneously D1S and D1H SOC
+## Extend config to support simultaneously D1S and D1H SOC
 ```patch
 git diff f40e63c...16181b0 > diff.patch
 
@@ -96,7 +96,7 @@ index bc8986a8e..17f622d73 100644
 +CONFIG_UART0_TX_USING_GPIOB8=y
 +CONFIG_UART0_RX_USING_GPIOB9=y
 ```
-## Change UART boudrate in driver
+## Change UART baud rate in driver
 ```patch
 diff --git a/bsp/allwinner/libraries/drivers/drv_uart.c b/bsp/allwinner/libraries/drivers/drv_uart.c
 index 18956e5e8..7b7efb7c4 100644
@@ -112,7 +112,7 @@ index 18956e5e8..7b7efb7c4 100644
 ## Problem SD card
 
 After this changes board started and shown out to UART.
-But loading frosen after "card_detect insert" message:
+But loading frozen after "card_detect insert" message:
 ```
  \ | /
 - RT -     Thread Smart Operating System
@@ -125,7 +125,7 @@ Looks like is frozen on rt_thread_mdelay function by some reason in files
 - bsp/allwinner/libraries/drivers/sdmmc/drv_sdmmc.c
 - bsp/allwinner/libraries/sunxi-hal/include/hal/sdmmc/osal/RT-Thread/_os_time.h
 
-Chnage it to rt_hw_us_delay function:  
+Change it to rt_hw_us_delay function:  
 ```patch
 diff --git a/bsp/allwinner/libraries/drivers/sdmmc/drv_sdmmc.c b/bsp/allwinner/libraries/drivers/sdmmc/drv_sdmmc.c
 index 4b64354f8..f8bc5b204 100644
@@ -166,7 +166,7 @@ index c8aa75c44..9893e5e5c 100644
 -#define SDMMC_CARD_NR 2
 +#define SDMMC_CARD_NR 1 //replace original 2 to 1
 ```
-## Finnaly looks like works:
+## Finlay looks like works:
 ```
  \ | /
 - RT -     Thread Smart Operating System
@@ -193,7 +193,7 @@ msh />
 ```
 ## LCD Display driver
  
-In original repo LCD driver init as a application inside main function, in this case is impossible to debug it in GDB as is executed in RTT thread so change it to init as device that executed before sheduler start.
+In original repo LCD driver init as a application inside main function, in this case is impossible to debug it in GDB as is executed in RTT thread so change it to init as device that executed before scheduler start.
 ```patch
 git diff bde29ac...36594b5 rt-thread/ > diff.patch
 
@@ -379,7 +379,7 @@ index 079b6545f..90897c039 100644
  
  #endif
 ```
-## Add configs and makefiles for drivers:
+## Add configs and make-files for drivers:
 ```patch
 diff --git a/rt-thread/bsp/allwinner/libraries/drivers/Kconfig b/rt-thread/bsp/allwinner/libraries/drivers/Kconfig
 index 36cef4f2d..f489985a9 100644
@@ -716,7 +716,7 @@ Also confirmed by:
 
 https://github.com/smaeul/linux/blob/d1/all/arch/riscv/boot/dts/allwinner/sun20i-d1-devterm-v3.14.dts
 
-```yaml
+```json
 &dsi {
 	pinctrl-0 = <&dsi_4lane_pins>;
 	pinctrl-names = "default";
@@ -736,7 +736,7 @@ https://github.com/smaeul/linux/blob/d1/all/arch/riscv/boot/dts/allwinner/sun20i
 
 https://github.com/smaeul/linux/blob/d1/all/arch/riscv/boot/dts/allwinner/sun20i-d1-clockworkpi-v3.14.dts
 
-```yaml
+```json
 &i2c0 {
 	pinctrl-0 = <&i2c0_pb10_pins>;
 	pinctrl-names = "default";
@@ -820,8 +820,8 @@ REG 10H: DCDC1/2/3/4/5&ALDO1/2&DC5LDO Enable Set
 | :--- | :---		 	   | :---  		  | :--- |:---     |
 | 7    | ALDO2 Enable Set  | 0: Off 1: On | RW   | X 	   |
 | 6    | ALDO1 Enable Set  | 			  | RW   | X 	   |
-| 5    | DC DC5 Enable Set | 			  | RW   | X 	   |
-| 4    | DC DC4 Enable Set | 			  | RW   | X 	   |
+| 5    | DCDC5 Enable Set  | 			  | RW   | X 	   |
+| 4    | DCDC4 Enable Set  | 			  | RW   | X 	   |
 | 3    | DCDC3 Enable Set  | 			  | RW   | X 	   |
 | 2    | DCDC2 Enable Set  | 			  | RW   | X 	   |
 | 1    | DCDC1 Enable Set  | 			  | RW   | X 	   |
@@ -1032,203 +1032,48 @@ lcd_draw_point 100 100:
 
 ## Devterm Keyboard
 
-Keyboard chip STM32F103Rx => J502 - DM1/DP1 => GL850G (usb hub) => USB_DP/USB_DM => D1H USB1-DP/USB1-DM A8/B8 => USB2.0 HOST
+1) Connected: Keyboard chip STM32F103Rx => J502 - DM1/DP1 => GL850G (usb hub) => USB_DP/USB_DM => D1H USB1-DP/USB1-DM A8/B8 => USB2.0 HOST
+2) Powered:
+DCDC1 -> SYS_3V -> SYS_5V
+DLDO2 / DLDO3 / DLDO4 -> 3V3 -> TPS2553 -> VBUS -> J502 Keyboard
 
-```patch
-git diff 136cb9c...b254b70 rt-thread/ > diff.patch
+3) Enumiration not happen:
 
-diff --git a/rt-thread/bsp/allwinner/d1s_d1h/.config b/rt-thread/bsp/allwinner/d1s_d1h/.config
-index adb50af2f..409e01021 100644
---- a/rt-thread/bsp/allwinner/d1s_d1h/.config
-+++ b/rt-thread/bsp/allwinner/d1s_d1h/.config
-
-+CONFIG_DRIVERS_USB=y
-+CONFIG_USB_HOST=y
-+CONFIG_HAL_TEST_HCI=y
-+# CONFIG_USB_STORAGE is not set
-+# CONFIG_USB_CAMERA is not set
-+CONFIG_USB_HID=y
-+# CONFIG_USB_DEVICE is not set
-+CONFIG_USB_MANAGER=y
-  
-diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/SConscript b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/SConscript
-index 165cce4ac..70773b048 100644
---- a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/SConscript
-+++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/SConscript
-@@ -237,11 +237,74 @@ if GetDepend('DRIVERS_TWI'):
-     twi_src += ['source/twi/hal_twi.c']
-     twi_path += [cwd + '/source/twi']
- 
-+# USB udc
- udc_src = Split('''
- source/usb/platform/sun20iw1/usb_sun20iw1.c
-+source/usb/udc/hal_udc.c
-+''')
-+udc_path = [cwd + '/source/usb/udc']
-+udc_path += [cwd + '/source/usb/include']
-+
-+# USB host
-+host_src = Split('''
-+source/usb/include/usb_os_platform.c
-+source/usb/include/list_head_ext.c
-+source/usb/include/usb_gen_dev_mod.c
-+source/usb/include/usb_drv_dev_macth.c
-+source/usb/include/usb_utils_find_zero_bit.c
-+source/usb/platform/sun20iw1/usb_sun20iw1.c
-+source/usb/core/usb_virt_bus.c
-+source/usb/core/usb_msg_base.c
-+source/usb/core/usb_msg.c
-+source/usb/core/usb_gen_hub_base.c
-+source/usb/core/usb_gen_hub.c
-+source/usb/core/usb_gen_hcd_rh.c
-+source/usb/core/usb_gen_hcd.c
-+source/usb/core/usb_core_interface.c
-+source/usb/core/usb_core_init.c
-+source/usb/core/usb_core_config.c
-+source/usb/core/usb_core_base.c	
-+source/usb/core/usb_driver_init.c
-+source/usb/core/urb.c
-+source/usb/host/ehci-hcd.c
-+source/usb/host/sunxi-hci.c
-+source/usb/host/ehci-sunxi.c
-+source/usb/host/hal_hci.c
-+source/usb/hid/Client/KeyBoard/KeyBoard.c
-+source/usb/hid/Client/misc_lib.c
-+source/usb/hid/Class/Hid.c
-+source/usb/hid/Class/HidProtocol.c
-+source/usb/hid/Class/HidTransport.c
-+source/usb/manager/usb_manager.c
-+source/usb/manager/usb_msg_center.c
-+source/usb/manager/usb_hw_scan.c
-+''')
-+#source/usb/hid/Client/Mouse/UsbMouse.c
-+#source/usb/hid/Client/Mouse/UsbMouse_DriftControl.c
-+
-+#source/usb/storage/Class/mscProtocol.c
-+#source/usb/storage/Class/mscTransport.c
-+#source/usb/storage/Class/mscTransport_i.c
-+#source/usb/storage/Class/usb_msc.c
-+#source/usb/storage/Disk/BlkDev.c
-+#source/usb/storage/Disk/CD.c
-+#source/usb/storage/Disk/Disk.c
-+#source/usb/storage/Disk/LunMgr.c
-+#source/usb/storage/Disk/Scsi2.c
-+#source/usb/storage/Misc/usbh_buff_manager.c
-+#source/usb/storage/Misc/usbh_disk_info.c
-+#source/usb/storage/Misc/usbh_disk_remove_time.c
-+
-+
-+host_test_src = Split('''
-+test/usb/host/test_hci.c
-+test/usb/host/hci_ed_test.c
- ''')
--# source/usb/udc/hal_udc.c
--udc_path = [cwd + '/source/usb/udc', cwd + '/source/usb/include']
-+
-+host_path =  [cwd + '/source/usb/include']
-+host_path += [cwd + '/source/usb/core']
-+host_path += [cwd + '/source/usb/storage/include']
-+host_path += [cwd + '/source/usb/hid/Include']
- 
- ce_src = Split('''
- source/ce/ce_common.c
-@@ -314,6 +377,10 @@ if GetDepend('DRIVERS_USB'):
-     if GetDepend('USB_DEVICE'):
-         src += udc_src
-         CPPPATH += udc_path
-+    if GetDepend('USB_HOST'):
-+        src += host_src + host_test_src
-+        CPPPATH += host_path
-+
- 
- if GetDepend('DRIVERS_CE'):
-     src += ce_src
-diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/kconfig.h b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/kconfig.h
-index 971fa38b0..981b99c95 100644
---- a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/kconfig.h
-+++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/kconfig.h
-@@ -61,7 +61,7 @@
--#define CONFIG_USB_STORAGE 1
-+//#define CONFIG_USB_STORAGE 1
--#define CONFIG_USB_DEVICE 1
-+//#define CONFIG_USB_DEVICE 1
-+#define CONFIG_USB_HID 1
-
-diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/test/usb/host/hci_ed_test.c b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/test/usb/host/hci_ed_test.c
-index 75a24ac3c..f7963f603 100644
---- a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/test/usb/host/hci_ed_test.c
-+++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/test/usb/host/hci_ed_test.c
-@@ -40,7 +40,8 @@ static int cmd_hal_hci_ed_test(int argc, const char **argv)
-     return 0;
- 
- }
--FINSH_FUNCTION_EXPORT_CMD(cmd_hal_hci_ed_test, __cmd_hci_ed_test, hci hal ed tests)
-+MSH_CMD_EXPORT_ALIAS(cmd_hal_hci_ed_test, cmd_hal_hci_ed_test, cmd_hal_hci_ed_test);
-+//FINSH_FUNCTION_EXPORT_CMD(cmd_hal_hci_ed_test, __cmd_hci_ed_test, hci hal ed tests)
- 
- static void show_hci_dl_adjust(void)
- {
-@@ -77,5 +78,6 @@ static int cmd_hci_dl_adjust(int argc, const char **argv)
-     return 0;
- 
- }
--FINSH_FUNCTION_EXPORT_CMD(cmd_hci_dl_adjust, __cmd_hci_dl_adjust, hci driver level adjust)
-+MSH_CMD_EXPORT_ALIAS(cmd_hci_dl_adjust, cmd_hci_dl_adjust, cmd_hci_dl_adjust);
-+//FINSH_FUNCTION_EXPORT_CMD(cmd_hci_dl_adjust, __cmd_hci_dl_adjust, hci driver level adjust)
- 
-diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/test/usb/host/test_hci.c b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/test/usb/host/test_hci.c
-index 5895036aa..61ae2a3b4 100644
---- a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/test/usb/host/test_hci.c
-+++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/test/usb/host/test_hci.c
-@@ -17,8 +17,8 @@ static int cmd_test_hci(int argc, const char **argv)
- 
-     return 0;
- }
--
--FINSH_FUNCTION_EXPORT_CMD(cmd_test_hci, hal_hci, hci hal APIs tests)
-+MSH_CMD_EXPORT_ALIAS(cmd_test_hci, cmd_test_hci, cmd_test_hci);
-+//FINSH_FUNCTION_EXPORT_CMD(cmd_test_hci, hal_hci, hci hal APIs tests)
- 
- static int cmd_test_hci_rm(int argc, const char **argv)
- {
-@@ -30,5 +30,5 @@ static int cmd_test_hci_rm(int argc, const char **argv)
- 
-     return 0;
- }
--
--FINSH_FUNCTION_EXPORT_CMD(cmd_test_hci_rm, hal_hci_rm, hci hal APIs tests)
-+MSH_CMD_EXPORT_ALIAS(cmd_test_hci_rm, cmd_test_hci_rm, cmd_test_hci_rm);
-+//FINSH_FUNCTION_EXPORT_CMD(cmd_test_hci_rm, hal_hci_rm, hci hal APIs tests)
-
-diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/include/hal/sunxi_hal_common.h b/rt-thread/bsp/allwinner/libraries/sunxi-hal/include/hal/sunxi_hal_common.h
-index ab2d8ad10..d6cad7f7f 100644
---- a/rt-thread/bsp/allwinner/libraries/sunxi-hal/include/hal/sunxi_hal_common.h
-+++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/include/hal/sunxi_hal_common.h
-@@ -32,6 +32,26 @@ extern "C"
- #include <stdio.h>
- #include <kconfig.h>
- 
-+/* 
-+ * Add missing functions for usb hal
-+ */
-+
-+#if (defined(__GNUC__) && (__GNUC__ >= 3))
-+#define likely(expr)	(__builtin_expect(!!(expr), 1))
-+#define unlikely(expr)	(__builtin_expect(!!(expr), 0))
-+#else
-+#define likely(expr)	(!!(expr))
-+#define unlikely(expr)	(!!(expr))
-+#endif
-+
-+#define ERR_PTR(err)    ((void *)((long)(err)))
-+#define PTR_ERR(ptr)    ((long)(ptr))
-+#define IS_ERR(ptr)     ((unsigned long)(ptr) > (unsigned long)(-1000))
-+/* 
-+ * End add missing functions for usb hal
-+ */
-+
-+
- #undef min
- #undef max
- #define min(a, b)  ((a) < (b) ? (a) : (b))
+All threads in suspend state
 ```
+hub-status-thread  suspend EINTRPT
+hub-status-thread  suspend EINTRPT
+hub-main-thread    suspend EINTRPT
+```
+
+components/
+
+LOG_D("start enumnation");
+    v
+usbhost_core = rt_usbh_attatch_instance
+	v
+hub = rt_usbh_hub_port_change
+	v
+rt_usbh_hub_irq / rt_usbh_hub_thread_entry < USB_MSG_CONNECT_CHANGE
+							v
+				hub = rt_usbh_hub_init
+							v
+				usbhost = rt_usb_host_init
+							v
+						   test
+
+USB_MSG_CONNECT_CHANGE
+	v
+rt_usbh_root_hub_connect_handler
+
+
+/home/yury/toolchain/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin/riscv64-unknown-linux-musl-addr2line -e rt-thread/bsp/allwinner/d1s_d1h/rtthread.elf -a -f 0x00000000404434d0 0x000000004044359c 0x000000004047d970 0x000000004046ce20 0x000000004046c8d2 0x0000000040449bb8
+
+
+https://github.com/smaeul/linux/blob/d1/all/arch/riscv/boot/dts/allwinner/sun20i-d1.dtsi
+
+
+
+- compare usb drivers with Melis
+- try tinyUSB
+- i2c thread seems also suspended with EINTRPT, need to check driver 

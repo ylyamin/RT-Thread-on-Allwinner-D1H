@@ -5,7 +5,7 @@ Executed at hardware such as [ClockworkPi DevTerm R01](https://www.clockworkpi.c
 
 The intention is to easily run peripherals in D1, exactly Display. RT-Thread OS was chosen because it looks like has the most extensive HAL layer for D1, similar to the [Linux kernel](https://github.com/cuu/last_linux-5.4/tree/master/drivers/video/fbdev/sunxi/) but not so overcomplicated.
 
-At the original repository [RT-Thread](https://github.com/RT-Thread/rt-thread) the compilation is not streamlined for D1H [issue 9063](https://github.com/RT-Thread/rt-thread/issues/9063). So was performed fork from [v5.0.2](https://github.com/RT-Thread/rt-thread/releases/tag/v5.0.2) and introduced several changes to make it runnable in D1H. Added also bootloaders, compiler, debugger, build system.
+At the original repository [RT-Thread](https://github.com/RT-Thread/rt-thread) the compilation is not streamlined for D1H [issue 9063](https://github.com/RT-Thread/rt-thread/issues/9063), [forum question](https://club.rt-thread.io/ask/question/183.html). So was performed fork from [v5.0.2](https://github.com/RT-Thread/rt-thread/releases/tag/v5.0.2) and introduced several changes to make it runnable in D1H. Added also bootloaders, compiler, debugger, build system.
 
 Introduced code changes described in [Code_changes](documentation/Code_changes.md) document.
 
@@ -15,10 +15,10 @@ RT-Thread could run in ClockworkPi DevTerm R01 and manage MIPI DSI LCD Display
 
 ![devterm_lcd_mipi_work.jpg](documentation/devterm_lcd_mipi_work.jpg)
 
-Aslso could run in Sipeed Lichee RV and manage RGB LCD Display [lichee_lcd_rgb_work](documentation/lichee_lcd_rgb_work.jpg)
+Also could run in Sipeed Lichee RV and manage RGB LCD Display [lichee_lcd_rgb_work](documentation/lichee_lcd_rgb_work.jpg)
 
 # Installation
-In repository exist prebuilded images for SD card in folder [image](image), need to flash it to SD card and install to device.
+In repository exist pre-builded images for SD card in folder [image](image), need to flash it to SD card and install to device.
 - For ClockworkPi DevTerm R01 board please use [image/sd_image_devterm.img](image/sd_image_devterm.img)
 - For Sipeed Lichee RV board please use [image/sd_image_lichee.img](image/sd_image_lichee.img)
 
@@ -37,7 +37,7 @@ sudo dd if=image/sd_image_lichee.img of=/dev/sdb bs=512 seek=16 conv=sync
 *where /dev/sdb - your SD card device
 
 # Run
-Configyre UART adapter to 115200 baudrate, 8N1. And connect to UART pins as shown in [Hardware section](#hardware).    
+Configure UART adapter to 115200 baud rate, 8N1. And connect to UART pins as shown in [Hardware section](#hardware).    
 
 Insert flashed SD card to device and power on, should see at the end of output like this:
 ```
@@ -102,7 +102,7 @@ RT-Thread-on-Allwinner-D1H
     └── README.md
 ```
 ## Environment
-Tested on Ubuntu 22.04.3 64x. On machine need to be installed make enviroment:
+Tested on Ubuntu 22.04.3 64x. On machine need to be installed make environment:
 ```sh
 sudo apt install git make build-essential scons libusb-1.0-0-dev libncurses5-dev
 ```
@@ -114,7 +114,7 @@ Then execute due each session:
 ```sh
  source ./environment.sh
 ```
-### Enviroment setup with virtual machine
+### Environment setup with virtual machine
 In my case I was use Windows 10 64x as a host with IDE VSCode and Ubuntu 22.04.3 64x virtual machine as a guest for compilation.   
 Repo was downloaded to a shared folder in Windows mounted in Ubuntu, /etc/fstab example
 ```sh
@@ -135,7 +135,7 @@ make toolchain
 Will be installed:
 - riscv64-linux-musleabi_for_x86_64-pc-linux-gnu (Used by RT-Thread compilation)
 - riscv64-glibc-gcc-thead_20200702 (Need for using GDB)
-- T-HEAD_DebugServer (Need for using JTAG connetion)
+- T-HEAD_DebugServer (Need for using JTAG connection)
 
 ## Build bootloaders
 To compile bootloaders use command
@@ -144,7 +144,7 @@ make bootloaders
 ```
 Will be installed:
 - sun20i_d1_spl (first bootloader after BROM, used for init DRAM and load TOC image from MMC)
-- u-boot (could used to load Linux image but now just tool to creat TOC image)
+- u-boot (could used to load Linux image but now just tool to create TOC image)
 - opensbi (Supervisor Binary Interface for platform in M mode)
 - xfel (used for debug when platform in FEL mode)
 
@@ -174,14 +174,14 @@ make sd_burn
 ```
 
 ## Debugging
-For debbugging used Sipeed RV-Debuggr Plus with [T-Head CKLink firmware](https://github.com/bouffalolab/bouffalo_sdk/tree/master/tools/cklink_firmware).   
-To connect debugger to board need use MicroSD brakout board because in D1H JTAG pins mapped to SD Card [pins](https://linux-sunxi.org/JTAG) as shown in [Hardware section](#hardware).  
+For debugging used Sipeed RV-Debugger Plus with [T-Head CKLink firmware](https://github.com/bouffalolab/bouffalo_sdk/tree/master/tools/cklink_firmware).   
+To connect debugger to board need use MicroSD breakout board because in D1H JTAG pins mapped to SD Card [pins](https://linux-sunxi.org/JTAG) as shown in [Hardware section](#hardware).  
 
-For flash firmware to Sipeed RV-Debuggr Plus - Press and hold the boot pin then plug the usb in the computer to go to the boot mode. And execte command:
+For flash firmware to Sipeed RV-Debugger Plus - Press and hold the boot pin then plug the usb in the computer to go to the boot mode. And execute command:
 ```sh
 make debug-burn
 ```
-To start GDB session need to use FEL button but surprisedly this works even without it somehow just after power up. Anyway in device that have FEL button (Sipeed Lichee RV) - press and hold the FEL button then press RESET button to go to the FEL mode, then execte command or just execute command (for Clockwork Devterm):
+To start GDB session need to use FEL button but surprisingly this works even without it somehow just after power up. Anyway in device that have FEL button (Sipeed Lichee RV) - press and hold the FEL button then press RESET button to go to the FEL mode, then execute command or just execute command (for Clockwork Devterm):
 ```sh
 make debug
 ```
@@ -213,18 +213,18 @@ Restoring binary file rt-thread/bsp/allwinner/d1s_d1h/rtthread.bin into memory (
 - Lichee RV Dock extension LCD adapter board
 - 4.3 RGB LCD Display (043026-N6(ML)) with IC ST7001s (SPI)
 - FTDI 2248-c USB/UART adapter
-- Sipeed RV-Debuggr Plus
+- Sipeed RV-Debugger Plus
 - MicroSD_Sniffer
 
 ### ClockworkPi DevTerm R01 assembly
-![Devterm_R01_assembly](documentation/Devterm_R01_assembly.png)
+![Devterm_R01_assembly](documentation/Devterm_R01_assembly.jpg)
 
-I figureout that integrated UART work very unstable. Acording [discussion](https://forum.clockworkpi.com/t/devterm-r-01-ext-board-uart-is-read-only/8704)
+I figure out that integrated UART work very unstable. According [discussion](https://forum.clockworkpi.com/t/devterm-r-01-ext-board-uart-is-read-only/8704)
 "The problem is that the CH340C provides 5 V logic levels, whereas the D1 only supports 3.3 V I/O...A better solution would be to solder wires to pins 2 and 3 of the CH340C and use a different USB-UART adapter that runs at the correct voltage." So I do this:
-![Devterm_R01_uart](documentation/Devterm_R01_uart.png)
+![Devterm_R01_uart](documentation/Devterm_R01_uart.jpg)
 
 ### Sipeed Lichee RV assembly
-![Lichee_RV_assembly](documentation/Lichee_RV_assembly.png)
+![Lichee_RV_assembly](documentation/Lichee_RV_assembly.jpg)
 
 ## Links
 - https://linux-sunxi.org/Allwinner_Nezha  

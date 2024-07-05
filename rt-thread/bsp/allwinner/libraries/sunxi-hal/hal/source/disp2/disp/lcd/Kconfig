@@ -24,7 +24,7 @@ config LCD_SUPPORT_FD055HD003S
 
 config LCD_SUPPORT_HE0801A068
     bool "LCD support he0801a068 panel"
-    default y
+    default n
     ---help---
         If you want to support he0801a068 panel for display driver, select it.
 
@@ -116,7 +116,6 @@ config LCD_SUPPORT_ST7701S
 
 config LCD_SUPPORT_ST7701S_RGB
     bool "LCD support ST7701S RGB panel"
-    depends on BSP_USING_SIPEED_LICHEE_RV
     default n
     ---help---
         If you want to support ST7701S RGB panel for display driver, select it.
@@ -147,19 +146,19 @@ config LCD_SUPPORT_S2003T46G
 
 config LCD_SUPPORT_WILLIAMLCD
     bool "LCD support WilliamLcd panel"
-    default y
+    default n
     ---help---
         If you want to support WilliamLcd panel for display driver, select it.
 
 config LCD_SUPPORT_LQ101R1SX03
     bool "LCD support lq101r1sx03 panel"
-    default y
+    default n
     ---help---
         If you want to support lq101r1sx03 panel for display driver, select it.
 
 config LCD_SUPPORT_INET_DSI_PANEL
     bool "LCD support inet_dsi_panel panel"
-    default y
+    default n
     ---help---
         If you want to support inet_dsi_panel panel for display driver, select it.
 
@@ -188,7 +187,6 @@ config LCD_SUPPORT_VVX07H005A10
 
 config LCD_SUPPORT_ICN9707_480x1280
     bool "LCD support ICN9707_480x1280 panel"
-    depends on BSP_USING_CWP_DT_R01
     default n
     ---help---
         If you want to support ICN9707_480x1280 panel for display driver, select it.

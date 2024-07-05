@@ -25,7 +25,7 @@ void rt_hw_backtrace(rt_uint32_t *ffp, rt_ubase_t sepc)
     rt_ubase_t vas, vae;
     int i, j;
 
-    rt_kprintf("riscv64-unknown-linux-musl-addr2line -e %s -a -f", _get_elf_name(sepc));
+    rt_kprintf("$TOOLCHAIN_INSTALL_DIR/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin/riscv64-unknown-linux-musl-addr2line -e rt-thread/bsp/allwinner/d1s_d1h/%s -a -f", _get_elf_name(sepc));
 
     fp = (rt_ubase_t *)ffp;
 

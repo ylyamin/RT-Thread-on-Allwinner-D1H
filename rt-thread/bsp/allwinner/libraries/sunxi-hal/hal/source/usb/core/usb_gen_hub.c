@@ -1513,7 +1513,12 @@ static int config_descriptors_changed(struct usb_host_virt_dev *udev)
 static void hub_post_reset(struct usb_hub *hub)
 {
     hub_activate(hub);
-    hub_power_on(hub);
+/*
+ * firmware stuck by some reason in hub_power_on() function. 
+ * In Devterm power provided separetly from axp228
+ * comment this funtion
+ */
+    // hub_power_on(hub);
 }
 
 /*
@@ -1760,7 +1765,12 @@ static void hub_events(u32 flag)
             {
                 hal_log_err("over-current change on port %d", i);
                 clear_port_feature(hdev, i, USB_PORT_FEAT_C_OVER_CURRENT);
-                hub_power_on(hub);
+/*
+ * firmware stuck by some reason in hub_power_on() function. 
+ * In Devterm power provided separetly from axp228
+ * comment this funtion
+ */
+                //hub_power_on(hub);
             }
 
             if (portchange & USB_PORT_STAT_C_RESET)
@@ -1810,7 +1820,12 @@ static void hub_events(u32 flag)
                 hal_msleep(50);  /* Cool down */
 #endif
                 clear_hub_feature(hdev, C_HUB_OVER_CURRENT);
-                hub_power_on(hub);
+/*
+ * firmware stuck by some reason in hub_power_on() function. 
+ * In Devterm power provided separetly from axp228
+ * comment this funtion
+ */
+                //!hub_power_on(hub);
             }
         }
 
@@ -2028,8 +2043,13 @@ re_enumerate:
  * USB_STATE_NOTATTACHED then all of udev's descendants' states are also set
  * to USB_STATE_NOTATTACHED.
  */
+#ifdef RT_USING_USB 
+void usb_set_device_state(struct usb_host_virt_dev *udev,
+                          udevice_state_t new_state)
+#else
 void usb_set_device_state(struct usb_host_virt_dev *udev,
                           enum usb_device_state new_state)
+#endif
 {
     uint32_t flags;
     //USB_OS_ENTER_CRITICAL(flags);
@@ -2689,8 +2709,14 @@ static int _hub_config(struct usb_hub *hub, struct usb_endpoint_descriptor *endp
     {
         hub->indicator [0] = INDICATOR_CYCLE;
     }
+/*
+ * firmware stuck by some reason in hub_power_on() function. 
+ * In Devterm power provided separetly from axp228
+ * comment this funtion
+
 
     hub_power_on(hub);
+*/
     hal_log_info("_hub_config--15--");
     //--<6>--发送get status的urb
     hub_activate(hub);

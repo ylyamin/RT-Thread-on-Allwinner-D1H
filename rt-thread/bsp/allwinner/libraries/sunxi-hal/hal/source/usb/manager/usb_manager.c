@@ -185,6 +185,9 @@ static __s32 usb_script_parse(usb_cfg_t *cfg)
     user_gpio_set_t gpio_set = {0};
 
     /* usbc enable */
+/*
+ * As in system we dont have USB config, override all values
+
     ret = Hal_Cfg_GetKeyValue(SET_USB0, KEY_USB_ENABLE, (int32_t *)&value, 1);
     Usb_Manager_INFO("value:%d, ret:%d\n", value, ret);
     if (ret)
@@ -192,36 +195,47 @@ static __s32 usb_script_parse(usb_cfg_t *cfg)
         Usb_Manager_Err("script_parser_fetch %s %s fail \n", SET_USB0, KEY_USB_ENABLE);
         cfg->port.enable = 0;
         return -1;
-    }
-    cfg->port.enable = value;
-    if (cfg->port.enable == 0)
+    }   
+*/
+    cfg->port.enable = 1; //value;
+
+/*
+     if (cfg->port.enable == 0)
     {
         Usb_Manager_INFO("%s not used!\n", SET_USB0);
         return -1;
-    }
+    } 
+*/
     /* usbc port type */
+/*     
+    
     ret = Hal_Cfg_GetKeyValue(SET_USB0, KEY_USB_PORT_TYPE, (int32_t *)&value, 1);
     Usb_Manager_INFO("port_type:%d, ret:%d\n", value, ret);
     if (ret)
     {
         Usb_Manager_Err("script_parser_fetch %s %s fail \n", SET_USB0, KEY_USB_PORT_TYPE);
         return -1;
-    }
-    cfg->port.port_type = value;
+    } 
+*/
+    cfg->port.port_type = USB_PORT_TYPE_HOST; //value;
+/* 
     if (cfg->port.port_type != USB_PORT_TYPE_OTG)
     {
         Usb_Manager_INFO("%s cfg->port.port_type:%d!\n", SET_USB0, cfg->port.port_type);
         return 0;
-    }
+    }    
+*/
     /* usbc det mode */
-    ret = Hal_Cfg_GetKeyValue(SET_USB0, KEY_USB_DET_TYPE, (int32_t *)&value, 1);
+/*
+     ret = Hal_Cfg_GetKeyValue(SET_USB0, KEY_USB_DET_TYPE, (int32_t *)&value, 1);
     Usb_Manager_Debug("detect_type:%d, ret:%d\n", value, ret);
     if (ret)
     {
         Usb_Manager_Err("script_parser_fetch %s %s fail \n", SET_USB0, KEY_USB_DET_TYPE);
         return -1;
     }
-    cfg->port.detect_type = value;
+ */
+    cfg->port.detect_type = USB_DETECT_TYPE_DP_DM;//value;
 
     if (cfg->port.detect_type == USB_DETECT_TYPE_VBUS_ID)
     {

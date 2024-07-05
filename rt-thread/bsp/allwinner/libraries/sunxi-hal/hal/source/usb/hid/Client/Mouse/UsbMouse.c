@@ -33,6 +33,8 @@
 #include "HidFunDrv.h"
 #include "UsbMouse.h"
 #include "UsbMouse_DriftControl.h"
+#include <sunxi_hal_common.h>
+
 
 //---------------------------------------------------------
 //   函数定义区
@@ -277,7 +279,7 @@ static int32_t usbMouseIoctl(USB_OS_HANDLE hDev, uint32_t Cmd, long Aux, void *p
         break;
 
         case USBH_HID_USER_CTRL_CMD_REG:
-            usbMouse->CallBack = (USBHMouse_CallBack)esKRNL_GetCallBack((__pCBK_t)(pBuffer));
+            //usbMouse->CallBack = (USBHMouse_CallBack)esKRNL_GetCallBack((__pCBK_t)(pBuffer));
             if(usbMouse->CallBack == NULL){
                 hal_log_err("ERR: usb mouse CallBack is NULL\n");
                 return EPDK_FAIL;
@@ -726,11 +728,11 @@ int usbMouseProbe(HidDev_t *HidDev)
               usbMouse->DataDef.Wheel.BitOffset, usbMouse->DataDef.Wheel.BitCount);
 
     /* init device operation function */
-    usbMouse->MouseOp.Open  = usbMouseOpen;
-    usbMouse->MouseOp.Close = usbMouseClose;
-    usbMouse->MouseOp.Read  = usbMouseRead;
-    usbMouse->MouseOp.Write = usbMouseWrite;
-    usbMouse->MouseOp.Ioctl = usbMouseIoctl;
+    usbMouse->MouseOp.open  = usbMouseOpen;
+    usbMouse->MouseOp.close = usbMouseClose;
+    usbMouse->MouseOp.read  = usbMouseRead;
+    usbMouse->MouseOp.write = usbMouseWrite;
+    usbMouse->MouseOp.control = usbMouseIoctl;
 
     /* init hid request */
     usbMouse->HidReq.HidDev = HidDev;
@@ -762,10 +764,10 @@ int usbMouseProbe(HidDev_t *HidDev)
     usbMouse->MouseThdId = kthread_create((void *)usbMouseThread,
                                             (void *)usbMouse,
                                             "usbMouseThread");
-    if(usbMouse->MouseThdId == OS_NO_ERR){
+/*     if(usbMouse->MouseThdId == OS_NO_ERR){
         hal_log_err("ERR: create usbMouseThd failed\n");
         goto error3;
-    }
+    } */
 
     hal_sem_wait(usbMouse->notify_complete);
 
@@ -793,10 +795,10 @@ int usbMouseProbe(HidDev_t *HidDev)
     }
 
     /* 向系统注册Hid设备 */
-    usbMouse->MouseRegHdle = esDEV_DevReg((const char *)usbMouse->ClassName,
+/*     usbMouse->MouseRegHdle = esDEV_DevReg((const char *)usbMouse->ClassName,
                                             (const char *)usbMouse->DevName,
                                             &(usbMouse->MouseOp),
-                                            (void *)usbMouse);
+                                            (void *)usbMouse); */
     if(usbMouse->MouseRegHdle == NULL){
         hal_log_err("ERR: Mouse USB_OS_DEV_REG failed\n");
         goto error4;
@@ -812,7 +814,7 @@ int usbMouseProbe(HidDev_t *HidDev)
     hal_log_info("\n");
 
     /* Notice: 由于新的设备上来以后，系统的设备管理告知应用程序，因此只能由驱动告知应用程序 */
-    esKSRV_SendMsg(KMSG_USR_SYSTEM_MOUSE_PLUGIN, KMSG_PRIO_HIGH);
+    //esKSRV_SendMsg(KMSG_USR_SYSTEM_MOUSE_PLUGIN, KMSG_PRIO_HIGH);
 
 #ifdef USBH_HID_MOUSE_TEST
     usbMouse->StopWork       = 0;
@@ -877,7 +879,7 @@ int usbMouseRemove(HidDev_t * HidDev)
         return USB_ERR_BAD_ARGUMENTS;
     }
 
-    esKSRV_SendMsg(KMSG_USR_SYSTEM_MOUSE_PLUGOUT, KMSG_PRIO_HIGH);
+    //esKSRV_SendMsg(KMSG_USR_SYSTEM_MOUSE_PLUGOUT, KMSG_PRIO_HIGH);
 
     usbMouse_StopWork(usbMouse);
 
@@ -892,7 +894,7 @@ int usbMouseRemove(HidDev_t * HidDev)
 
     /* unregist device */
     if(usbMouse->MouseRegHdle){
-        esDEV_DevUnreg(usbMouse->MouseRegHdle);
+        //esDEV_DevUnreg(usbMouse->MouseRegHdle);
     }
 
     /* kill thread */
