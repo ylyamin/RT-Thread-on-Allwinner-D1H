@@ -30,6 +30,7 @@ static void insmod_host_driver(struct usb_msg_center_info *center_info)
     Usb_Manager_INFO("\n");
     set_usb_role(center_info, USB_ROLE_HOST);
     hal_usb_hcd_init(0);
+    hal_usb_hcd_init(1);
 }
 
 static void rmmod_host_driver(struct usb_msg_center_info *center_info)

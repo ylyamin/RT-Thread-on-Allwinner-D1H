@@ -36,6 +36,7 @@ static void *c906_irq_priority[INTERRUPTS_MAX] = {RT_NULL};
 
 rt_inline void plic_irq_toggle(int hwirq, int enable)
 {
+    rt_kprintf("plic_irq_toggle irq:%d,enable:%d\n",hwirq,enable);
     int cpu = 0;
     void *priority_addr;
 

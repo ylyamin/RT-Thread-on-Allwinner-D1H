@@ -247,7 +247,7 @@ According https://github.com/xboot/xboot/blob/master/src/arch/riscv64/mach-liche
 +++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/soc/RGB_LCD_ST7001s.c
 ```
 #### According this image:   
-![display_pinout](Sipeed_Lichee_RV\20181022143917_27009.jpg)
+![display_pinout](Sipeed_Lichee_RV/20181022143917_27009.jpg)
 
 #### Pinout for 4.3 RGB LCD Display:
 
@@ -1868,10 +1868,164 @@ USB_MSG_CONNECT_CHANGE
 rt_usbh_root_hub_connect_handler
 ```
 
-/home/yury/toolchain/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin/riscv64-unknown-linux-musl-addr2line -e rt-thread/bsp/allwinner/d1s_d1h/rtthread.elf -a -f 0x00000000404434d0 0x000000004044359c 0x000000004047d970 0x000000004046ce20 0x000000004046c8d2 0x0000000040449bb8
+hal_usb_core_init() -> usb_gen_hub_init() -> 
+
+     1) __usb_gen_hub_thread_init
+     thread_cont->hub_thread_event = hal_sem_create(1);
+     thread_cont->hub_thread_complete = hal_sem_create(0);
+
+     2) kthread_create 
+     3) kthread_start -> hub_main_thread() -> hub_thread_sleep() - hal_sem_wait(thread_cont->hub_thread_event)
+
+
+hal_usb_hci_init() -> sunxi_ehci_hcd_init() -> sunxi_insmod_ehci()
+
+
+
+core:
+     usb_virt_bus.o
+	usb_msg_base.o		
+	usb_msg.o		
+	usb_gen_hub_base.o	
+	usb_gen_hub.o		
+	usb_gen_hcd_rh.o	
+	usb_gen_hcd.o		
+	usb_core_interface.o	
+->   usb_core_init.o		
+	usb_core_config.o	
+	usb_core_base.o	
+	usb_driver_init.o	
+	urb.o
+
+host:
+     ehci-hcd.o
+     sunxi-hci.o
+->   ehci-sunxi.o
+     hal_hci.o
+
+
+
+
+
+
+
+
+
+
+
 
 https://github.com/smaeul/linux/blob/d1/all/arch/riscv/boot/dts/allwinner/sun20i-d1.dtsi
 
+```yaml
+		usb_otg: usb@4100000 {
+			compatible = "allwinner,sun20i-d1-musb",
+				     "allwinner,sun8i-a33-musb";
+			reg = <0x4100000 0x400>;
+			interrupts = <45 IRQ_TYPE_LEVEL_HIGH>;
+			interrupt-names = "mc";
+			clocks = <&ccu CLK_BUS_OTG>;
+			resets = <&ccu RST_BUS_OTG>;
+			extcon = <&usbphy 0>;
+			phys = <&usbphy 0>;
+			phy-names = "usb";
+			status = "disabled";
+		};
+
+		usbphy: phy@4100400 {
+			compatible = "allwinner,sun20i-d1-usb-phy";
+			reg = <0x4100400 0x100>,
+			      <0x4101800 0x100>,
+			      <0x4200800 0x100>;
+			reg-names = "phy_ctrl",
+				    "pmu0",
+				    "pmu1";
+			clocks = <&osc24M>,
+				 <&osc24M>;
+			clock-names = "usb0_phy",
+				      "usb1_phy";
+			resets = <&ccu RST_USB_PHY0>,
+				 <&ccu RST_USB_PHY1>;
+			reset-names = "usb0_reset",
+				      "usb1_reset";
+			status = "disabled";
+			#phy-cells = <1>;
+		};
+
+		ehci0: usb@4101000 {
+			compatible = "allwinner,sun20i-d1-ehci",
+				     "generic-ehci";
+			reg = <0x4101000 0x100>;
+			interrupts = <46 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&ccu CLK_BUS_OHCI0>,
+				 <&ccu CLK_BUS_EHCI0>,
+				 <&ccu CLK_USB_OHCI0>;
+			resets = <&ccu RST_BUS_OHCI0>,
+				 <&ccu RST_BUS_EHCI0>;
+			phys = <&usbphy 0>;
+			phy-names = "usb";
+			status = "disabled";
+		};
+
+		ohci0: usb@4101400 {
+			compatible = "allwinner,sun20i-d1-ohci",
+				     "generic-ohci";
+			reg = <0x4101400 0x100>;
+			interrupts = <47 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&ccu CLK_BUS_OHCI0>,
+				 <&ccu CLK_USB_OHCI0>;
+			resets = <&ccu RST_BUS_OHCI0>;
+			phys = <&usbphy 0>;
+			phy-names = "usb";
+			status = "disabled";
+		};
+
+		ehci1: usb@4200000 {
+			compatible = "allwinner,sun20i-d1-ehci",
+				     "generic-ehci";
+			reg = <0x4200000 0x100>;
+			interrupts = <49 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&ccu CLK_BUS_OHCI1>,
+				 <&ccu CLK_BUS_EHCI1>,
+				 <&ccu CLK_USB_OHCI1>;
+			resets = <&ccu RST_BUS_OHCI1>,
+				 <&ccu RST_BUS_EHCI1>;
+			phys = <&usbphy 1>;
+			phy-names = "usb";
+			status = "disabled";
+		};
+
+		ohci1: usb@4200400 {
+			compatible = "allwinner,sun20i-d1-ohci",
+				     "generic-ohci";
+			reg = <0x4200400 0x100>;
+			interrupts = <50 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&ccu CLK_BUS_OHCI1>,
+				 <&ccu CLK_USB_OHCI1>;
+			resets = <&ccu RST_BUS_OHCI1>;
+			phys = <&usbphy 1>;
+			phy-names = "usb";
+			status = "disabled";
+		};
+```
+
+D1s_melis 1.0.0
+- rund hub connect then disconnect
+
+D1s_melis
+- not started with new/old spl
+
+
+
+
+
+
 - compare usb drivers with Melis
 - try tinyUSB
-- i2c thread seems also suspended with EINTRPT, need to check driver 
+- reg offset 0x100
+- speed function
+- irq for ohci
+
+
+- try PR for d1s in d1h
+- create PR for d1h common folder
+- create article in forum

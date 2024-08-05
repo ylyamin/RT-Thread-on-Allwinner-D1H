@@ -1,4 +1,4 @@
-https://github.com/RT-Thread/rt-thread/issues/9063
+This question also published in github issue https://github.com/RT-Thread/rt-thread/issues/9063
 
 ### Not compiled for Allwinner D1H.
 

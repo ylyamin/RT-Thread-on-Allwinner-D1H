@@ -3,6 +3,10 @@ from building import *
 cwd = GetCurrentDir()
 src = Split('''
 source/ccmu/hal_clk.c
+source/ccmu/hal_reset.c
+''')
+
+sunxi_ng_src = Split('''
 source/ccmu/sunxi-ng/clk-fixed-rate.c
 source/ccmu/sunxi-ng/ccu_common.c
 source/ccmu/sunxi-ng/ccu_sdm.c
@@ -24,7 +28,19 @@ source/ccmu/sunxi-ng/clk-divider.c
 source/ccmu/sunxi-ng/ccu_div.c
 source/ccmu/sunxi-ng/ccu_nkmp.c
 source/ccmu/sunxi-ng/ccu-sun8iw20.c
-source/ccmu/hal_reset.c
+''')
+
+sunxi_clk_src = Split('''
+source/ccmu/sunxi/clk.c
+source/ccmu/sunxi/clk_factors.c
+source/ccmu/sunxi/clk_periph.c
+source/ccmu/sunxi/sun8iw19p1/clk_sun8iw19.c 
+''')
+
+#src += sunxi_clk_src
+src += sunxi_ng_src
+
+common_src = Split('''
 source/gpio/hal_gpio.c
 source/gpio/sun8iw20/gpio-sun8iw20.c
 source/uart/hal_uart.c
@@ -34,7 +50,7 @@ source/timer/hal_timer.c
 source/timer/sunxi_timer.c
 source/timer/hal_avs.c
 ''')
-
+src += common_src
 #./source/disp2/disp/lcd/VVX07H005A10.c
 #./source/disp2/disp/lcd/st7701s.c
 #./source/disp2/disp/lcd/to20t20000.c
@@ -336,6 +352,7 @@ CPPPATH = [
     cwd + '/source',
     cwd + '/source/uart',
     cwd + '/source/ccmu',
+    cwd + '/source/ccmu/sunxi', #!
     cwd + '/source/gpio',
     cwd + '/source/gpio/sun8iw20',
     cwd + '/source/pwm',

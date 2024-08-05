@@ -3,7 +3,7 @@
 
 #include <rtthread.h>
 
-#define DBG_LVL DBG_WARNING
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #define pr_err(fmt, ...)           LOG_E(fmt, ##__VA_ARGS__)

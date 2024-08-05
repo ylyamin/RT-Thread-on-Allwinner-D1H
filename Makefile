@@ -17,6 +17,7 @@ all: sd
 RISCV64_MUSL_DIR = $(TOOLCHAIN_INSTALL_DIR)/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu
 RISCV64_GLIBC_GCC_DIR = $(TOOLCHAIN_INSTALL_DIR)/riscv64-glibc-gcc-thead_20200702
 T_HEAD_DEBUGSERVER_DIR = $(TOOLCHAIN_INSTALL_DIR)/T-HEAD_DebugServer
+RTT_ENV_DIR = $(TOOLCHAIN_INSTALL_DIR)/env
 
 RISCV64_MUSL_BIN = $(RISCV64_MUSL_DIR)/bin
 RISCV64_GLIBC_GCC_BIN = $(RISCV64_GLIBC_GCC_DIR)/bin/riscv64-unknown-linux-gnu-
@@ -45,7 +46,10 @@ $(T_HEAD_DEBUGSERVER_DIR)-remove:
 	rm -rf $(TOOLCHAIN_INSTALL_DIR)/T-Head-DebugServer*
 	sudo rm -rf $(TOOLCHAIN_INSTALL_DIR)/T-HEAD_DebugServer*
 
-toolchain: $(RISCV64_MUSL_DIR) $(RISCV64_GLIBC_GCC_DIR) $(T_HEAD_DEBUGSERVER_DIR)
+$(RTT_ENV_DIR):
+	git clone https://github.com/RT-Thread/env $(RTT_ENV_DIR)
+
+toolchain: $(RISCV64_MUSL_DIR) $(RISCV64_GLIBC_GCC_DIR) $(T_HEAD_DEBUGSERVER_DIR) $(RTT_ENV_DIR)
 
 toolchain-remove: $(RISCV64_MUSL_DIR)-remove $(RISCV64_GLIBC_GCC_DIR)-remove $(T_HEAD_DEBUGSERVER_DIR)-remove
 

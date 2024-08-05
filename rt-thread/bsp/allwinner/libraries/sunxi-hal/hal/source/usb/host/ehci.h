@@ -820,7 +820,7 @@ int ehci_bus_suspend (struct hc_gen_dev *hcd);
 int ehci_bus_resume (struct hc_gen_dev *hcd);
 irqreturn_t ehci_irq_handler (int dummy, void *dev);
 
-int sunxi_ehci_hcd_init(int hci_num);
+struct sunxi_hci_hcd *  sunxi_ehci_hcd_init(int hci_num);
 int sunxi_ehci_hcd_deinit(int hci_num);
 
 #endif /* __LINUX_EHCI_HCD_H */

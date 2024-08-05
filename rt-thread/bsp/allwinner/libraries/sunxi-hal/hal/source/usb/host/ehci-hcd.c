@@ -289,7 +289,7 @@ static void start_unlink_intr(struct ehci_hcd *ehci, struct ehci_qh *qh);
 static void end_unlink_intr(struct ehci_hcd *ehci, struct ehci_qh *qh);
 static int ehci_port_power(struct ehci_hcd *ehci, int portnum, bool enable);
 
-#define EHCI_QH_COMPLETIONS_DEBUG 0
+#define EHCI_QH_COMPLETIONS_DEBUG 1
 #if EHCI_QH_COMPLETIONS_DEBUG
 #define EHCI_DEBUG_PRINTF(format, args...) \
     printf("[%s:%d] " format "\n", __func__, __LINE__, ##args)

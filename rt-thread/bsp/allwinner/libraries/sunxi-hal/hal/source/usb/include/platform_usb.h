@@ -33,6 +33,8 @@
 #ifndef __USB_PLATFORM_H__
 #define __USB_PLATFORM_H__
 
+#include <kconfig.h>
+
 #if defined(CONFIG_ARCH_SUN8IW18P1)
 #include "../platform/sun8iw18/usb_sun8iw18.h"
 #endif

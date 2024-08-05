@@ -5,9 +5,12 @@ Executed at hardware such as [ClockworkPi DevTerm R01](https://www.clockworkpi.c
 
 The intention is to easily run peripherals in D1, exactly Display. RT-Thread OS was chosen because it looks like has the most extensive HAL layer for D1, similar to the [Linux kernel](https://github.com/cuu/last_linux-5.4/tree/master/drivers/video/fbdev/sunxi/) but not so overcomplicated.
 
-At the original repository [RT-Thread](https://github.com/RT-Thread/rt-thread) the compilation is not streamlined for D1H [issue 9063](https://github.com/RT-Thread/rt-thread/issues/9063), [forum question](https://club.rt-thread.io/ask/question/183.html). So was performed fork from [v5.0.2](https://github.com/RT-Thread/rt-thread/releases/tag/v5.0.2) and introduced several changes to make it runnable in D1H. Added also bootloaders, compiler, debugger, build system.
+At the original repository [RT-Thread](https://github.com/RT-Thread/rt-thread) the compilation is not streamlined for D1H [^1].
+So was performed fork from [v5.0.2](https://github.com/RT-Thread/rt-thread/releases/tag/v5.0.2) and introduced several changes to make it runnable in D1H. Added also bootloaders, compiler, debugger, build system.
 
 Introduced code changes described in [Code_changes](documentation/Code_changes.md) document.
+
+ > [^1]: At time when I'm tried to compile was [issue 9063](https://github.com/RT-Thread/rt-thread/issues/9063) after it was solved by [PR](https://github.com/RT-Thread/rt-thread/pull/9142) in Master.
 
 ## Current progress
 
@@ -114,6 +117,8 @@ Then execute due each session:
 ```sh
  source ./environment.sh
 ```
+Or add to ~/.bashrc
+
 ### Environment setup with virtual machine
 In my case I was use Windows 10 64x as a host with IDE VSCode and Ubuntu 22.04.3 64x virtual machine as a guest for compilation.   
 Repo was downloaded to a shared folder in Windows mounted in Ubuntu, /etc/fstab example

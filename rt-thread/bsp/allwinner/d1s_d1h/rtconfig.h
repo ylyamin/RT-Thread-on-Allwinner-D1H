@@ -145,12 +145,6 @@
 
 /* Using USB */
 
-#define RT_USING_USB
-#define RT_USING_USB_HOST
-#define RT_USBH_HID
-#define RT_USBH_HID_MOUSE
-#define RT_USBH_HID_KEYBOARD
-#define RT_USBD_THREAD_STACK_SZ 4096
 
 /* C/C++ and POSIX layer */
 
@@ -258,12 +252,22 @@
 
 /* Micrium: Micrium software products porting for RT-Thread */
 
+#define PKG_USING_CHERRYUSB
+#define PKG_CHERRYUSB_HOST
+#define PKG_CHERRYUSB_HOST_EHCI_CUSTOM
+#define PKG_CHERRYUSB_HOST_HID
+#define PKG_CHERRYUSB_HOST_TEMPLATE
+#define TEST_USBH_HID 1
+#define PKG_USING_CHERRYUSB_LATEST_VERSION
 
 /* peripheral libraries and drivers */
 
 /* HAL & SDK Drivers */
 
 /* STM32 HAL & SDK Drivers */
+
+
+/* Infineon HAL Packages */
 
 
 /* Kendryte SDK */
@@ -359,6 +363,7 @@
 /* CCMU Devices */
 
 #define DRIVERS_CCMU
+#define DRIVERS_SUNXI_CLK
 #define DRIVERS_SUNXI_CCU
 
 /* DMA Devices */
@@ -420,14 +425,10 @@
 /* USB HOST */
 
 #define USB_HOST
-#define HAL_TEST_HCI
 #define USB_HID
 
 /* USB DEVICE */
 
-#define USB_DEVICE
-#define HAL_TEST_UDC
-#define USB_MANAGER
 
 /* CE Devices */
 

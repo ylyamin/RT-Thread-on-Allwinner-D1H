@@ -25,9 +25,9 @@
 #include "hal_cfg.h"
 
 #if USB_MAX_CONTROLLER_COUNT
-static struct sunxi_hci_hcd g_sunxi_ehci[USB_MAX_CONTROLLER_COUNT];
+struct sunxi_hci_hcd g_sunxi_ehci[USB_MAX_CONTROLLER_COUNT];
 #else
-static struct sunxi_hci_hcd *g_sunxi_ehci = 0;
+struct sunxi_hci_hcd *g_sunxi_ehci = 0;
 #endif
 
 static unsigned char g_sunxi_insmod_cnt = 0;
@@ -279,13 +279,13 @@ int sunxi_rmmod_ehci(struct sunxi_hci_hcd * sunxi_ehci)
     return 0;
 }
 
-int sunxi_ehci_hcd_init(int hci_num)
+ struct sunxi_hci_hcd * sunxi_ehci_hcd_init(int hci_num)
 {
     int value = 0;
     char ehci_name[10] = {0};
     sprintf(ehci_name, "usbc%1d", hci_num);
 
-    if (Hal_Cfg_GetKeyValue(ehci_name, KEY_USB_ENABLE, (int32_t *)&value, 1) == 0) {
+/*     if (Hal_Cfg_GetKeyValue(ehci_name, KEY_USB_ENABLE, (int32_t *)&value, 1) == 0) {
         if (value == SUNXI_USB_DISABLE) {
             hal_log_err("ERR: ehci%d disable", hci_num);
             return -1;
@@ -298,10 +298,11 @@ int sunxi_ehci_hcd_init(int hci_num)
     }
 
     if (hci_num >= USB_MAX_CONTROLLER_COUNT) {
+        rt_kprintf("USB_MAX_CONTROLLER_COUNT\n");
         hal_log_err("ERR: ehci%d oversize!", hci_num);
         return -1;
     }
-
+ */
     int ret = 0;
     struct sunxi_hci_hcd *sunxi_ehci = &g_sunxi_ehci[hci_num];
 
@@ -330,14 +331,14 @@ int sunxi_ehci_hcd_init(int hci_num)
         sunxi_ehci->usb_passby          = usb_passby;
 
         sunxi_insmod_ehci(sunxi_ehci);
-        return 0;
+        return sunxi_ehci;
     }
     else
     {
         hal_log_err("ERR: ehci%d already exist!", hci_num);
     }
 
-    return -1;
+    return NULL;
 }
 
 int sunxi_ehci_hcd_deinit(int hci_num)

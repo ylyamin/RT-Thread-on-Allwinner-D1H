@@ -30,7 +30,7 @@ documentation/html
 #source insight 4 project files
 *.si4project
 tools/kconfig-frontends/kconfig-mconf
-packages
+#packages
 dist
 rt-studio-project
 cconfig.h
@@ -50,5 +50,5 @@ tags
 .history
 CMakeLists.txt
 cmake-build-debug
-*.mk
+#*.mk
 *.img

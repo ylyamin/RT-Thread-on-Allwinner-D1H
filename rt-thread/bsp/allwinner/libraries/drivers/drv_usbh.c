@@ -8,31 +8,52 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
+/* extern struct sunxi_hci_hcd *g_sunxi_ehci;
+
+#include <sunxi-hci.h>
+#include <usb_gen_hcd.h>
+ */
+
+
 extern void _axp_USB_control(int on);
 
-#include <HidSpec.h>
+#include <usbh_core.h>
+#include <usbh_hid.h>
+#include "../sunxi-hal/hal/source/usb/platform/sun20iw1/usb_sun20iw1.h"
 
-#include <Hid_i.h>
+
+/* extern struct usbh_hid *usbh_hid_class_alloc(void);
+extern void usbh_hid_run(struct usbh_hid *hid_class);
+extern int usb_core_init(void); */
 
 int drv_usb(void)
 {
-    _axp_USB_control(1);
 
+    usbh_initialize(0, SUNXI_USB_EHCI0_PBASE);
+    usbh_initialize(1, SUNXI_USB_EHCI1_PBASE);
+    //usbh_initialize(2, SUNXI_USB_OTG_PBASE);
+
+    //_axp_USB_control(1);
+
+
+    //struct usbh_hid *hid = usbh_hid_class_alloc();
+    //usbh_hid_run(hid);
+
+/*     
     hal_usb_core_init();
+    hal_usb_hci_init();
 
-    for (int hci_num = 0; hci_num < USB_MAX_CONTROLLER_COUNT; hci_num++)
-    {
-        hal_usb_hcd_init(hci_num);
-    }
-    
-    //HidInit();
+    struct sunxi_hci_hcd *sunxi_ehci = g_sunxi_ehci;
 
-    //HidDev_t HidDevM;
+    rt_kprintf("desc %s\n",sunxi_ehci->hcd->driver->product_desc);
 
-    //usbMouseProbe(HidDevM);
+    hal_usb_manager_init();    
+    rt_device_t dev = rt_device_find("hwsc");
+    rt_device_init(dev);
+    rt_device_open(dev,RT_DEVICE_OFLAG_OPEN);
+    rt_usb_host_init("hwsc"); 
+*/
 
-    //hal_usb_manager_init();    
-    //rt_usb_host_init("hwsc");
- }
- MSH_CMD_EXPORT_ALIAS(drv_usb, usb, usb);
-//INIT_DEVICE_EXPORT(drv_usb);
+}
+MSH_CMD_EXPORT_ALIAS(drv_usb, usb, usb);
+INIT_DEVICE_EXPORT(drv_usb);

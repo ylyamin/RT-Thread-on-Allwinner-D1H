@@ -117,6 +117,15 @@ SECTIONS
         PROVIDE(__dtors_end__ = .);
     } > SRAM
 
+    .usb :
+    {
+    /* section information for usbh class */
+    . = ALIGN(4);
+    __usbh_class_info_start__ = .;
+    KEEP(*(.usbh_class_info))
+    __usbh_class_info_end__ = .;
+    } > SRAM
+
     /* stack for dual core */
     .stack :
     {

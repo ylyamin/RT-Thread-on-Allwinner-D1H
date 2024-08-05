@@ -12,3 +12,6 @@
 [submodule "bootloaders/xfel"]
 	path = bootloaders/xfel
 	url = https://github.com/xboot/xfel
+[submodule "rt-thread/bsp/allwinner/d1s_d1h/packages/CherryUSB"]
+	path = rt-thread/bsp/allwinner/d1s_d1h/packages/CherryUSB
+	url = https://github.com/cherry-embedded/CherryUSB.git

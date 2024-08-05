@@ -151,6 +151,7 @@ static void mouse_task(void* param)
 
 static rt_err_t rt_usbh_hid_mouse_init(void* arg)
 {
+    rt_kprintf("rt_usbh_hid_mouse_init \n");
     struct uhintf* intf = (struct uhintf*)arg;
 
     RT_ASSERT(intf != RT_NULL);

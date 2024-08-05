@@ -22,7 +22,7 @@ static int thread_stopped_flag = 1;
 #ifdef CONFIG_KERNEL_FREERTOS
 int thread_suspend_flag = 0;
 #else
-int thread_suspend_flag = 1;
+int thread_suspend_flag = 0;
 static rt_err_t usb_manager_open(rt_device_t dev, rt_uint16_t oflag)
 {
     return 0;
@@ -96,12 +96,23 @@ static void usb_device_scan_thread(void *pArg)
 
 static void usb_host_scan_thread(void *pArg)
 {
-
+    rt_kprintf("usb_host_scan_thread \n");
     while (thread_run_flag) {
-        hal_msleep(100);  /* 1s */
+
+        rt_kprintf("hal_msleep \n");
+
+        //hal_msleep(100);  /* 1s */
+        //rt_hw_us_delay(100);
+
+        rt_kprintf("thread_susif pend_flag \n");
+
         if (thread_suspend_flag)
             continue;
+
+        rt_kprintf("hw_insmod_usb_host \n");
         hw_insmod_usb_host();
+
+        rt_kprintf("usb_msg_center \n");
         usb_msg_center(&g_usb_cfg);
         thread_run_flag = 0;
     }

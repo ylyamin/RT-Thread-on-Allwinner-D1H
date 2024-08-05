@@ -12,7 +12,7 @@ int hal_usb_core_exit(void)
     return usb_core_exit();
 }
 
-int hal_usb_hcd_init(int hci_num)
+struct sunxi_hci_hcd * hal_usb_hcd_init(int hci_num)
 {
     return sunxi_ehci_hcd_init(hci_num);
 }
@@ -22,7 +22,7 @@ void hal_usb_hci_init(void)
     /*except for usb0ï¼Œ other usb hci should be init in OS.
      *usb0 hci depends on otg.
      */
-    for (int hci_num = 1; hci_num < USB_MAX_CONTROLLER_COUNT; hci_num++)
+    for (int hci_num = 0; hci_num < USB_MAX_CONTROLLER_COUNT; hci_num++)
     {
         sunxi_ehci_hcd_init(hci_num);
     }
