@@ -1,1 +1,3 @@
 rt-thread/bsp/allwinner/d1s_d1h/packages/SConscript
+rt-thread/bsp/allwinner/d1s_d1h/packages/CherryUSB
+rt-thread/bsp/allwinner/d1s_d1h/packages/CherryUSB
