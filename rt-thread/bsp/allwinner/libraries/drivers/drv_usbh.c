@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <kconfig.h>
-#include <platform_usb.h>
+//#include <platform_usb.h>
 #include <hal_log.h>
 #include <hal_cmd.h>
-#include <usb/hal_hci.h>
+//#include <usb/hal_hci.h>
 
 #include <rtthread.h>
 #include <rtdevice.h>
@@ -17,9 +17,9 @@
 
 extern void _axp_USB_control(int on);
 
-#include <usbh_core.h>
-#include <usbh_hid.h>
-#include "../sunxi-hal/hal/source/usb/platform/sun20iw1/usb_sun20iw1.h"
+//#include <usbh_core.h>
+//#include <usbh_hid.h>
+//#include "../sunxi-hal/hal/source/usb/platform/sun20iw1/usb_sun20iw1.h"
 
 
 /* extern struct usbh_hid *usbh_hid_class_alloc(void);
@@ -29,8 +29,8 @@ extern int usb_core_init(void); */
 int drv_usb(void)
 {
 
-    usbh_initialize(0, SUNXI_USB_EHCI0_PBASE);
-    usbh_initialize(1, SUNXI_USB_EHCI1_PBASE);
+    //usbh_initialize(0, SUNXI_USB_EHCI0_PBASE);
+    //usbh_initialize(1, SUNXI_USB_EHCI1_PBASE);
     //usbh_initialize(2, SUNXI_USB_OTG_PBASE);
 
     //_axp_USB_control(1);
@@ -56,4 +56,4 @@ int drv_usb(void)
 
 }
 MSH_CMD_EXPORT_ALIAS(drv_usb, usb, usb);
-INIT_DEVICE_EXPORT(drv_usb);
+//INIT_DEVICE_EXPORT(drv_usb);

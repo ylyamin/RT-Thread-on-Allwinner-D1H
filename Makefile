@@ -138,4 +138,4 @@ debug:
 	$(T_HEAD_DEBUGSERVER_BIN)&
 	$(RISCV64_GLIBC_GCC_BIN)gdb -x build/.gdbinit
 
-clean: toolchain-remove bootloaders-clean rt-clean
+clean: rt-clean bootloaders-clean toolchain-remove 

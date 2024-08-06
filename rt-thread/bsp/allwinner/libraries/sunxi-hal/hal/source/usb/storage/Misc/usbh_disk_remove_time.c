@@ -19,11 +19,9 @@
 *
 ********************************************************************************************************************
 */
-//#include  "usb_host_base_types.h"
-#include  "usb_os_platform.h"
-#include  "usbh_disk_remove_time.h"
-#include  "error.h"
-#include  "usb_msc_i.h"
+
+#include "usb_msc_i.h"
+#include "usbh_disk_remove_time.h"
 
 static unsigned int usbh_disk_time[USBH_DISK_REMOVE_TIME_UNIT];
 
@@ -44,18 +42,16 @@ static unsigned int usbh_disk_time[USBH_DISK_REMOVE_TIME_UNIT];
 */
 void usbh_disk_save_time(unsigned int time)
 {
-    unsigned int i = 0;
+	unsigned int i = 0;
 
-    for (i = 0; i < USBH_DISK_REMOVE_TIME_UNIT; i++)
-    {
-        if (usbh_disk_time[i] == 0)
-        {
-            usbh_disk_time[i] = time;
-            break;
-        }
-    }
+	for (i = 0; i < USBH_DISK_REMOVE_TIME_UNIT; i++) {
+		if (usbh_disk_time[i] == 0) {
+			usbh_disk_time[i] = time;
+			break;
+		}
+	}
 
-    return;
+	return;
 }
 
 /*
@@ -75,18 +71,16 @@ void usbh_disk_save_time(unsigned int time)
 */
 void usbh_disk_del_time(unsigned int time)
 {
-    unsigned int i = 0;
+	unsigned int i = 0;
 
-    for (i = 0; i < USBH_DISK_REMOVE_TIME_UNIT; i++)
-    {
-        if (usbh_disk_time[i] == time)
-        {
-            usbh_disk_time[i] = 0;
-            break;
-        }
-    }
+	for (i = 0; i < USBH_DISK_REMOVE_TIME_UNIT; i++) {
+		if (usbh_disk_time[i] == time) {
+			usbh_disk_time[i] = 0;
+			break;
+		}
+	}
 
-    return;
+	return;
 }
 
 /*
@@ -106,18 +100,16 @@ void usbh_disk_del_time(unsigned int time)
 */
 unsigned int get_max_disk_time(void)
 {
-    unsigned int i = 0;
-    unsigned int max = 0;
+	unsigned int i = 0;
+	unsigned int max = 0;
 
-    for (i = 0; i < USBH_DISK_REMOVE_TIME_UNIT; i++)
-    {
-        if (usbh_disk_time[i] > max)
-        {
-            max = usbh_disk_time[i];
-        }
-    }
+	for (i = 0; i < USBH_DISK_REMOVE_TIME_UNIT; i++) {
+		if (usbh_disk_time[i] > max) {
+			max = usbh_disk_time[i];
+		}
+	}
 
-    return max;
+	return max;
 }
 
 /*
@@ -137,7 +129,7 @@ unsigned int get_max_disk_time(void)
 */
 void usbh_disk_time_init(void)
 {
-    memset(usbh_disk_time, 0, 4 * USBH_DISK_REMOVE_TIME_UNIT);
+	memset(usbh_disk_time, 0, 4 * USBH_DISK_REMOVE_TIME_UNIT);
 }
 
 /*
@@ -157,6 +149,5 @@ void usbh_disk_time_init(void)
 */
 void usbh_disk_time_exit(void)
 {
-    memset(usbh_disk_time, 0, 4 * USBH_DISK_REMOVE_TIME_UNIT);
+	memset(usbh_disk_time, 0, 4 * USBH_DISK_REMOVE_TIME_UNIT);
 }
-

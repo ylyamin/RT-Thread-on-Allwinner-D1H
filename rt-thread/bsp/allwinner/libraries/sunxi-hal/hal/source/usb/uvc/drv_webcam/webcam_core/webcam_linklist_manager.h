@@ -17,7 +17,8 @@
 */
 #ifndef _WEBCAM_LINKLIST_MANAGER_H_
 #define _WEBCAM_LINKLIST_MANAGER_H_
-#include "typedef.h"
+
+#include "usb_os_platform.h"
 #include "drv_webcam.h"
 
 //链表实现方式2
@@ -35,29 +36,30 @@
     在处理前，把一些可能会被改变的变量记下来而已。
 *******************************************************************************/
 
-#define FRMID_CNT (WEBCAM_BUFFER_NUM+1)
+#define FRMID_CNT (WEBCAM_BUFFER_NUM + 1)
 
-typedef enum{
-    WEBCAM_LISTTYPE_FREE = 0,
-    WEBCAM_LISTTYPE_FULL = 1,
+typedef enum {
+	WEBCAM_LISTTYPE_FREE = 0,
+	WEBCAM_LISTTYPE_FULL = 1,
 } WEBCAM_LINKLIST_TYPE;
+
 typedef struct tag_WEBCAM_LINKLIST_MANAGER __webcam_linklist_manager_t;
-typedef void    (*WEBCAM_LINKLIST_MANAGER_Initial)     (__webcam_linklist_manager_t *thiz, WEBCAM_LINKLIST_TYPE type);
-typedef __s32   (*WEBCAM_LINKLIST_MANAGER_Insert)      (__webcam_linklist_manager_t *thiz, __s32 frame_id);
-typedef __s32   (*WEBCAM_LINKLIST_MANAGER_Delete)      (__webcam_linklist_manager_t *thiz);
-typedef __s32   (*WEBCAM_LINKLIST_MANAGER_Exit)        (__webcam_linklist_manager_t *thiz);
-typedef struct tag_WEBCAM_LINKLIST_MANAGER
-{
-    WEBCAM_LINKLIST_TYPE list_type;
-    __s32 frmid_array[FRMID_CNT];  //存index号的数组,  index是__webcam_frame_t webcam_frame[WEBCAM_BUFFER_NUM]的index
-    __s32 wt;
-    __s32 rd;
-    WEBCAM_LINKLIST_MANAGER_Initial    initial;
-    WEBCAM_LINKLIST_MANAGER_Insert     insert_element;
-    WEBCAM_LINKLIST_MANAGER_Delete     delete_element;
-    WEBCAM_LINKLIST_MANAGER_Exit       exit;
-} __webcam_linklist_manager_t; //只允许使用WEBCAM_BUFFER_NUM个元素，避免wt,rd重合时的歧义(满还是空).
-extern __webcam_linklist_manager_t* webcam_linklist_manager_init(void);
+typedef void (*WEBCAM_LINKLIST_MANAGER_Initial)		(__webcam_linklist_manager_t *thiz, WEBCAM_LINKLIST_TYPE type);
+typedef __s32 (*WEBCAM_LINKLIST_MANAGER_Insert)		(__webcam_linklist_manager_t *thiz, __s32 frame_id);
+typedef __s32 (*WEBCAM_LINKLIST_MANAGER_Delete)		(__webcam_linklist_manager_t *thiz);
+typedef __s32 (*WEBCAM_LINKLIST_MANAGER_Exit)		(__webcam_linklist_manager_t *thiz);
 
-#endif  /* _WEBCAM_LINKLIST_MANAGER_H_ */
+typedef struct tag_WEBCAM_LINKLIST_MANAGER {
+	WEBCAM_LINKLIST_TYPE list_type;
+	__s32 frmid_array[FRMID_CNT];  //存index号的数组,  index是__webcam_frame_t webcam_frame[WEBCAM_BUFFER_NUM]的index
+	__s32 wt;
+	__s32 rd;
+	WEBCAM_LINKLIST_MANAGER_Initial initial;
+	WEBCAM_LINKLIST_MANAGER_Insert insert_element;
+	WEBCAM_LINKLIST_MANAGER_Delete delete_element;
+	WEBCAM_LINKLIST_MANAGER_Exit exit;
+} __webcam_linklist_manager_t;	//只允许使用WEBCAM_BUFFER_NUM个元素，避免wt,rd重合时的歧义(满还是空).
 
+extern __webcam_linklist_manager_t *webcam_linklist_manager_init(void);
+
+#endif /* _WEBCAM_LINKLIST_MANAGER_H_ */

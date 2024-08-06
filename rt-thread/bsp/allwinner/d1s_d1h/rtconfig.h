@@ -420,15 +420,20 @@
 /* G2D Devices */
 
 #define DRIVERS_G2D
+
+/* USB Drivers */
+
+#define USB
 #define DRIVERS_USB
-
-/* USB HOST */
-
+#define HAL_TEST_USB
 #define USB_HOST
-#define USB_HID
-
-/* USB DEVICE */
-
+#define HAL_TEST_HCI
+#define USB_EHCI
+#define USB_OHCI
+#define USB_EHCI_0
+#define USB_OHCI_0
+#define USB_EHCI_1
+#define USB_OHCI_1
 
 /* CE Devices */
 

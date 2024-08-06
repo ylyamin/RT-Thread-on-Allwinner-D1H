@@ -46,6 +46,8 @@ int kthread_suspend(void *thread);
 
 //#define in_interrupt(...)   rt_interrupt_get_nest()
 
+#define hal_thread_t rt_thread_t
+#define HAL_THREAD_PRIORITY_SYS HAL_THREAD_PRIORITY
 
 #endif
 #ifdef __cplusplus

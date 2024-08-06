@@ -36,6 +36,8 @@
 #include <stdio.h>
 #include <interrupt.h>
 #include <timer/platform_timer.h>
+#include <hal_time.h>
+
 
 #ifdef __cplusplus
     extern "C" {

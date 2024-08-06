@@ -129,6 +129,13 @@ int hal_workqueue_dowork(hal_workqueue *queue, hal_work *work)
     return ret;
 }
 
+int hal_workqueue_destroy(hal_workqueue *queue)
+{
+	int ret = 0;
+	ret = rt_workqueue_destroy(queue);
+	return 0;
+}
+
 hal_queue_t hal_queue_create(const char *name, unsigned int item_size, unsigned int queue_size)
 {
     return rt_mq_create("hal_layer", item_size, queue_size, RT_IPC_FLAG_FIFO);

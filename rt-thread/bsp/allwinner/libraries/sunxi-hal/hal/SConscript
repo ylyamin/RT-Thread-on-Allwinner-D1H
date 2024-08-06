@@ -269,12 +269,10 @@ test/usb/udc/ed_test.c
 
 # USB host
 host_src = Split('''
-source/usb/include/usb_os_platform.c
-source/usb/include/list_head_ext.c
-source/usb/include/usb_gen_dev_mod.c
-source/usb/include/usb_drv_dev_macth.c
-source/usb/include/usb_utils_find_zero_bit.c
-source/usb/platform/sun20iw1/usb_sun20iw1.c
+
+source/usb/common/usb_init.c
+source/usb/common/list_head_ext.c
+source/usb/common/usb_phy.c
 source/usb/core/usb_virt_bus.c
 source/usb/core/usb_msg_base.c
 source/usb/core/usb_msg.c
@@ -291,20 +289,21 @@ source/usb/core/urb.c
 source/usb/host/ehci-hcd.c
 source/usb/host/sunxi-hci.c
 source/usb/host/ehci-sunxi.c
-source/usb/host/hal_hci.c
-source/usb/hid/Client/KeyBoard/KeyBoard.c
-source/usb/hid/Client/misc_lib.c
-source/usb/hid/Class/Hid.c
-source/usb/hid/Class/HidProtocol.c
-source/usb/hid/Class/HidTransport.c
+source/usb/host/ohci-hcd.c
+source/usb/host/ohci-sunxi.c
+source/usb/host/hci_hal.c
+source/usb/platform/sun20iw1/usb_sun20iw1.c
 source/usb/manager/usb_manager.c
 source/usb/manager/usb_msg_center.c
 source/usb/manager/usb_hw_scan.c
-source/usb/hid/Client/Mouse/UsbMouse.c
-source/usb/hid/Client/Mouse/UsbMouse_DriftControl.c
 ''')
 #source/usb/hid/Client/Mouse/UsbMouse.c
 #source/usb/hid/Client/Mouse/UsbMouse_DriftControl.c
+#source/usb/hid/Client/KeyBoard/KeyBoard.c
+#source/usb/hid/Client/misc_lib.c
+#source/usb/hid/Class/Hid.c
+#source/usb/hid/Class/HidProtocol.c
+#source/usb/hid/Class/HidTransport.c
 
 #source/usb/storage/Class/mscProtocol.c
 #source/usb/storage/Class/mscTransport.c
@@ -319,12 +318,20 @@ source/usb/hid/Client/Mouse/UsbMouse_DriftControl.c
 #source/usb/storage/Misc/usbh_disk_info.c
 #source/usb/storage/Misc/usbh_disk_remove_time.c
 
+#source/usb/include/usb_os_platform.c
+#source/usb/include/list_head_ext.c
+#source/usb/include/usb_gen_dev_mod.c
+#source/usb/include/usb_drv_dev_macth.c
+#source/usb/include/usb_utils_find_zero_bit.c
+
 host_test_src = Split('''
 test/usb/host/test_hci.c
-test/usb/host/hci_ed_test.c
 ''')
 
-host_path =  [cwd + '/source/usb/include']
+#test/usb/host/hci_ed_test.c
+
+host_path =  [cwd + '/source/usb/common']
+host_path += [cwd + '/source/usb/include']
 host_path += [cwd + '/source/usb/core']
 host_path += [cwd + '/source/usb/storage/include']
 host_path += [cwd + '/source/usb/hid/Include']

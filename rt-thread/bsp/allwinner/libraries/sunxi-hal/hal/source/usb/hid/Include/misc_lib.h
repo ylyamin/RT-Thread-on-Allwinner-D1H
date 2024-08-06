@@ -3,28 +3,25 @@
 *
 *
 *                              (c) Copyright 2007-2010, javen.China
-*                                       All Rights Reserved
+*										All	Rights Reserved
 *
-* File Name     : misc_lib.h
+* File Name 	: misc_lib.h
 *
-* Author        : javen
+* Author 		: javen
 *
-* Version       : 1.0
+* Version 		: 1.0
 *
-* Date          : 2010.08.04
+* Date 			: 2010.08.04
 *
-* Description   :
+* Description 	:
 *
-* History       :
+* History 		:
 *
 ********************************************************************************************************************
 */
-#ifndef  __MISC_H__
-#define  __MISC_H__
-#include "usb_host_common.h"
+#ifndef __MISC_H__
+#define __MISC_H__
 
 int xGetDataFromBuffer(unsigned char *Buffer, unsigned int BitOffset, unsigned int BitCount, int *Data);
 
-#endif   //__MISC_H__
-
-
+#endif	//__MISC_H__

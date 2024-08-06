@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <usb/hal_hci.h>
+//#include <usb/hal_hci.h>
 #include <hal_cmd.h>
 #include <hal_log.h>
 

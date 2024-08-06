@@ -5,28 +5,26 @@
 *                (c) Copyright 2006-2010, All winners Co,Ld.
 *                        All Right Reserved
 *
-* FileName      :  UVC.c
+* FileName		:  UVC.c
 *
-* Author        :  Kingvan
+* Author		:  Kingvan
 *
-* Date          :  2013/03/26
+* Date			:  2013/03/26
 *
-* Description   :  USB VIDEO CONTROL Driver中对USB接口设备的处理
+* Description	:  USB VIDEO CONTROL Driver中对USB接口设备的处理
 *
-* Others        :  NULL
+* Others		:  NULL
 *
 * History:
-*       <time>          <author>     <version >     <desc>
-*      2013.03.26       Kingvan         1.0         build this file
+*		<time> 			<author>	 <version >		<desc>
+*	   2013.03.26		Kingvan			1.0			build this file
 *
 ********************************************************************************
 */
-#ifndef  __UVC_H__
-#define  __UVC_H__
-#include "typedef.h"
+#ifndef __UVC_H__
+#define __UVC_H__
 
 __s32 UVCInit(void);
 __s32 UVCExit(void);
 
-#endif   //__UVC_H__
-
+#endif	//__UVC_H__
