@@ -15,3 +15,5 @@
 [submodule "rt-thread/bsp/allwinner/d1s_d1h/packages/CherryUSB"]
 	path = rt-thread/bsp/allwinner/d1s_d1h/packages/CherryUSB
 	url = https://github.com/cherry-embedded/CherryUSB.git
+	ignore = dirty
+
