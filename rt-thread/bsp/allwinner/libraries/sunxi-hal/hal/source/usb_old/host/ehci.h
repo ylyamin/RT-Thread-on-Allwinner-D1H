@@ -807,7 +807,7 @@ extern int  ehci_hub_control(struct hc_gen_dev *hcd, u16 typeReq, u16 wValue,
                  u16 wIndex, char *buf, u16 wLength);
 
 void ehci_stop (struct hc_gen_dev *hcd);
-int ehci_init(struct hc_gen_dev *hcd);
+int ehci_init_(struct hc_gen_dev *hcd);
 int ehci_halt (struct ehci_hcd *ehci);
 void ehci_work (struct ehci_hcd *ehci);
 int ehci_run (struct hc_gen_dev *hcd);

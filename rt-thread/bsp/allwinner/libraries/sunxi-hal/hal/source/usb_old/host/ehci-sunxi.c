@@ -103,7 +103,7 @@ static void sunxi_stop_ehci(struct sunxi_hci_hcd *sunxi_ehci)
 static int sunxi_ehci_setup(struct hc_gen_dev *hcd)
 {
     struct ehci_hcd *ehci = hcd_to_ehci(hcd);
-    int ret = ehci_init(hcd);
+    int ret = ehci_init_(hcd);
 
     //ehci->need_io_watchdog = 0;
 
@@ -188,13 +188,16 @@ int sunxi_insmod_ehci(struct sunxi_hci_hcd * sunxi_ehci)
     sunxi_ehci->hcd = hcd;
 
     /* request irq */
+    //!
+/*
     if (request_irq(sunxi_ehci->irq_no, ehci_irq_handler, sunxi_ehci->usb_irq_flag, "ehci", hcd) < 0) {
         hal_log_err("request irq error\n");
         return -1;
     }
 
     enable_irq(sunxi_ehci->irq_no);
-
+*/
+    //!
     /* echi start to work */
     sunxi_start_ehci(sunxi_ehci);
 

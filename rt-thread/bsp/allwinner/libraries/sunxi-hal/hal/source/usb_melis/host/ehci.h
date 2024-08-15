@@ -775,8 +775,8 @@ void ehci_endpoint_disable(struct usb_hcd *hcd, struct usb_host_endpoint *ep);
 int ehci_hub_status_data(struct usb_hcd *hcd, char *buf);
 int ehci_bus_suspend(struct usb_hcd *hcd);
 int ehci_bus_resume(struct usb_hcd *hcd);
-//hal_irqreturn_t ehci_irq_handler(void *dev);
-hal_irqreturn_t ehci_irq_handler(struct usb_hcd *hcd);
+hal_irqreturn_t ehci_irq_handler(void *dev);
+//hal_irqreturn_t ehci_irq_handler(struct usb_hcd *hcd);
 
 
 #endif /* __LINUX_EHCI_HCD_H */

@@ -192,7 +192,7 @@ int open_clock(struct sunxi_hci_hcd *sunxi_hci)
 	// 	     USBC_Readl(sunxi_hci->usb_vbase + SUNXI_HCI_PHY_CTRL));
 	// mutex_unlock(&usb_clock_lock);
 
-	//!
+	///!
 	usb_phy_init(sunxi_hci->usb_vbase + SUNXI_USB_PHY_BASE_OFFSET, sunxi_hci->usbc_no);
 
 	return 0;

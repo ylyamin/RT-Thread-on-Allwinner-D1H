@@ -1836,193 +1836,48 @@ index 000000000..8b71888a1
 + MSH_CMD_EXPORT_ALIAS(drv_usb, usb, usb);
 +//INIT_DEVICE_EXPORT(drv_usb);
 ```
-## After all Enumiration not happen
 
-All threads in suspend state
-```sh
-hub-status-thread  suspend EINTRPT
-hub-status-thread  suspend EINTRPT
-hub-main-thread    suspend EINTRPT
+
+
+
+## USB RTT HAL variant
+```C
+hal_usb_core_init();
+hal_usb_hcd_init(1);
+
+usb_new_phy_init or usb_phy_init
+hcd->driver->start mean ehci_run()
+request_irq(sunxi_ehci->irq_no, ehci_irq_handler or hal_request_irq(sunxi_ehci->irq_no, ehci_irq_handler
+```
+Interapt work ehci_irq: highspeed device connect
+
+## USB D1s Melis HAL variant
+
+Failed in ehci_irq_handler() line &ehci->regs->status
+
+## Cherry USB variant with RTT HAL
+```C
+    usbh_initialize(1, SUNXI_USB_HCI1_PBASE);
+```
+with chery init interapt not call
+
+## Tiny USB variant with RTT or Melis HAL
+```C
+    init_tinyusb();
 ```
 
+if only tiny init
+hcd_int_handler int_status:EHCI_INT_MASK_FRAMELIST_ROLLOVER
+hcd_int_handler int_status:EHCI_INT_MASK_PORT_CHANGE
 
-```sh
-components/
+if only hal init
+hcd_int_handler int_status:EHCI_INT_MASK_PORT_CHANGE
 
+
+
+## Notes
 LOG_D("start enumnation");
-    v
-usbhost_core = rt_usbh_attatch_instance
-	v
-hub = rt_usbh_hub_port_change
-	v
-rt_usbh_hub_irq / rt_usbh_hub_thread_entry < USB_MSG_CONNECT_CHANGE
-							v
-				hub = rt_usbh_hub_init
-							v
-				usbhost = rt_usb_host_init
-							v
-						   test
-
-USB_MSG_CONNECT_CHANGE
-	v
-rt_usbh_root_hub_connect_handler
-```
-
-hal_usb_core_init() -> usb_gen_hub_init() -> 
-
-     1) __usb_gen_hub_thread_init
-     thread_cont->hub_thread_event = hal_sem_create(1);
-     thread_cont->hub_thread_complete = hal_sem_create(0);
-
-     2) kthread_create 
-     3) kthread_start -> hub_main_thread() -> hub_thread_sleep() - hal_sem_wait(thread_cont->hub_thread_event)
-
-
-hal_usb_hci_init() -> sunxi_ehci_hcd_init() -> sunxi_insmod_ehci()
-
-
-
-core:
-     usb_virt_bus.o
-	usb_msg_base.o		
-	usb_msg.o		
-	usb_gen_hub_base.o	
-	usb_gen_hub.o		
-	usb_gen_hcd_rh.o	
-	usb_gen_hcd.o		
-	usb_core_interface.o	
-->   usb_core_init.o		
-	usb_core_config.o	
-	usb_core_base.o	
-	usb_driver_init.o	
-	urb.o
-
-host:
-     ehci-hcd.o
-     sunxi-hci.o
-->   ehci-sunxi.o
-     hal_hci.o
-
-
-
-
-
-
-
-
-
-
-
-
 https://github.com/smaeul/linux/blob/d1/all/arch/riscv/boot/dts/allwinner/sun20i-d1.dtsi
-
-```yaml
-		usb_otg: usb@4100000 {
-			compatible = "allwinner,sun20i-d1-musb",
-				     "allwinner,sun8i-a33-musb";
-			reg = <0x4100000 0x400>;
-			interrupts = <45 IRQ_TYPE_LEVEL_HIGH>;
-			interrupt-names = "mc";
-			clocks = <&ccu CLK_BUS_OTG>;
-			resets = <&ccu RST_BUS_OTG>;
-			extcon = <&usbphy 0>;
-			phys = <&usbphy 0>;
-			phy-names = "usb";
-			status = "disabled";
-		};
-
-		usbphy: phy@4100400 {
-			compatible = "allwinner,sun20i-d1-usb-phy";
-			reg = <0x4100400 0x100>,
-			      <0x4101800 0x100>,
-			      <0x4200800 0x100>;
-			reg-names = "phy_ctrl",
-				    "pmu0",
-				    "pmu1";
-			clocks = <&osc24M>,
-				 <&osc24M>;
-			clock-names = "usb0_phy",
-				      "usb1_phy";
-			resets = <&ccu RST_USB_PHY0>,
-				 <&ccu RST_USB_PHY1>;
-			reset-names = "usb0_reset",
-				      "usb1_reset";
-			status = "disabled";
-			#phy-cells = <1>;
-		};
-
-		ehci0: usb@4101000 {
-			compatible = "allwinner,sun20i-d1-ehci",
-				     "generic-ehci";
-			reg = <0x4101000 0x100>;
-			interrupts = <46 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&ccu CLK_BUS_OHCI0>,
-				 <&ccu CLK_BUS_EHCI0>,
-				 <&ccu CLK_USB_OHCI0>;
-			resets = <&ccu RST_BUS_OHCI0>,
-				 <&ccu RST_BUS_EHCI0>;
-			phys = <&usbphy 0>;
-			phy-names = "usb";
-			status = "disabled";
-		};
-
-		ohci0: usb@4101400 {
-			compatible = "allwinner,sun20i-d1-ohci",
-				     "generic-ohci";
-			reg = <0x4101400 0x100>;
-			interrupts = <47 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&ccu CLK_BUS_OHCI0>,
-				 <&ccu CLK_USB_OHCI0>;
-			resets = <&ccu RST_BUS_OHCI0>;
-			phys = <&usbphy 0>;
-			phy-names = "usb";
-			status = "disabled";
-		};
-
-		ehci1: usb@4200000 {
-			compatible = "allwinner,sun20i-d1-ehci",
-				     "generic-ehci";
-			reg = <0x4200000 0x100>;
-			interrupts = <49 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&ccu CLK_BUS_OHCI1>,
-				 <&ccu CLK_BUS_EHCI1>,
-				 <&ccu CLK_USB_OHCI1>;
-			resets = <&ccu RST_BUS_OHCI1>,
-				 <&ccu RST_BUS_EHCI1>;
-			phys = <&usbphy 1>;
-			phy-names = "usb";
-			status = "disabled";
-		};
-
-		ohci1: usb@4200400 {
-			compatible = "allwinner,sun20i-d1-ohci",
-				     "generic-ohci";
-			reg = <0x4200400 0x100>;
-			interrupts = <50 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&ccu CLK_BUS_OHCI1>,
-				 <&ccu CLK_USB_OHCI1>;
-			resets = <&ccu RST_BUS_OHCI1>;
-			phys = <&usbphy 1>;
-			phy-names = "usb";
-			status = "disabled";
-		};
-```
-
-D1s_melis 1.0.0
-- rund hub connect then disconnect
-
-D1s_melis
-- not started with new/old spl
-
-
-
-
-
-
-- compare usb drivers with Melis
-- try tinyUSB
-- speed function
-- irq for ohci
 
 
 - try PR for d1s in d1h

@@ -671,10 +671,10 @@ int ehci_setup(struct usb_hcd *hcd)
 
 /*-------------------------------------------------------------------------*/
 // irqreturn_t ehci_irq (struct usb_hcd *hcd)
-//hal_irqreturn_t ehci_irq_handler(void *dev)
-hal_irqreturn_t ehci_irq_handler(struct usb_hcd *hcd)
+hal_irqreturn_t ehci_irq_handler(void *dev)
+//hal_irqreturn_t ehci_irq_handler(struct usb_hcd *hcd)
 {
-	//struct usb_hcd *hcd = (struct usb_hcd *)dev;
+	struct usb_hcd *hcd = (struct usb_hcd *)dev;
 	struct ehci_hcd *ehci = hcd_to_ehci(hcd);
 	u32 status, masked_status, pcd_status = 0, cmd;
 	int bh;

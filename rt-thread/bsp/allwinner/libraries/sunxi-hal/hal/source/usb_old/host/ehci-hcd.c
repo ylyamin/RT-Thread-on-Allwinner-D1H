@@ -452,7 +452,7 @@ void ehci_stop (struct hc_gen_dev *hcd)
 
 /* one-time init, only for memory state */
 //static int ehci_init(struct usb_hcd *hcd)
-int ehci_init(struct hc_gen_dev *hcd)
+int ehci_init_(struct hc_gen_dev *hcd)
 {
     struct ehci_hcd     *ehci = hcd_to_ehci(hcd);
     u32         temp;
@@ -646,7 +646,9 @@ int ehci_run (struct hc_gen_dev *hcd)
     ehci_writel(ehci, FLAG_CF, &ehci->regs->configured_flag);
     ehci_readl(ehci, &ehci->regs->command); /* unblock posted writes */
     hal_log_info("--ehci_run: cmd = 0x%x\n", ehci_readl(ehci, &ehci->regs->command));
-    hal_msleep(5);
+    //!hal_msleep(5);
+    rt_hw_us_delay(5*1000);
+
     //up_write(&ehci_cf_port_reset_rwsem);
     //ehci->last_periodic_enable = ktime_get_real();
 
@@ -686,7 +688,7 @@ int ehci_setup(struct hc_gen_dev *hcd)
     ehci->sbrn = 0x0020;//HCD_USB2;
 
     /* data structure init */
-    retval = ehci_init(hcd);
+    retval = ehci_init_(hcd);
     if (retval)
         return retval;
 

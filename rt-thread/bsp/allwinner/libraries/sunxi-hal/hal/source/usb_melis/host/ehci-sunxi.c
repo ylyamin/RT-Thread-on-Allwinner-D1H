@@ -179,6 +179,7 @@ int sunxi_insmod_ehci(struct sunxi_hci_hcd *sunxi_ehci)
 	hcd = usb_create_hc_gen_dev(&sunxi_ehci_hc_driver, sunxi_ehci->hci_name);
 	//hcd = usb_create_hcd(&sunxi_ehci_hc_driver, sunxi_ehci->hci_name);
 	sunxi_ehci->hcd = hcd;
+//!!
 
 	/* request irq */
 	if (hal_request_irq(sunxi_ehci->irq_no, ehci_irq_handler, "ehci", hcd) < 0) {
@@ -187,7 +188,8 @@ int sunxi_insmod_ehci(struct sunxi_hci_hcd *sunxi_ehci)
 	}
 
 	hal_enable_irq(sunxi_ehci->irq_no);
-
+	
+//!!
 	/* echi start to work */
 	sunxi_start_ehci(sunxi_ehci);
 

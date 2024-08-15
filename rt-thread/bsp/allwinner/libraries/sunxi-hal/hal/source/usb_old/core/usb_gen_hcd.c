@@ -556,8 +556,7 @@ s32 usb_add_hc_gen_dev(struct hc_gen_dev *hcd, u32  irqnum, u32 irqflags)
     hal_log_info("----3--usb_add_hc_gen_dev\n");
     //--<2>--此hcd设备支持的速度
     rh_dev->speed = (hcd->driver->flags & HC_DRIVER_FLAG_HCD_USB2) ? USB_SPEED_HIGH : USB_SPEED_FULL;
-/*
- * function start() is not assigned anywhere     
+//!
 
     //--<3>--start这个设备
     if ((retval = hcd->driver->start(hcd)) < 0)
@@ -565,7 +564,8 @@ s32 usb_add_hc_gen_dev(struct hc_gen_dev *hcd, u32  irqnum, u32 irqflags)
         hal_log_err("PANIC : usb_add_hc_gen_dev() :startup error %d", retval);
         goto err_hcd_driver_start;
     }
-*/
+
+//!
 
     hal_log_info("----4--usb_add_hc_gen_dev\n");
     /* hcd->driver->start() reported can_wakeup, probably with
