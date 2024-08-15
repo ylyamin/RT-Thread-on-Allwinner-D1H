@@ -309,6 +309,8 @@ enum usb_wakeup_source_type {
 // SUNXI_CLK_USB1,
 // };
 
+#include <hal_clk.h>
+
 struct sunxi_hci_hcd {
 	uint32_t usbc_no;  /* usb controller number */
 	uint32_t irq_no;   /* interrupt number */

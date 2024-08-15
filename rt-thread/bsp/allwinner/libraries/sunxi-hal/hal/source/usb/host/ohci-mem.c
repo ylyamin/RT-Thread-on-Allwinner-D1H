@@ -23,6 +23,8 @@
 
 /*-------------------------------------------------------------------------*/
 
+#include "ohci.h"
+
 void ohci_hcd_init(struct ohci_hcd *ohci)
 {
 	// ohci->next_statechange = jiffies;

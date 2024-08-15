@@ -1808,7 +1808,12 @@ re_enumerate:
  * USB_STATE_NOTATTACHED then all of udev's descendants' states are also set
  * to USB_STATE_NOTATTACHED.
  */
+
+#ifdef RT_USING_USB 
+void usb_set_device_state(struct usb_device *udev, udevice_state_t new_state)
+#else
 void usb_set_device_state(struct usb_device *udev, enum usb_device_state new_state)
+#endif
 {
 	unsigned long flags;
 	// USB_OS_ENTER_CRITICAL(flags);
@@ -2419,7 +2424,7 @@ static int _hub_config(struct usb_hub *hub, struct usb_endpoint_descriptor *endp
 			     (hubstatus & HUB_STATUS_OVERCURRENT) ? "" : "no ");
 	}
 
-	rt_kprintf("//--<5>--设置interrupt ep，用来获得hub port 的status\n\r");
+	//--<5>--设置interrupt ep，用来获得hub port 的status
 	pipe = usb_rcvintpipe(hdev, endpoint->bEndpointAddress);
 	maxp = usb_maxpacket(hdev, pipe);
 
@@ -2448,7 +2453,7 @@ static int _hub_config(struct usb_hub *hub, struct usb_endpoint_descriptor *endp
 	}
 
 	memset(hub->status_urb_ubff, 0, sizeof(*hub->status_urb_ubff));
-	rt_kprintf("//填充该urb\n\t");
+	//填充该urb
 	usb_fill_int_urb(hub->urb,
 			 hdev,
 			 pipe,
@@ -2464,15 +2469,12 @@ static int _hub_config(struct usb_hub *hub, struct usb_endpoint_descriptor *endp
 	if (hub->has_indicators && blinkenlights) {
 		hub->indicator[0] = INDICATOR_CYCLE;
 	}
-	rt_kprintf("//hub_power_on\n\r");
 
 	hub_power_on(hub);
-	rt_kprintf("//--<6>--发送get status的urb\n\r");
+	//--<6>--发送get status的urb
 	hub_activate(hub);
 
 	return 0;
-	rt_kprintf("finish \n\r");
-
 fail:
 	hal_log_err("PANIC : config failed, %s (err %d)", message, ret);
 	/* hub_disconnect() frees urb and descriptor */

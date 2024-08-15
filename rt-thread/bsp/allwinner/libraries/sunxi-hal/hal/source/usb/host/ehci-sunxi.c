@@ -98,7 +98,7 @@ static void sunxi_stop_ehci(struct sunxi_hci_hcd *sunxi_ehci)
 static int sunxi_ehci_setup(struct usb_hcd *hcd)
 {
 	struct ehci_hcd *ehci = hcd_to_ehci(hcd);
-	int ret = ehci_init(hcd);
+	int ret = ehci_init_(hcd);
 
 	ehci->need_io_watchdog = 0;
 
@@ -177,7 +177,7 @@ int sunxi_insmod_ehci(struct sunxi_hci_hcd *sunxi_ehci)
 
 	/* creat a usb_hcd for the ehci controller*/
 	hcd = usb_create_hc_gen_dev(&sunxi_ehci_hc_driver, sunxi_ehci->hci_name);
-	// hcd = usb_create_hcd(&sunxi_ehci_hc_driver, sunxi_ehci->hci_name);
+	//hcd = usb_create_hcd(&sunxi_ehci_hc_driver, sunxi_ehci->hci_name);
 	sunxi_ehci->hcd = hcd;
 
 	/* request irq */

@@ -7,16 +7,15 @@
 
 static int cmd_test_hci(int argc, const char **argv)
 {
-    hal_usb_core_init();
+    //hal_usb_core_init();
+    //hal_usb_hcd_init(0);
+    //hal_usb_hcd_init(1);
+    //hal_usb_manager_init();    
+    //rt_usb_host_init("hwsc"); 
 
-    for (int hci_num = 0; hci_num < 2; hci_num++)
-    {
-        /*usb0 need hcd neet to choose */
-        hal_usb_hcd_init(hci_num);
-    }
 
-    hal_usb_manager_init();    
-
+    hal_hci_driverlevel_adjust(1,15);
+    hal_hci_phy_range_set(1,31);
 
     return 0;
 }

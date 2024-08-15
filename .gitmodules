@@ -2,18 +2,20 @@
 	path = bootloaders/sun20i_d1_spl
 	url = https://github.com/smaeul/sun20i_d1_spl.git
 	branch = mainline
+	ignore = dirty
 [submodule "bootloaders/opensbi"]
 	path = bootloaders/opensbi
 	url = https://github.com/riscv-software-src/opensbi
-#[submodule "bootloaders/u-boot"]
-#	path = bootloaders/u-boot
-#	url = https://github.com/smaeul/u-boot
-#	branch = 7446a47
+	ignore = dirty
 [submodule "bootloaders/xfel"]
 	path = bootloaders/xfel
-	url = https://github.com/xboot/xfel
+	url = https://github.com/xboot/
+	ignore = dirty
 [submodule "rt-thread/bsp/allwinner/d1s_d1h/packages/CherryUSB"]
 	path = rt-thread/bsp/allwinner/d1s_d1h/packages/CherryUSB
 	url = https://github.com/cherry-embedded/CherryUSB.git
 	ignore = dirty
-
+[submodule "rt-thread/bsp/allwinner/d1s_d1h/packages/TinyUSB"]
+	path = rt-thread/bsp/allwinner/d1s_d1h/packages/TinyUSB
+	url = https://github.com/RT-Thread-packages/tinyusb.git
+	ignore = dirty

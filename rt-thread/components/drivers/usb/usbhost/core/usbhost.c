@@ -72,5 +72,6 @@ rt_err_t rt_usb_host_init(const char *name)
     /* initialize usb host controller */
     rt_device_init(uhc);
 
+    rt_kprintf("rt_usb_host_init OK!\n\r");
     return RT_EOK;
 }

@@ -399,7 +399,8 @@ struct usb_endpoint_descriptor {
 	uint8_t bRefresh;
 	uint8_t bSynchAddress;
 };
-
+#include <rtconfig.h>
+#ifndef RT_USING_USB
 /* USB_DT_DEVICE_QUALIFIER: Device Qualifier descriptor */
 struct __attribute__((packed)) usb_qualifier_descriptor {
 	uint8_t bLength;
@@ -413,7 +414,7 @@ struct __attribute__((packed)) usb_qualifier_descriptor {
 	uint8_t bNumConfigurations;
 	uint8_t bRESERVED;
 };
-
+#endif
 
 #define USB_DT_ENDPOINT_SIZE		7
 #define USB_DT_ENDPOINT_AUDIO_SIZE	9	/* Audio extension */
@@ -538,6 +539,8 @@ enum usb_device_speed {
 	USB_SPEED_SUPER,      /* usb 3.0 */
 	USB_SPEED_SUPER_PLUS, /* usb 3.1 */
 };
+#include <rtconfig.h>
+#ifndef RT_USING_USB
 enum usb_device_state {
 	USB_STATE_NOTATTACHED = 0,
 	USB_STATE_ATTACHED,
@@ -549,4 +552,7 @@ enum usb_device_state {
 	USB_STATE_CONFIGURED, /* most functions */
 	USB_STATE_SUSPENDED
 };
+#else
+#include <drivers/usb_common.h>
+#endif
 #endif /*__USB_CH9_H__*/

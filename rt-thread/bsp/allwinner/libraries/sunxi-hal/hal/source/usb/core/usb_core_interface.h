@@ -1,7 +1,7 @@
 #ifndef _USB_CORE_INTERFACE_H_
 #define _USB_CORE_INTERFACE_H_
 
-#include <usb_os_platform.h>
+#include "usb_os_platform.h"
 
 /* 是连接usb_host_virt_dev和usb_interface的桥梁
  * 在usb_set_configuration()的时候被使用

@@ -764,7 +764,7 @@ extern int ehci_hub_control(struct usb_hcd *hcd, u16 typeReq, u16 wValue,
 				 u16 wIndex, char *buf, u16 wLength);
 
 void ehci_stop(struct usb_hcd *hcd);
-int ehci_init(struct usb_hcd *hcd);
+int ehci_init_(struct usb_hcd *hcd);
 int ehci_halt(struct ehci_hcd *ehci);
 void ehci_work(struct ehci_hcd *ehci);
 int ehci_run(struct usb_hcd *hcd);
@@ -775,6 +775,8 @@ void ehci_endpoint_disable(struct usb_hcd *hcd, struct usb_host_endpoint *ep);
 int ehci_hub_status_data(struct usb_hcd *hcd, char *buf);
 int ehci_bus_suspend(struct usb_hcd *hcd);
 int ehci_bus_resume(struct usb_hcd *hcd);
-hal_irqreturn_t ehci_irq_handler(void *dev);
+//hal_irqreturn_t ehci_irq_handler(void *dev);
+hal_irqreturn_t ehci_irq_handler(struct usb_hcd *hcd);
+
 
 #endif /* __LINUX_EHCI_HCD_H */

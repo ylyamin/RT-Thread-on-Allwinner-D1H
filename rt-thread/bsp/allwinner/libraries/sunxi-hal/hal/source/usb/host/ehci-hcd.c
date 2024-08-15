@@ -432,7 +432,7 @@ void ehci_stop(struct usb_hcd *hcd)
 
 /* one-time init, only for memory state */
 // static int ehci_init(struct usb_hcd *hcd)
-int ehci_init(struct usb_hcd *hcd)
+int ehci_init_(struct usb_hcd *hcd)
 {
 	struct ehci_hcd *ehci = hcd_to_ehci(hcd);
 	u32 temp;
@@ -616,7 +616,9 @@ int ehci_run(struct usb_hcd *hcd)
 	ehci->rh_state = EHCI_RH_RUNNING;
 	ehci_writel(ehci, FLAG_CF, &ehci->regs->configured_flag);
 	ehci_readl(ehci, &ehci->regs->command); /* unblock posted writes */
-	hal_msleep(5);
+	//! 
+	//hal_msleep(5);
+	rt_hw_us_delay(5*1000);
 	// up_write(&ehci_cf_port_reset_rwsem);
 	ehci->last_periodic_enable = hal_tick_get();
 	temp = HC_VERSION(ehci, ehci_readl(ehci, &ehci->caps->hc_capbase));
@@ -651,7 +653,7 @@ int ehci_setup(struct usb_hcd *hcd)
 	ehci->sbrn = 0x0020;  // HCD_USB2;
 
 	/* data structure init */
-	retval = ehci_init(hcd);
+	retval = ehci_init_(hcd);
 	if (retval)
 		return retval;
 
@@ -669,18 +671,19 @@ int ehci_setup(struct usb_hcd *hcd)
 
 /*-------------------------------------------------------------------------*/
 // irqreturn_t ehci_irq (struct usb_hcd *hcd)
-hal_irqreturn_t ehci_irq_handler(void *dev)
+//hal_irqreturn_t ehci_irq_handler(void *dev)
+hal_irqreturn_t ehci_irq_handler(struct usb_hcd *hcd)
 {
-	struct usb_hcd *hcd = (struct usb_hcd *)dev;
+	//struct usb_hcd *hcd = (struct usb_hcd *)dev;
 	struct ehci_hcd *ehci = hcd_to_ehci(hcd);
 	u32 status, masked_status, pcd_status = 0, cmd;
 	int bh;
 	unsigned long flags;
-
+/*!!
 	EHCI_DEBUG_PRINTF("status = 0x%x, cmd = 0x%x",
 			  ehci_readl(ehci, &ehci->regs->status),
 			  ehci_readl(ehci, &ehci->regs->command));
-
+*/
 	/*
 	 * For threadirqs option we use spin_lock_irqsave() variant to prevent
 	 * deadlock with ehci hrtimer callback, because hrtimer callbacks run
@@ -688,6 +691,10 @@ hal_irqreturn_t ehci_irq_handler(void *dev)
 	 * back to spin_lock() variant when hrtimer callbacks become threaded.
 	 */
 	flags = hal_spin_lock_irqsave(&ehci->lock);
+	rt_kprintf("ehci: %x\n\r",&ehci);
+	rt_kprintf("regs: %x\n\r",&ehci->regs);
+	rt_kprintf("regs: %x\n\r",&ehci->regs->status);
+
 	status = ehci_readl(ehci, &ehci->regs->status);
 
 	/* e.g. cardbus physical eject */

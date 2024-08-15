@@ -192,6 +192,7 @@ int open_clock(struct sunxi_hci_hcd *sunxi_hci)
 	// 	     USBC_Readl(sunxi_hci->usb_vbase + SUNXI_HCI_PHY_CTRL));
 	// mutex_unlock(&usb_clock_lock);
 
+	//!
 	usb_phy_init(sunxi_hci->usb_vbase + SUNXI_USB_PHY_BASE_OFFSET, sunxi_hci->usbc_no);
 
 	return 0;
@@ -461,6 +462,7 @@ void sunxi_hci_get_config_param(struct sunxi_hci_hcd *sunxi_hci)
 	}
 	sunxi_hci->usb_irq_flag = value;
 #else
+/*!!
 	struct platform_usb_port_config *port_table = platform_get_port_table();
 	sunxi_hci->drv_vbus_gpio_valid = port_table->drv_vbus[sunxi_hci->usbc_no].valid;
 	sunxi_hci->drv_vbus_gpio_set = port_table->drv_vbus[sunxi_hci->usbc_no].gpio;
@@ -474,6 +476,7 @@ void sunxi_hci_get_config_param(struct sunxi_hci_hcd *sunxi_hci)
 		sunxi_hci->usb_driver_level = 5;
 		sunxi_hci->usb_irq_flag = 0;
 	}
+*/
 #endif
 }
 

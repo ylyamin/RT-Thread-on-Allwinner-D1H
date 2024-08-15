@@ -66,15 +66,15 @@ static const struct platform_usb_config usb_otg_table = {
 #if defined(CONFIG_ARCH_SUN8IW20) || defined(CONFIG_SOC_SUN20IW1)
 static const struct platform_usb_port_config usb_port_table = {
 	.enable = 1,
-	.port_type = 1,
+	.port_type = 2, //!
 	.detect_type = 1,
 	.detect_mode = 0,
 	.id.valid = 1,
 	.id.gpio = GPIO_PD12,
 	.det_vbus.valid = 1,
-	.det_vbus.gpio = 0,//GPIO_PB8,
+	.det_vbus.gpio = GPIO_PD12,//! GPIO_PB8,
 	.drv_vbus[0].valid = 1,
-	.drv_vbus[0].gpio = 0,//GPIO_PB7,
+	.drv_vbus[0].gpio = GPIO_PD12,//! GPIO_PB7,
 	.drv_vbus[1].valid = 1,
 	.drv_vbus[1].gpio = GPIO_PD22,
 };

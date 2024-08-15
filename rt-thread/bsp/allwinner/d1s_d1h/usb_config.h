@@ -255,7 +255,7 @@
 #define CONFIG_USB_EHCI_HCOR_RESERVED_DISABLE
 #define CONFIG_USB_EHCI_CONFIGFLAG
 // #define CONFIG_USB_EHCI_ISO
-// #define CONFIG_USB_EHCI_WITH_OHCI
+//#define CONFIG_USB_EHCI_WITH_OHCI
 
 /* ---------------- OHCI Configuration ---------------- */
 #define CONFIG_USB_OHCI_HCOR_OFFSET (0x400)

@@ -166,7 +166,7 @@ static int sunxi_ohci_start(struct usb_hcd *hcd)
 	struct ohci_hcd *ohci = hcd_to_ohci(hcd);
 	int ret;
 
-	ret = ohci_init(ohci);
+	ret = ohci_init_(ohci);
 	if (ret < 0)
 		return ret;
 

@@ -60,6 +60,10 @@ rt_inline void plic_irq_toggle(int hwirq, int enable)
 
 static void generic_handle_irq(int irq)
 {
+    if(irq > 45 && irq < 50)
+    {
+        //rt_kprintf("generic_handle_irq irq:%d\n",irq);
+    }
     rt_isr_handler_t isr;
     void *param;
 

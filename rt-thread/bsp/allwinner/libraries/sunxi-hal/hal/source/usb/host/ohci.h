@@ -706,21 +706,25 @@ static inline void periodic_reinit(struct ohci_hcd *ohci)
 
 static inline u32 roothub_a(struct ohci_hcd *hc)
 {
+	 //!
 	return read_roothub(hc, a, 0xfc0fe000);
 }
 
 static inline u32 roothub_b(struct ohci_hcd *hc)
 {
+	//!
 	return ohci_readl(hc, &hc->regs->roothub.b);
 }
 
 static inline u32 roothub_status(struct ohci_hcd *hc)
 {
+	//!
 	return ohci_readl(hc, &hc->regs->roothub.status);
 }
 
 static inline u32 roothub_portstatus(struct ohci_hcd *hc, int i)
 {
+	//!
 	return read_roothub(hc, portstatus[i], 0xffe0fce0);
 }
 
@@ -743,7 +747,7 @@ extern int ohci_hub_control(struct usb_hcd	*hcd, u16 typeReq, u16 wValue,
 extern int ohci_hub_status_data(struct usb_hcd *hcd, char *buf);
 extern int ohci_run(struct ohci_hcd *ohci);
 extern void ohci_stop(struct usb_hcd *hcd);
-extern int ohci_init(struct ohci_hcd *ohci);
+extern int ohci_init_(struct ohci_hcd *ohci);
 extern hal_irqreturn_t ohci_irq_handler(void *dev);
 extern int ohci_urb_enqueue(struct usb_hcd *hcd, struct urb *urb, gfp_t mem_flags);
 extern int ohci_urb_dequeue(struct usb_hcd *hcd, struct urb *urb);

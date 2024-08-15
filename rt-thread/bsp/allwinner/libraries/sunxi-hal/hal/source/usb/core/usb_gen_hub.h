@@ -52,8 +52,12 @@ struct usb_hub {
 	__u8 HubRemove;	       /* flag. Hub是否拔出             */
 	__u32 hub_req_busy;    /* 正在发送urb请求               */
 };
-
+#ifdef RT_USING_USB
+#include <drivers/usb_common.h>
+void usb_set_device_state(struct usb_device *udev, udevice_state_t new_state);
+#else
 void usb_set_device_state(struct usb_device *udev, enum usb_device_state new_state);
+#endif
 void usb_disable_endpoint(struct usb_device *dev, unsigned int epaddr);
 
 void usb_disconnect(struct usb_device **pdev);

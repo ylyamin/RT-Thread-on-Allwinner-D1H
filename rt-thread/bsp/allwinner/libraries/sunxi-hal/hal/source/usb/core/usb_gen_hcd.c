@@ -609,7 +609,7 @@ s32 usb_add_hc_gen_dev(struct usb_hcd *hcd, u32 irqnum, u32 irqflags)
 
 	/*version 1, we consider only one host*/
 
-	rt_kprintf("//--<1>--为rh 创建一个usb_device结构\n\r");
+	//--<1>--为rh 创建一个usb_device结构
 	rh_dev = usb_host_alloc_virt_dev(NULL, &hcd->self, 0);
 	if (rh_dev == NULL) {
 		hal_log_err("PANIC : usb_add_hc_gen_dev() : unable to allocate root hub");
@@ -625,15 +625,17 @@ s32 usb_add_hc_gen_dev(struct usb_hcd *hcd, u32 irqnum, u32 irqflags)
 		BUG();
 	}
 
-	rt_kprintf("//--<2>--此hcd设备支持的速度\n\r");
+	//--<2>--此hcd设备支持的速度
 	rh_dev->speed = (hcd->driver->flags & HC_DRIVER_FLAG_HCD_USB2) ? USB_SPEED_HIGH : USB_SPEED_FULL;
-/*
-	rt_kprintf("//--<3>--start这个设备\n\r");
+//!!!
+
+	//--<3>--start这个设备
 	if ((retval = hcd->driver->start(hcd)) < 0) {
 		hal_log_err("PANIC : usb_add_hc_gen_dev() :startup error %d", retval);
 		goto err_hcd_driver_start;
 	}
-*/
+	
+//!!!
 	/* hcd->driver->start() reported can_wakeup, probably with
 	 * assistance from board's boot firmware.
 	 * NOTE:  normal devices won't enable wakeup by default.
@@ -644,14 +646,14 @@ s32 usb_add_hc_gen_dev(struct usb_hcd *hcd, u32 irqnum, u32 irqflags)
 
 	hcd->remote_wakeup = hcd->can_wakeup;
 
-	rt_kprintf("//--<4>--注册root hub, 即添加一个usb_host_virt_dev\n\r");
+	//--<4>--注册root hub, 即添加一个usb_host_virt_dev
 	// linux-4.9 register_root_hub(hcd)
 	if ((retval = _register_root_hub(rh_dev, hcd)) != 0) {
 		hal_log_err("PANIC : can not register root hub :(");
 		goto err_register_root_hub;
 	}
 
-	rt_kprintf("//--<5>--\n\r");
+	//--<5>--
 	if (hcd->uses_new_polling && hcd->poll_rh) {
 		usb_hcd_poll_rh_status(hcd);
 	}

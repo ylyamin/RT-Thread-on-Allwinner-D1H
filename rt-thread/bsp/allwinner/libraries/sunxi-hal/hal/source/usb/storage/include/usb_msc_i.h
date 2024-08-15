@@ -22,7 +22,7 @@
 #ifndef __USB_MSC_I_H__
 #define __USB_MSC_I_H_
 
-#include "usb_list.h"
+#include "usb_list_.h"
 #include "usb_os_platform.h"
 
 /* Sub Classes */

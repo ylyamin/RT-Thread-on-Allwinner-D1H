@@ -121,7 +121,9 @@ rt_err_t rt_usbh_attatch_instance(uinst_t device)
 
     /* reset bus */
     rt_usbh_hub_reset_port(device->parent_hub, device->port);
-    rt_thread_delay(2);
+    //rt_thread_delay(2);
+    rt_hw_us_delay(2*1000);
+
     rt_usbh_hub_clear_port_feature(device->parent_hub, i + 1, PORT_FEAT_C_CONNECTION);
     /* set device address */
     ret = rt_usbh_set_address(device);

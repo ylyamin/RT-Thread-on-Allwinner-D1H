@@ -4,7 +4,7 @@
 
 #include "ch9.h"
 #include "ch11.h"
-#include "usb_list.h"
+#include "usb_list_.h"
 
 #define USB_MAJOR			180
 #define USB_DEVICE_MAJOR		189
@@ -654,7 +654,11 @@ struct usb_device {
 	int		devnum;
 // 	char		devpath[16];
 // 	u32		route;
+#ifdef RT_USING_USB
+	udevice_state_t 		state;
+#else
 	enum usb_device_state	state;
+#endif	
 	enum usb_device_speed	speed;
 // 	unsigned int		rx_lanes;
 // 	unsigned int		tx_lanes;

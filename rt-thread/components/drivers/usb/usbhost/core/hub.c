@@ -316,7 +316,8 @@ rt_err_t rt_usbh_hub_reset_port(uhub_t hub, rt_uint16_t port)
     /* parameter check */
     RT_ASSERT(hub != RT_NULL);
 
-    rt_thread_delay(50);
+    //rt_thread_delay(50);
+    rt_hw_us_delay(50 * 1000);
 
     /* reset hub port */
     ret = rt_usbh_hub_set_port_feature(hub, port, PORT_FEAT_RESET);
@@ -332,7 +333,8 @@ rt_err_t rt_usbh_hub_reset_port(uhub_t hub, rt_uint16_t port)
     ret = rt_usbh_hub_clear_port_feature(hub, port, PORT_FEAT_C_RESET);
     if(ret != RT_EOK) return ret;
 
-    rt_thread_delay(50);
+    //rt_thread_delay(50);
+    rt_hw_us_delay(50 * 1000);
 
     return RT_EOK;
 }
@@ -369,7 +371,9 @@ rt_err_t rt_usbh_hub_port_debounce(uhub_t hub, rt_uint16_t port)
             break;
         }
 
-        rt_thread_delay(delayticks);
+        //rt_thread_delay(delayticks);
+        rt_hw_us_delay(delayticks * 1000);
+
     }
 
     if(connect) return RT_EOK;
@@ -554,8 +558,10 @@ static rt_err_t rt_usbh_hub_enable(void *arg)
     for (i = 0; i < hub->num_ports; i++)
     {
         rt_usbh_hub_set_port_feature(hub, i + 1, PORT_FEAT_POWER);
-        rt_thread_delay(hub->hub_desc.pwron_to_good
-            * 2 * RT_TICK_PER_SECOND / 1000 );
+
+        rt_hw_us_delay(hub->hub_desc.pwron_to_good * 2 * RT_TICK_PER_SECOND);
+        
+        //rt_thread_delay(hub->hub_desc.pwron_to_good * 2 * RT_TICK_PER_SECOND / 1000 );
     }
 
     if(intf->intf_desc->bNumEndpoints != 1)

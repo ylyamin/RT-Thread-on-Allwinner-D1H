@@ -326,9 +326,9 @@ source/usb/manager/usb_hw_scan.c
 
 host_test_src = Split('''
 test/usb/host/test_hci.c
+test/usb/host/hci_ed_test.c
 ''')
 
-#test/usb/host/hci_ed_test.c
 
 host_path =  [cwd + '/source/usb/common']
 host_path += [cwd + '/source/usb/include']

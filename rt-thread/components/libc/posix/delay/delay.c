@@ -15,6 +15,8 @@
 void msleep(unsigned int msecs)
 {
     rt_thread_mdelay(msecs);
+    //!rt_hw_us_delay(msecs * 1000);
+
 }
 RTM_EXPORT(msleep);
 

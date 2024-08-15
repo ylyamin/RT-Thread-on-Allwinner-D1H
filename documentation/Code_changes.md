@@ -2021,7 +2021,6 @@ D1s_melis
 
 - compare usb drivers with Melis
 - try tinyUSB
-- reg offset 0x100
 - speed function
 - irq for ohci
 

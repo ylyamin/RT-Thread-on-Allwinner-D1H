@@ -424,7 +424,7 @@ static void _ohci_shutdown(struct usb_hcd *hcd)
 
 /* init memory, and kick BIOS/SMM off */
 
-int ohci_init(struct ohci_hcd *ohci)
+int ohci_init_(struct ohci_hcd *ohci)
 {
 	int ret;
 	struct usb_hcd *hcd = ohci_to_hcd(ohci);
