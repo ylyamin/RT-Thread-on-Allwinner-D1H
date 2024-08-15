@@ -74,7 +74,7 @@ static int cmd_hci_dl_adjust(int argc, const char **argv)
         show_ed_test_help();
         return 0;
     }
-    hal_hci_driverlevel_adjust(hci_num, driver_level);
+    //hal_hci_driverlevel_adjust(hci_num, driver_level);
     return 0;
 
 }

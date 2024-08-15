@@ -268,71 +268,43 @@ test/usb/udc/ed_test.c
 ''')
 
 # USB host
-host_src_old = Split('''
-source/usb_old/include/usb_os_platform.c
-source/usb_old/include/list_head_ext.c
-source/usb_old/include/usb_gen_dev_mod.c
-source/usb_old/include/usb_drv_dev_macth.c
-source/usb_old/include/usb_utils_find_zero_bit.c
-source/usb_old/platform/sun20iw1/usb_sun20iw1.c
-source/usb_old/core/usb_virt_bus.c
-source/usb_old/core/usb_msg_base.c
-source/usb_old/core/usb_msg.c
-source/usb_old/core/usb_gen_hub_base.c
-source/usb_old/core/usb_gen_hub.c
-source/usb_old/core/usb_gen_hcd_rh.c
-source/usb_old/core/usb_gen_hcd.c
-source/usb_old/core/usb_core_interface.c
-source/usb_old/core/usb_core_init.c
-source/usb_old/core/usb_core_config.c
-source/usb_old/core/usb_core_base.c	
-source/usb_old/core/usb_driver_init.c
-source/usb_old/core/urb.c
-source/usb_old/host/ehci-hcd.c
-source/usb_old/host/sunxi-hci.c
-source/usb_old/host/ehci-sunxi.c
-source/usb_old/host/hal_hci.c
-source/usb_old/manager/usb_manager.c
-source/usb_old/manager/usb_msg_center.c
-source/usb_old/manager/usb_hw_scan.c
+host_src = Split('''
+source/usb/include/usb_os_platform.c
+source/usb/include/list_head_ext.c
+source/usb/include/usb_gen_dev_mod.c
+source/usb/include/usb_drv_dev_macth.c
+source/usb/include/usb_utils_find_zero_bit.c
+source/usb/platform/sun20iw1/usb_sun20iw1.c
+source/usb/core/usb_virt_bus.c
+source/usb/core/usb_msg_base.c
+source/usb/core/usb_msg.c
+source/usb/core/usb_gen_hub_base.c
+source/usb/core/usb_gen_hub.c
+source/usb/core/usb_gen_hcd_rh.c
+source/usb/core/usb_gen_hcd.c
+source/usb/core/usb_core_interface.c
+source/usb/core/usb_core_init.c
+source/usb/core/usb_core_config.c
+source/usb/core/usb_core_base.c	
+source/usb/core/usb_driver_init.c
+source/usb/core/urb.c
+source/usb/host/ehci-hcd.c
+source/usb/host/sunxi-hci.c
+source/usb/host/ehci-sunxi.c
+source/usb/host/hal_hci.c
+source/usb/hid/Client/KeyBoard/KeyBoard.c
+source/usb/hid/Client/misc_lib.c
+source/usb/hid/Class/Hid.c
+source/usb/hid/Class/HidProtocol.c
+source/usb/hid/Class/HidTransport.c
+source/usb/manager/usb_manager.c
+source/usb/manager/usb_msg_center.c
+source/usb/manager/usb_hw_scan.c
+source/usb/hid/Client/Mouse/UsbMouse.c
+source/usb/hid/Client/Mouse/UsbMouse_DriftControl.c
 ''')
-host_src_melis = Split('''
-source/usb_melis/common/usb_init.c
-source/usb_melis/common/list_head_ext.c
-source/usb_melis/common/usb_phy.c
-source/usb_melis/core/usb_virt_bus.c
-source/usb_melis/core/usb_msg_base.c
-source/usb_melis/core/usb_msg.c
-source/usb_melis/core/usb_gen_hub_base.c
-source/usb_melis/core/usb_gen_hub.c
-source/usb_melis/core/usb_gen_hcd_rh.c
-source/usb_melis/core/usb_gen_hcd.c
-source/usb_melis/core/usb_core_interface.c
-source/usb_melis/core/usb_core_init.c
-source/usb_melis/core/usb_core_config.c
-source/usb_melis/core/usb_core_base.c	
-source/usb_melis/core/usb_driver_init.c
-source/usb_melis/core/urb.c
-source/usb_melis/host/ehci-hcd.c
-source/usb_melis/host/sunxi-hci.c
-source/usb_melis/host/ehci-sunxi.c
-source/usb_melis/host/ohci-hcd.c
-source/usb_melis/host/ohci-sunxi.c
-source/usb_melis/host/hci_hal.c
-source/usb_melis/platform/sun20iw1/usb_sun20iw1.c
-source/usb_melis/manager/usb_manager.c
-source/usb_melis/manager/usb_msg_center.c
-source/usb_melis/manager/usb_hw_scan.c
-''')
-host_src = host_src_old
-
 #source/usb/hid/Client/Mouse/UsbMouse.c
 #source/usb/hid/Client/Mouse/UsbMouse_DriftControl.c
-#source/usb/hid/Client/KeyBoard/KeyBoard.c
-#source/usb/hid/Client/misc_lib.c
-#source/usb/hid/Class/Hid.c
-#source/usb/hid/Class/HidProtocol.c
-#source/usb/hid/Class/HidTransport.c
 
 #source/usb/storage/Class/mscProtocol.c
 #source/usb/storage/Class/mscTransport.c
@@ -347,32 +319,16 @@ host_src = host_src_old
 #source/usb/storage/Misc/usbh_disk_info.c
 #source/usb/storage/Misc/usbh_disk_remove_time.c
 
-#source/usb/include/usb_os_platform.c
-#source/usb/include/list_head_ext.c
-#source/usb/include/usb_gen_dev_mod.c
-#source/usb/include/usb_drv_dev_macth.c
-#source/usb/include/usb_utils_find_zero_bit.c
-
 host_test_src = Split('''
 test/usb/host/test_hci.c
 test/usb/host/hci_ed_test.c
 ''')
 
-host_path_old =  [cwd + '/source/usb_old/common']
-host_path_old += [cwd + '/source/usb_old/include']
-host_path_old += [cwd + '/source/usb_old/core']
-host_path_old += [cwd + '/source/usb_old/storage/include']
-host_path_old += [cwd + '/source/usb_old/hid/Include']
-host_path_old += [cwd + '/source/usb_old/host']
-
-host_path_melis =  [cwd + '/source/usb_melis/common']
-host_path_melis += [cwd + '/source/usb_melis/include']
-host_path_melis += [cwd + '/source/usb_melis/core']
-host_path_melis += [cwd + '/source/usb_melis/storage/include']
-host_path_melis += [cwd + '/source/usb_melis/hid/Include']
-host_path_melis += [cwd + '/source/usb_melis/host']
-
-host_path = host_path_old
+host_path =  [cwd + '/source/usb/include']
+host_path += [cwd + '/source/usb/core']
+host_path += [cwd + '/source/usb/storage/include']
+host_path += [cwd + '/source/usb/hid/Include']
+host_path += [cwd + '/source/usb/host']
 
 ce_src = Split('''
 source/ce/ce_common.c
@@ -391,7 +347,7 @@ CPPPATH = [
     cwd + '/../include/hal',
     cwd + '/../include/hal/sdmmc',
     cwd + '/../include/hal/phy',
-    cwd + '/../include/hal/usb', #!
+    cwd + '/../include/hal/usb',
     cwd + '/../include/osal',
     cwd + '/source',
     cwd + '/source/uart',

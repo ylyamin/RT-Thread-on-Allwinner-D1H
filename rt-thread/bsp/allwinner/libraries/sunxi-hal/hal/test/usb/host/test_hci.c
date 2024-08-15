@@ -14,8 +14,8 @@ static int cmd_test_hci(int argc, const char **argv)
     //rt_usb_host_init("hwsc"); 
 
 
-    hal_hci_driverlevel_adjust(1,15);
-    hal_hci_phy_range_set(1,31);
+    //hal_hci_driverlevel_adjust(1,15);
+    //hal_hci_phy_range_set(1,31);
 
     return 0;
 }

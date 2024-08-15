@@ -21,7 +21,7 @@ int drv_usb(void)
     hal_usb_core_init();
 	//hal_usb_hcd_init(0);
 	hal_usb_hcd_init(1);
-    hal_usb_manager_init();
+    //hal_usb_manager_init();
 
     //rt_usb_host_init("hwsc"); 
 
