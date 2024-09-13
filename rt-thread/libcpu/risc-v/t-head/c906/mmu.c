@@ -173,6 +173,7 @@ static int _map_one_page(struct rt_aspace *aspace, void *va, void *pa,
         }
     }
 
+//!
     RT_ASSERT(!PTE_USED(*(mmu_l3 + l3_off)));
     // declares a reference to parent page table
     rt_page_ref_inc((void *)mmu_l3, 0);

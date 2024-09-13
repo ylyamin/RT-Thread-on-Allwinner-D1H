@@ -3608,6 +3608,7 @@ static rt_ssize_t _rt_mq_recv(rt_mq_t mq,
                               rt_int32_t timeout,
                               int suspend_flag)
 {
+    //!rt_kprintf("_rt_mq_recv start\n\r");
     struct rt_thread *thread;
     rt_base_t level;
     struct rt_mq_message *msg;

@@ -671,10 +671,15 @@ int ehci_setup(struct usb_hcd *hcd)
 
 /*-------------------------------------------------------------------------*/
 // irqreturn_t ehci_irq (struct usb_hcd *hcd)
-hal_irqreturn_t ehci_irq_handler(void *dev)
-//hal_irqreturn_t ehci_irq_handler(struct usb_hcd *hcd)
+//! hal_irqreturn_t ehci_irq_handler(void *dev)
+#include <sunxi-hci.h>
+extern struct sunxi_hci_hcd g_sunxi_ehci[2];
+
+hal_irqreturn_t ehci_irq_handler(struct usb_hcd *hcd)
 {
-	struct usb_hcd *hcd = (struct usb_hcd *)dev;
+	struct sunxi_hci_hcd *sunxi_ehci = &g_sunxi_ehci[1];
+	hcd = sunxi_ehci->hcd;
+	//struct usb_hcd *hcd = (struct usb_hcd *)dev;
 	struct ehci_hcd *ehci = hcd_to_ehci(hcd);
 	u32 status, masked_status, pcd_status = 0, cmd;
 	int bh;
@@ -691,9 +696,10 @@ hal_irqreturn_t ehci_irq_handler(void *dev)
 	 * back to spin_lock() variant when hrtimer callbacks become threaded.
 	 */
 	flags = hal_spin_lock_irqsave(&ehci->lock);
-	rt_kprintf("ehci: %x\n\r",&ehci);
-	rt_kprintf("regs: %x\n\r",&ehci->regs);
-	rt_kprintf("regs: %x\n\r",&ehci->regs->status);
+
+	rt_kprintf("ehci_irq_handler hcd: %x\n\r",hcd);
+	rt_kprintf("ehci_irq_handler regs: %x\n\r",ehci->regs);
+	rt_kprintf("ehci_irq_handler status: %x\n\r",&ehci->regs->status);
 
 	status = ehci_readl(ehci, &ehci->regs->status);
 

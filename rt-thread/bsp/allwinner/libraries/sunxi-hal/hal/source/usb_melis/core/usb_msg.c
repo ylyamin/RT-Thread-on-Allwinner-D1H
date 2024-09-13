@@ -199,6 +199,25 @@ s32 usb_get_descriptor(struct usb_device *dev, u8 type, u8 index, void *buf, s32
 		break;
 	}
 
+/* 	
+	struct usb_device_descriptor * descriptor = (struct usb_device_descriptor *) buf;
+	rt_kprintf("Descriptor:\n\r");
+	rt_kprintf("bcdDevice: %x\n\r",				descriptor->bcdDevice);
+ 	rt_kprintf("bLength: %x\n\r",				descriptor->bLength);
+ 	rt_kprintf("bDescriptorType: %x\n\r",		descriptor->bDescriptorType);
+ 	rt_kprintf("bcdUSB: %x\n\r",				descriptor->bcdUSB);
+ 	rt_kprintf("bDeviceClass: %x\n\r",			descriptor->bDeviceClass);
+ 	rt_kprintf("bDeviceSubClass: %x\n\r",		descriptor->bDeviceSubClass);
+ 	rt_kprintf("bDeviceProtocol: %x\n\r",		descriptor->bDeviceProtocol);
+ 	rt_kprintf("bMaxPacketSize0: %x\n\r",		descriptor->bMaxPacketSize0);
+ 	rt_kprintf("idVendor: %x\n\r",				descriptor->idVendor);
+ 	rt_kprintf("idProduct: %x\n\r",				descriptor->idProduct);
+ 	rt_kprintf("bcdDevice: %x\n\r",				descriptor->bcdDevice);
+ 	rt_kprintf("iManufacturer: %x\n\r",			descriptor->iManufacturer);
+ 	rt_kprintf("iProduct: %x\n\r",				descriptor->iProduct);
+ 	rt_kprintf("iSerialNumber: %x\n\r",			descriptor->iSerialNumber);
+ 	rt_kprintf("bNumConfigurations: %x\n\r",	descriptor->bNumConfigurations);
+ */
 	return result;
 }
 

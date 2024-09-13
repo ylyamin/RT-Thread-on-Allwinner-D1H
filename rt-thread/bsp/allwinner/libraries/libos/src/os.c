@@ -62,8 +62,8 @@ static inline uint64_t arch_counter_get_cntpct(void)
 
 rt_weak int msleep(unsigned int msecs)
 {
-    //!rt_hw_us_delay(msecs*1000);
-    rt_thread_mdelay(msecs);
+    rt_hw_us_delay(msecs*1000);
+    //!rt_thread_mdelay(msecs);
     return 0;
 }
 
@@ -87,8 +87,8 @@ rt_weak int usleep(unsigned int usecs)
 
     if (ticks)
     {
-        rt_thread_delay(ticks);
-        //!rt_hw_us_delay(usecs);
+        //!rt_thread_delay(ticks);
+        rt_hw_us_delay(usecs);
     }
     if (msecs)
     {

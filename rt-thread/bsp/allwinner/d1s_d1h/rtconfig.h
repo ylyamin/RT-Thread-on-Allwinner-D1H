@@ -68,7 +68,6 @@
 #define RT_USING_USER_MAIN
 #define RT_MAIN_THREAD_STACK_SIZE 16384
 #define RT_MAIN_THREAD_PRIORITY 10
-#define RT_USING_LEGACY
 #define RT_USING_MSH
 #define RT_USING_FINSH
 #define FINSH_USING_MSH
@@ -261,7 +260,7 @@
 #define PKG_USING_TINYUSB
 #define PKG_TINYUSB_STACK_SIZE 2048
 #define PKG_TINYUSB_THREAD_PRIORITY 8
-#define PKG_TINYUSB_MEM_SECTION ".data"
+#define PKG_TINYUSB_MEM_SECTION ".usb"
 #define PKG_TINYUSB_MEM_ALIGN 4
 #define PKG_TINYUSB_RHPORT_NUM_1
 #define PKG_TINYUSB_RHPORT_NUM 0
@@ -351,7 +350,6 @@
 /* Uncategorized */
 
 #define BOARD_allwinnerd1
-#define ENABLE_FPU
 #define __STACKSIZE__ 16384
 
 /* General Drivers Configuration */
@@ -446,6 +444,7 @@
 
 #define USB
 #define DRIVERS_USB
+#define USB_UDC
 #define HAL_TEST_USB
 #define USB_HOST
 #define HAL_TEST_HCI
@@ -455,6 +454,12 @@
 #define USB_OHCI_0
 #define USB_EHCI_1
 #define USB_OHCI_1
+#define USB_DEVICE
+#define HAL_TEST_UDC
+#define USB_GADGET
+#define COMPONENT_ADBD
+#define COMPONENTS_USB_GADGET_ADBD
+#define DRIVERS_USB_GADGET_ADB
 
 /* CE Devices */
 

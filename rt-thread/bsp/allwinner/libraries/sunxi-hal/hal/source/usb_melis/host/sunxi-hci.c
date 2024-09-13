@@ -30,6 +30,7 @@ static void USBC_SelectPhyToHci(struct sunxi_hci_hcd *sunxi_hci)
 	reg_value = USBC_Readl(sunxi_hci->otg_vbase + SUNXI_OTG_PHY_CFG);
 	reg_value &= ~(0x01);
 	USBC_Writel(reg_value, (sunxi_hci->otg_vbase + SUNXI_OTG_PHY_CFG));
+	rt_kprintf("phy write: %x<-%x\n\r",(sunxi_hci->otg_vbase + SUNXI_OTG_PHY_CFG),reg_value);
 }
 
 #if defined(CONFIG_ARCH_SUN20IW2)
@@ -50,6 +51,7 @@ static void USBC_Clean_SIDDP(struct sunxi_hci_hcd *sunxi_hci)
 	reg_value = USBC_Readl(sunxi_hci->usb_vbase + SUNXI_HCI_PHY_CTRL);
 	reg_value &= ~(0x01 << SUNXI_HCI_PHY_CTRL_SIDDQ);
 	USBC_Writel(reg_value, (sunxi_hci->usb_vbase + SUNXI_HCI_PHY_CTRL));
+	rt_kprintf("phy write: %x<-%x\n\r",(sunxi_hci->usb_vbase + SUNXI_HCI_PHY_CTRL),reg_value);
 }
 
 /*
@@ -185,16 +187,27 @@ int open_clock(struct sunxi_hci_hcd *sunxi_hci)
 	USBC_Clean_SIDDP(sunxi_hci);
 
 	/* otg and hci0 Controller Shared phy in SUN50I */
-	if (sunxi_hci->usbc_no == HCI0_USBC_NO)
-		USBC_SelectPhyToHci(sunxi_hci);
+	//! if (sunxi_hci->usbc_no == HCI0_USBC_NO)
+	//	USBC_SelectPhyToHci(sunxi_hci);
 
 	// hal_log_info("--open_clock 0x810 = 0x%x",
 	// 	     USBC_Readl(sunxi_hci->usb_vbase + SUNXI_HCI_PHY_CTRL));
 	// mutex_unlock(&usb_clock_lock);
 
 	///!
-	usb_phy_init(sunxi_hci->usb_vbase + SUNXI_USB_PHY_BASE_OFFSET, sunxi_hci->usbc_no);
+	//usb_phy_init(sunxi_hci->usb_vbase + SUNXI_USB_PHY_BASE_OFFSET, sunxi_hci->usbc_no);
 
+/* special */
+	if (sunxi_hci->usbc_no == HCI0_USBC_NO)
+	{
+		unsigned long reg_value = 0;
+		reg_value = USBC_Readl(sunxi_hci->otg_vbase + SUNXI_OTG_PHY_CTRL);	
+		reg_value |= (0x01 << 5);
+		reg_value &= ~(0x01 << 3);
+		USBC_Writel(reg_value, (sunxi_hci->otg_vbase + SUNXI_OTG_PHY_CTRL));
+		rt_kprintf("phy write: %x<-%x\n\r",(sunxi_hci->otg_vbase + SUNXI_OTG_PHY_CTRL),reg_value);
+	}
+/* special */
 	return 0;
 }
 
@@ -299,9 +312,29 @@ void usb_passby(struct sunxi_hci_hcd *sunxi_hci, u32 enable)
 		reg_value &= ~(1 << 0);	 /* ULPI bypass disable */
 	}
 	USBC_Writel(reg_value, (sunxi_hci->usb_vbase + SUNXI_USB_PMU_IRQ_ENABLE));
+	rt_kprintf("phy write: %x<-%x\n\r",(sunxi_hci->usb_vbase + SUNXI_USB_PMU_IRQ_ENABLE),reg_value);
 
 	// hal_log_info("---usb_passby 0x800 = 0x%x",
 	// 	     USBC_Readl(sunxi_hci->usb_vbase + SUNXI_USB_PMU_IRQ_ENABLE));
+
+/* special */
+	if (sunxi_hci->usbc_no == HCI0_USBC_NO)
+	{
+		reg_value = 0;
+		reg_value = USBC_Readl(sunxi_hci->otg_vbase+0x400);	
+		reg_value &= ~((unsigned long) 0);
+		reg_value |= (0x01 << 16);
+		USBC_Writel(reg_value, (sunxi_hci->otg_vbase+0x400));
+		rt_kprintf("phy write: %x<-%x\n\r",(sunxi_hci->otg_vbase+0x400),reg_value);
+
+		reg_value = USBC_Readl(sunxi_hci->otg_vbase+0x400);	
+		reg_value &= ~((unsigned long) 0);
+		reg_value |= (0x01 << 17);
+		USBC_Writel(reg_value, (sunxi_hci->otg_vbase+0x400));
+		rt_kprintf("phy write: %x<-%x\n\r",(sunxi_hci->otg_vbase+0x400),reg_value);
+	}
+/* special */
+
 
 	hal_spin_unlock_irqrestore(&passby_lock, flags);
 }

@@ -197,7 +197,7 @@
 //#define CONFIG_USB_EHCI_0 1
 //#define CONFIG_USB_EHCI_1 1
 
-//#define CONFIG_USB_OHCI 1
+#define CONFIG_USB_OHCI 1
 //#define CONFIG_USB_OHCI_0 1
 //#define CONFIG_USB_OHCI_1 1
 //#define CONFIG_USB_HID 1

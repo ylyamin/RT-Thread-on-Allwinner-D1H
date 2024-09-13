@@ -1873,13 +1873,364 @@ hcd_int_handler int_status:EHCI_INT_MASK_PORT_CHANGE
 if only hal init
 hcd_int_handler int_status:EHCI_INT_MASK_PORT_CHANGE
 
+https://github.com/clockworkpi/DevTerm/blob/main/Code/patch/d1/config
+```conf
+CONFIG_USB_HID=y
+CONFIG_USB_OHCI_LITTLE_ENDIAN=y
+CONFIG_USB_SUPPORT=y
+CONFIG_USB_COMMON=y
+CONFIG_USB_ARCH_HAS_HCD=y
+CONFIG_USB=y
+
+CONFIG_USB_EHCI_HCD=y
+CONFIG_USB_EHCI_ROOT_HUB_TT=y
+CONFIG_USB_EHCI_TT_NEWSCHED=y
+CONFIG_USB_EHCI_HCD_SUNXI=y
+
+CONFIG_USB_OHCI_HCD=y
+CONFIG_USB_OHCI_HCD_SUNXI=y
+CONFIG_USB_SUNXI_HCD=y
+CONFIG_USB_SUNXI_HCI=y
+CONFIG_USB_SUNXI_EHCI0=y
+CONFIG_USB_SUNXI_EHCI1=y
+CONFIG_USB_SUNXI_OHCI0=y
+CONFIG_USB_SUNXI_OHCI1=y
+
+CONFIG_USB_SUNXI_UDC0=y
+
+CONFIG_USB_SUNXI_USB=y
+CONFIG_USB_SUNXI_USB_MANAGER=y
+CONFIG_USB_SUNXI_USB_DEBUG=y
+CONFIG_USB_SUNXI_USB_ADB=y
+```
 
 
 ## Notes
 LOG_D("start enumnation");
 https://github.com/smaeul/linux/blob/d1/all/arch/riscv/boot/dts/allwinner/sun20i-d1.dtsi
 
+LINUX
 
+```c
+
+#define CLK_USB_OHCI0		97
+#define CLK_USB_OHCI1		98
+#define CLK_BUS_OHCI0		99
+#define CLK_BUS_OHCI1		100
+#define CLK_BUS_EHCI0		101
+#define CLK_BUS_EHCI1		102
+#define CLK_BUS_OTG		     103
+
+#define RST_USB_PHY0		40
+#define RST_USB_PHY1		41
+#define RST_BUS_OHCI0		42
+#define RST_BUS_OHCI1		43
+#define RST_BUS_EHCI0		44
+#define RST_BUS_EHCI1		45
+#define RST_BUS_OTG		     46
+
+
+[    0.877847] phy->clk name: usb0_phy
+[    0.899453] phy->reset name: usb0_reset
+[    0.912893] phy->clk name: usb1_phy
+[    0.916606] phy->reset name: usb1_reset
+
+	          clocks =       <&osc24M>,
+				          <&osc24M>;
+			clock-names =  "usb0_phy",
+				          "usb1_phy";
+			resets =       <&ccu RST_USB_PHY0>, 40
+				          <&ccu RST_USB_PHY1>; 41
+			reset-names =  "usb0_reset",
+				          "usb1_reset";
+
+	ehci1:
+			clocks =  <&ccu CLK_BUS_OHCI1>,
+				     <&ccu CLK_BUS_EHCI1>,    CLK_BUS_EHCI1		102
+				     <&ccu CLK_USB_OHCI1>;
+
+			resets =  <&ccu RST_BUS_OHCI1>,
+				     <&ccu RST_BUS_EHCI1>;    RST_BUS_EHCI1		45
+
+	ohci1:
+			clocks =  <&ccu CLK_BUS_OHCI1>,
+				     <&ccu CLK_USB_OHCI1>;
+
+			resets =  <&ccu RST_BUS_OHCI1>;
+
+clk_prepare_enable(phy->clk);           osc24M
+clk_prepare_enable(phy->clk2);          0
+reset_control_deassert(phy->reset);     RST_USB_PHY1 = 41
+
+of_clk_get(dev->dev.of_node, clk);      CLK_BUS_EHCI1 = 102
+reset_control_deassert(priv->rsts);     RST_BUS_EHCI1 = 45
+
+
+
+```
+
+RTT
+```c
+#define CLK_USB_OHCI0       100
+#define CLK_USB_OHCI1       101
+#define CLK_BUS_OHCI0       102
+#define CLK_BUS_OHCI1       103
+#define CLK_BUS_EHCI0       104
+#define CLK_BUS_EHCI1       105
+#define CLK_BUS_OTG         106
+#define RST_USB_PHY0        42
+#define RST_USB_PHY1        43
+#define RST_BUS_OHCI0       44
+#define RST_BUS_OHCI1       45
+#define RST_BUS_EHCI0       46
+#define RST_BUS_EHCI1       47
+#define RST_BUS_OTG         48
+
+
+	ehci-0
+		.usb_clk = CLK_BUS_EHCI0 = 104
+		.usb_rst = RST_BUS_EHCI0 = 46
+		.phy_clk = 0,
+		.phy_rst = RST_USB_PHY0  = 42
+	ehci-1
+		.usb_clk = CLK_BUS_EHCI1 = 105
+		.usb_rst = RST_BUS_EHCI1 = 47
+		.phy_clk = 0,
+		.phy_rst = RST_USB_PHY1  = 43
+	ohci-0
+		.ohci_clk = CLK_USB_OHCI0,
+		.usb_clk  = CLK_BUS_OHCI0,
+		.usb_rst  = RST_BUS_OHCI0,
+		.phy_clk  = 0,
+		.phy_rst  = RST_USB_PHY0
+	ohci-1
+		.ohci_clk = CLK_USB_OHCI1,
+		.usb_clk  = CLK_BUS_OHCI1,
+		.usb_rst  = RST_BUS_OHCI1,
+		.phy_clk  = 0,
+		.phy_rst  = RST_USB_PHY1
+	otg
+          .usb_clk = CLK_BUS_OTG,
+          .usb_rst = RST_BUS_OTG,
+          .phy_clk = 0,
+          .phy_rst = RST_USB_PHY0
+
+	bus_clk_id    = usb_clk CLK_BUS_EHCI1 = 105
+	reset_bus_clk = usb_rst RST_BUS_EHCI1 = 47
+	phy_clk_id    = phy_clk  0
+	reset_phy_clk = phy_rst  RST_USB_PHY1  = 43
+	ohci_clk_id   = ohci_clk CLK_USB_OHCI1 = 101
+
+reset_control_get(reset_phy_clk)   RST_USB_PHY1  = 43
+reset_control_deassert(reset_phy)
+reset_control_put(reset_phy)
+
+reset_control_get(reset_bus_clk)   RST_BUS_EHCI1 = 47
+reset_control_deassert(reset_hci)
+reset_control_put(reset_hci)
+
+clock_get(phy_clk_id)    0
+clock_enable(phy_clk)
+
+clock_get(bus_clk_id)    CLK_BUS_EHCI1 = 105
+clock_enable(bus_clk)
+
+clock_get(ohci_clk_id)   CLK_USB_OHCI1 = 101
+clock_enable(ohci_clk)   
+
+```
+
+
+
+OTG_PBASE		0x04100000
+phy otg        0x04100400
+
+EHCI0     	0x04101000
+OHCI0          0x04101400
+phy hci0       0x04101800
+
+EHCI1     	0x04200000
+OHCI1          0x04200400
+phy hci1       0x04200800
+
+
+
+```s
+sun4i_usb_phy_probe
+sun4i_usb_phy_probe data->base 4125400
+
+sun4i_usb_phy_init				phy writel 412d 810<-0			cntrl clear
+								phy writel 4125 410<-20			| 5 & 3	SIDDQ
+sun4i_usb_phy_passby			phy writel 412d 800<-701		| 10 9 8 0
+phy->index == 0                                 
+sun4i_usb_phy0_update_iscr		phy writel 4125 400<-40010000	& 0 | 16 
+sun4i_usb_phy0_update_iscr		phy writel 4125 400<-40030000	& 0 | 17
+
+
+(1)sun4i_usb_phy0_id_vbus_det_scan					 								Changing dr_mode to 1
+(1)sun4i_usb_phy0_set_id_detect                    			
+(1)sun4i_usb_phy0_update_iscr		phy writel 4125 400<-4003c000	2?3 << 14 ISCR_FORCE_ID
+(1)sun4i_usb_phy0_set_vbus_detect                  
+(1)sun4i_usb_phy0_update_iscr		phy writel 4125 400<-4103f000	2?3 << 12  ISCR_FORCE_VBUS				External vbus detected, not enabling our own vbus
+(1)sun4i_usb_phy0_set_vbus_detect					 								ehci-platform 4101000.usb: EHCI Host Controller
+(1)sun4i_usb_phy0_update_iscr		phy writel 4125 400<-4303e000	2?3 << 12  ISCR_FORCE_VBUS
+											    
+sun4i_usb_phy_init				phy writel 4141 810<-0			cntrl clear
+sun4i_usb_phy_passby			phy writel 4141 800<-701		| 10 9 8 0		ehci-platform 4200000.usb: EHCI Host Controlle
+(1)sun4i_usb_phy0_set_vbus_detect	                
+(1)sun4i_usb_phy0_update_iscr		phy writel 4125 400<-4103f000					ohci-platform 4101400.usb: Generic Platform OHCI controller
+(1)sun4i_usb_phy_passby			phy writel 412d 800<-0			& 10 9 8 0	
+(1)sun4i_usb_phy0_reroute			phy writel 4125 420<-1			Route phy0 to MUSB
+
+(2)sun4i_usb_phy0_id_vbus_det_scan                 
+(2)sun4i_usb_phy0_set_vbus_detect                  
+(2)sun4i_usb_phy0_update_iscr		phy writel 4125 400<-4303e000					ohci-platform 4200400.usb: Generic Platform OHCI controller
+(2)sun4i_usb_phy0_set_vbus_detect                  
+(2)sun4i_usb_phy0_update_iscr		phy writel 4125 400<-4103f000
+								phy writel 4125 400<-4303b000
+(2)sun4i_usb_phy_passby			phy writel 412d 800<-701
+(2)sun4i_usb_phy0_reroute			phy writel 4125 420<-0			Route phy0 to EHCI/OHCI
+```
+
+```s
+sun4i_usb_phy_probe
+data->base phy_ctrl virt_addr: 4125 400
+data->base phy_ctrl phy__addr: 4100 400		phy otg
+
+phy->pmu pmu0 virt_addr: 412d 800
+phy->pmu pmu0 phy__addr: 4101 800			phy hci0
+							  
+phy->pmu pmu1 virt_addr: 4141 800
+phy->pmu pmu1 phy__addr: 4200 800			phy hci1 
+
+sun4i_usb_phy_init			phy writel 4101 810<-0			cntrl clear
+						phy writel 4100 410<-20			| 5 & 3	SIDDQ
+sun4i_usb_phy_passby		phy writel 4101 800<-701		| 10 9 8 0
+phy->index == 0                             
+sun4i_usb_phy0_update_iscr	phy writel 4100 400<-40010000	& 0 | 16 
+sun4i_usb_phy0_update_iscr	phy writel 4100 400<-40030000	& 0 | 17
+										    
+										    
+sun4i_usb_phy_init			phy writel 4200 810<-0			cntrl clear
+sun4i_usb_phy_passby		phy writel 4200 800<-701		| 10 9 8 0
+```
+
+```s
+[ehci-usb1] insmod host driver!
+USBC_Clean_SIDDP
+phy write: 4200810<-0
+phy_vbase : 0x4200800, usbc_no : 1, efuse : 0x1e9200f 
+vref
+usb_phy_tp_write
+phy write ctrl: 4200810<-2
+phy writeB: 4200810<-2
+phy write: 4200810<-6002
+phy writeB: 4200810<-2
+phy writeB: 4200810<-3
+phy writeB ctrl: 4200810<-2
+phy writeB ctrl: 4200810<-0
+usb_phy_tp_write
+phy write ctrl: 4200810<-2
+phy writeB: 4200810<-2
+phy write: 4200810<-4402
+phy writeB: 4200810<-2
+phy writeB: 4200810<-3
+phy writeB: 4200810<-2
+phy write: 4200810<-4502
+phy writeB: 4200810<-82
+phy writeB: 4200810<-83
+phy writeB: 4200810<-82
+phy write: 4200810<-4682
+phy writeB: 4200810<-2
+phy writeB: 4200810<-3
+phy writeB: 4200810<-2
+phy write: 4200810<-4702
+phy writeB: 4200810<-82
+phy writeB: 4200810<-83
+phy writeB ctrl: 4200810<-82
+phy writeB ctrl: 4200810<-80
+usb_phy_tp_write
+phy write ctrl: 4200810<-82
+phy writeB: 4200810<-82
+phy write: 4200810<-3682
+phy writeB: 4200810<-82
+phy writeB: 4200810<-83
+phy writeB: 4200810<-82
+phy write: 4200810<-3782
+phy writeB: 4200810<-82
+phy writeB: 4200810<-83
+phy writeB: 4200810<-82
+phy write: 4200810<-3882
+phy writeB: 4200810<-82
+phy writeB: 4200810<-83
+phy writeB ctrl: 4200810<-82
+phy writeB ctrl: 4200810<-80
+usb_passby
+phy write: 4200800<-701
+sunxi_set_vbus
+
+[ohci-usb1] insmod host driver!
+USBC_Clean_SIDDP
+phy write: 4200810<-3880
+phy_vbase : 0x4200800, usbc_no : 1, efuse : 0x1e9200f 
+vref
+usb_phy_tp_write
+phy write ctrl: 4200810<-82
+phy writeB: 4200810<-82
+phy write: 4200810<-6082
+phy writeB: 4200810<-2
+phy writeB: 4200810<-3
+phy writeB ctrl: 4200810<-2
+phy writeB ctrl: 4200810<-0
+usb_phy_tp_write
+phy write ctrl: 4200810<-2
+phy writeB: 4200810<-2
+phy write: 4200810<-4402
+phy writeB: 4200810<-2
+phy writeB: 4200810<-3
+phy writeB: 4200810<-2
+phy write: 4200810<-4502
+phy writeB: 4200810<-82
+phy writeB: 4200810<-83
+phy writeB: 4200810<-82
+phy write: 4200810<-4682
+phy writeB: 4200810<-2
+phy writeB: 4200810<-3
+phy writeB: 4200810<-2
+phy write: 4200810<-4702
+phy writeB: 4200810<-82
+phy writeB: 4200810<-83
+phy writeB ctrl: 4200810<-82
+phy writeB ctrl: 4200810<-80
+usb_phy_tp_write
+phy write ctrl: 4200810<-82
+phy writeB: 4200810<-82
+phy write: 4200810<-3682
+phy writeB: 4200810<-82
+phy writeB: 4200810<-83
+phy writeB: 4200810<-82
+phy write: 4200810<-3782
+phy writeB: 4200810<-82
+phy writeB: 4200810<-83
+phy writeB: 4200810<-82
+phy write: 4200810<-3882
+phy writeB: 4200810<-82
+phy writeB: 4200810<-83
+phy writeB ctrl: 4200810<-82
+phy writeB ctrl: 4200810<-80
+usb_passby
+phy write: 4200800<-701
+sunxi_set_vbus
+
+```
+
+
+TODO USB:
+- clock init ?
+- linux ehci reg
+- DMA, MMU ?
+
+TODO:
 - try PR for d1s in d1h
 - create PR for d1h common folder
 - create article in forum

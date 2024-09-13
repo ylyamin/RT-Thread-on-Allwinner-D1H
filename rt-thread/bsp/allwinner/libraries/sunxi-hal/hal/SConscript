@@ -255,11 +255,12 @@ if GetDepend('DRIVERS_TWI'):
 
 # USB udc
 udc_src = Split('''
-source/usb/platform/sun20iw1/usb_sun20iw1.c
-source/usb/udc/hal_udc.c
+source/usb_melis/platform/sun20iw1/usb_sun20iw1.c
+source/usb_melis/udc/udc.c
+source/usb_melis/udc/udc_hal.c
 ''')
-udc_path = [cwd + '/source/usb/udc']
-udc_path += [cwd + '/source/usb/include']
+udc_path = [cwd + '/source/usb_melis/udc']
+udc_path += [cwd + '/source/usb_melis/include']
 
 udc_test_src = Split('''
 test/usb/udc/usb_msg.c
@@ -324,7 +325,7 @@ source/usb_melis/manager/usb_manager.c
 source/usb_melis/manager/usb_msg_center.c
 source/usb_melis/manager/usb_hw_scan.c
 ''')
-host_src = host_src_old
+host_src = host_src_melis
 
 #source/usb/hid/Client/Mouse/UsbMouse.c
 #source/usb/hid/Client/Mouse/UsbMouse_DriftControl.c
@@ -372,7 +373,7 @@ host_path_melis += [cwd + '/source/usb_melis/storage/include']
 host_path_melis += [cwd + '/source/usb_melis/hid/Include']
 host_path_melis += [cwd + '/source/usb_melis/host']
 
-host_path = host_path_old
+host_path = host_path_melis
 
 ce_src = Split('''
 source/ce/ce_common.c

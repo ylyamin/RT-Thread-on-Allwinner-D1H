@@ -27,7 +27,8 @@ static const char pm_ehci_name[16];
 #endif
 
 #if USB_MAX_CONTROLLER_COUNT
-static struct sunxi_hci_hcd g_sunxi_ehci[USB_MAX_CONTROLLER_COUNT];
+//!static
+struct sunxi_hci_hcd g_sunxi_ehci[USB_MAX_CONTROLLER_COUNT];
 #else
 static struct sunxi_hci_hcd *g_sunxi_ehci = 0;
 #endif
@@ -179,17 +180,16 @@ int sunxi_insmod_ehci(struct sunxi_hci_hcd *sunxi_ehci)
 	hcd = usb_create_hc_gen_dev(&sunxi_ehci_hc_driver, sunxi_ehci->hci_name);
 	//hcd = usb_create_hcd(&sunxi_ehci_hc_driver, sunxi_ehci->hci_name);
 	sunxi_ehci->hcd = hcd;
-//!!
 
-	/* request irq */
-	if (hal_request_irq(sunxi_ehci->irq_no, ehci_irq_handler, "ehci", hcd) < 0) {
+//!!
+	// request irq 
+/* 	if (hal_request_irq(sunxi_ehci->irq_no, ehci_irq_handler, "ehci", hcd) < 0) {
 		hal_log_err("request irq error\n");
 		return -1;
 	}
-
-	hal_enable_irq(sunxi_ehci->irq_no);
-	
+	hal_enable_irq(sunxi_ehci->irq_no); */
 //!!
+
 	/* echi start to work */
 	sunxi_start_ehci(sunxi_ehci);
 

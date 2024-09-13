@@ -465,14 +465,14 @@ int32_t _usb_core_func_drv_probe_interface(struct usb_host_virt_sub_dev *sub_dev
 		return -EHOSTUNREACH;
 	}
 	id = usb_match_id(intf, func_drv->match_table);
-
-	if (id) {
+//!
+/*   	if (id) {
 		intf->condition = USB_INTERFACE_BINDING;
 		error = func_drv->probe(intf, id);
 		intf->condition = error ? USB_INTERFACE_UNBOUND : USB_INTERFACE_BOUND;
 		return error;
-	}
-
+	}  */
+//!
 	return -ENODEV;	 //失败
 }
 

@@ -33,6 +33,8 @@
 #define __UDC_H__
 
 #include "ch9.h"
+#include <hal_clk.h>
+#include <sunxi_hal_usb.h>
 
 //#define UDC_LOG_DEBUG
 #define log_udc_info(fmt, ...)	hal_log_info("udc: "fmt, ##__VA_ARGS__)

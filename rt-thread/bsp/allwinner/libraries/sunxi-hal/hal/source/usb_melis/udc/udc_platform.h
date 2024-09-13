@@ -32,6 +32,9 @@
 #ifndef __UDC_PLATFORM_H__
 #define __UDC_PLATFORM_H__
 
+#include <usb_os_platform.h>
+
+
 /* USB_POWER */
 #define USB_POWER_ENABLESUSPENDM	(0x01)   /* RW */
 #define USB_POWER_SUSPENDMODE		(0x02)   /* P: RO ; H: WO */ /*Read clear by the intr. register*/

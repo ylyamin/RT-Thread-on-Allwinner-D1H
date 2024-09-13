@@ -15,8 +15,11 @@
 
 #define CONFIG_USB_PRINTF(...) rt_kprintf(__VA_ARGS__)
 
-#define usb_malloc(size) rt_malloc(size)
-#define usb_free(ptr)    rt_free(ptr)
+#define usb_malloc(size)    dma_alloc_coherent_align(size, 4)
+#define usb_free(ptr)       dma_free_coherent_align(ptr)
+
+//#define usb_malloc(size) rt_malloc(size)
+//#define usb_free(ptr)    rt_free(ptr)
 
 #define memcpy rt_memcpy
 
@@ -248,14 +251,14 @@
 /* ---------------- EHCI Configuration ---------------- */
 
 #define CONFIG_USB_EHCI_HCCR_OFFSET     (0x0)
-#define CONFIG_USB_EHCI_FRAME_LIST_SIZE 1024
+#define CONFIG_USB_EHCI_FRAME_LIST_SIZE 512
 #define CONFIG_USB_EHCI_QH_NUM          CONFIG_USBHOST_PIPE_NUM
 #define CONFIG_USB_EHCI_QTD_NUM         3
 #define CONFIG_USB_EHCI_ITD_NUM         20
-#define CONFIG_USB_EHCI_HCOR_RESERVED_DISABLE
-#define CONFIG_USB_EHCI_CONFIGFLAG  1
-// #define CONFIG_USB_EHCI_ISO
-//#define CONFIG_USB_EHCI_WITH_OHCI
+//#define CONFIG_USB_EHCI_HCOR_RESERVED_DISABLE
+//#define CONFIG_USB_EHCI_CONFIGFLAG  1
+//#define CONFIG_USB_EHCI_ISO
+#define CONFIG_USB_EHCI_WITH_OHCI
 
 /* ---------------- OHCI Configuration ---------------- */
 #define CONFIG_USB_OHCI_HCOR_OFFSET (0x400)
