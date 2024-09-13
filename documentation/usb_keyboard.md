@@ -1,6 +1,21 @@
 ## Devterm Keyboard
 
-How is connected to D1: Keyboard chip STM32F103Rx => J502 - DM1/DP1 => GL850G (usb hub) => USB_DP/USB_DM => D1H USB1-DP/USB1-DM A8/B8 => USB2.0 HOST
+So we have working display as output from board need to have way to enter information - keyboard.
+
+Keyboard in Devterm is actually standalone USB keyboard with STM32F103Rx chip connected to mainboard. 
+
+Keyboard connected to J502 connector (DM1/DP1 pins) then is go to => GL850G chip (is usb hub) DM0/DP0 => USB_DP/USB_DM to R01 Core board
+
+![usb_keyboard_mb_comm](Pics/usb_keyboard_mb_comm.png)
+
+In R01 Core is connected to D1H USB1-DP/USB1-DM (A8/B8 pins)  =>  => USB2.0 HOST
+![usb_keyboard_r01_comm](Pics/usb_keyboard_r01_comm.png)
+
+![D1H_usb_pins](Pics/D1H_usb_pins.png)
+![D1H_system_diagram_usb](Pics/D1H_system_diagram_usb.png)
+![D1H_usb_host_phy](Pics/D1H_usb_host_phy.png)
+
+
 
 ### Power
 DCDC1 -> SYS_3V -> SYS_5V
