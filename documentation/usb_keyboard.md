@@ -1,15 +1,13 @@
 ## Devterm Keyboard
 
-Hoow is connected to D1: Keyboard chip STM32F103Rx => J502 - DM1/DP1 => GL850G (usb hub) => USB_DP/USB_DM => D1H USB1-DP/USB1-DM A8/B8 => USB2.0 HOST
+How is connected to D1: Keyboard chip STM32F103Rx => J502 - DM1/DP1 => GL850G (usb hub) => USB_DP/USB_DM => D1H USB1-DP/USB1-DM A8/B8 => USB2.0 HOST
 
 ### Power
 DCDC1 -> SYS_3V -> SYS_5V
 DLDO2 / DLDO3 / DLDO4 -> 3V3 -> TPS2553 -> VBUS -> J502 Keyboard
 
-Add power for VBUS
-
-<details>
-<summary>Code for AXP</summary>
+### Add power for VBUS
+<details><summary>Code for AXP</summary>
 
 ```patch
 diff --git a/rt-thread/bsp/allwinner/libraries/drivers/drv_axp228_simpl.c b/rt-thread/bsp/allwinner/libraries/drivers/drv_axp228_simpl.c
@@ -54,8 +52,10 @@ index 000000000..9bff5c7f4
 </details>
 
 ### Change config to support USB Host in Components and HAL
+<details><summary>.config</summary>
 
 ```patch
+
 diff --git a/rt-thread/bsp/allwinner/d1s_d1h/.config b/rt-thread/bsp/allwinner/d1s_d1h/.config
 index 25fa3db03..0619d4d8d 100644
 --- a/rt-thread/bsp/allwinner/d1s_d1h/.config
@@ -83,7 +83,11 @@ index 25fa3db03..0619d4d8d 100644
 +CONFIG_HAL_TEST_UDC=y
 +CONFIG_USB_MANAGER=y
 ```
+</details>
+
 ### Change build to support USB HAL
+<details><summary>build</summary>
+
 ```patch
 diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/SConscript b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/SConscript
 index 165cce4ac..beb29117f 100644
@@ -196,7 +200,11 @@ index 971fa38b0..40ba78a6d 100644
 +//#define CONFIG_USB_STORAGE 1
 +#define CONFIG_USB_HID 1
 ```
+</details>
+
 ### Fix USB HAL problems
+<details><summary>fix</summary>
+
 ```patch
 diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/core/usb_gen_hcd.c b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/core/usb_gen_hcd.c
 index 57c6ac5d2..4cf06807f 100644
@@ -524,7 +532,11 @@ index ab2d8ad10..d6cad7f7f 100644
 + * End add missing functions for usb hal
 + */
 ```
+</details>
+
 ### Add USB driver
+<details><summary>driver</summary>
+
 ```patch
 diff --git a/rt-thread/bsp/allwinner/libraries/drivers/Kconfig b/rt-thread/bsp/allwinner/libraries/drivers/Kconfig
 index f489985a9..def4a0100 100644
@@ -603,12 +615,12 @@ index 000000000..8b71888a1
 + MSH_CMD_EXPORT_ALIAS(drv_usb, usb, usb);
 +//INIT_DEVICE_EXPORT(drv_usb);
 ```
-
+</details>
 
 
 
 ## USB RTT HAL variant
-```C
+```c
 hal_usb_core_init();
 hal_usb_hcd_init(1);
 
@@ -633,14 +645,10 @@ with chery init interapt not call
     init_tinyusb();
 ```
 
-if only tiny init
-hcd_int_handler int_status:EHCI_INT_MASK_FRAMELIST_ROLLOVER
-hcd_int_handler int_status:EHCI_INT_MASK_PORT_CHANGE
 
-if only hal init
-hcd_int_handler int_status:EHCI_INT_MASK_PORT_CHANGE
 
 https://github.com/clockworkpi/DevTerm/blob/main/Code/patch/d1/config
+
 ```conf
 CONFIG_USB_HID=y
 CONFIG_USB_OHCI_LITTLE_ENDIAN=y
@@ -676,8 +684,10 @@ CONFIG_USB_SUNXI_USB_ADB=y
 LOG_D("start enumnation");
 https://github.com/smaeul/linux/blob/d1/all/arch/riscv/boot/dts/allwinner/sun20i-d1.dtsi
 
-LINUX
 
+### Clock
+
+LINUX
 ```c
 
 #define CLK_USB_OHCI0		97
@@ -808,7 +818,7 @@ clock_enable(ohci_clk)
 ```
 
 
-
+```c
 OTG_PBASE		0x04100000
 phy otg        0x04100400
 
@@ -819,9 +829,9 @@ phy hci0       0x04101800
 EHCI1     	0x04200000
 OHCI1          0x04200400
 phy hci1       0x04200800
+```
 
-
-
+### PHY up
 ```s
 sun4i_usb_phy_probe
 sun4i_usb_phy_probe data->base 4125400
@@ -992,21 +1002,7 @@ sunxi_set_vbus
 ```
 
 
-TODO USB:
+### TODO USB:
 - clock init ?
 - linux ehci reg
 - DMA, MMU ?
-
-TODO:
-- try PR for d1s in d1h
-- create PR for d1h common folder
-- create article in forum
-
-
-Articles:
-1) Introdaction
-2) D1 Boot process, bootloaders, debbuger, gdb
-3) Make structure
-4) RTT structure, first boot
-5) LCD, AXP
-6) USB
