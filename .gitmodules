@@ -13,9 +13,10 @@
 	ignore = dirty
 [submodule "rt-thread/bsp/allwinner/d1s_d1h/packages/CherryUSB"]
 	path = rt-thread/bsp/allwinner/d1s_d1h/packages/CherryUSB
-	url = https://github.com/cherry-embedded/CherryUSB.git
+	url = https://github.com/ylyamin/CherryUSB_fork
 	ignore = dirty
+	branch = Allwinner_D1
 [submodule "rt-thread/bsp/allwinner/d1s_d1h/packages/TinyUSB"]
 	path = rt-thread/bsp/allwinner/d1s_d1h/packages/TinyUSB
-	url = https://github.com/RT-Thread-packages/tinyusb.git
-	ignore = dirty
+	url = https://github.com/ylyamin/tinyusb_fork
+	branch = Allwinner_D1
