@@ -19,4 +19,5 @@
 [submodule "rt-thread/bsp/allwinner/d1s_d1h/packages/TinyUSB"]
 	path = rt-thread/bsp/allwinner/d1s_d1h/packages/TinyUSB
 	url = https://github.com/ylyamin/tinyusb_fork
+	ignore = dirty
 	branch = Allwinner_D1
