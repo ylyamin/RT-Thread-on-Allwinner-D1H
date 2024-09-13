@@ -11,3 +11,7 @@
 	path = bootloaders/xfel
 	url = https://github.com/xboot/
 	ignore = dirty
+[submodule "rt-thread/bsp/allwinner/d1s_d1h/packages/CherryUSB"]
+	path = rt-thread/bsp/allwinner/d1s_d1h/packages/CherryUSB
+	url = https://github.com/ylyamin/tinyusb_fork
+	branch = Allwinner_D1
