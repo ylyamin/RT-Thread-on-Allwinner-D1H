@@ -8,7 +8,7 @@ The intention is to easily run peripherals in D1, exactly Display. RT-Thread OS 
 At the original repository [RT-Thread](https://github.com/RT-Thread/rt-thread) the compilation is not streamlined for D1H [^1].
 So was performed fork from [v5.0.2](https://github.com/RT-Thread/rt-thread/releases/tag/v5.0.2) and introduced several changes to make it runnable in D1H. Added also bootloaders, compiler, debugger, build system.
 
-Introduced code changes described in [Code_changes](documentation/Code_changes.md) document.
+Introduced code changes described in [Code_changes](documentation/Pics/Code_changes.md) document.
 
  > [^1]: At time when I'm tried to compile was [issue 9063](https://github.com/RT-Thread/rt-thread/issues/9063) after it was solved by [PR](https://github.com/RT-Thread/rt-thread/pull/9142) in Master.
 
@@ -16,9 +16,9 @@ Introduced code changes described in [Code_changes](documentation/Code_changes.m
 
 RT-Thread could run in ClockworkPi DevTerm R01 and manage MIPI DSI LCD Display  
 
-![devterm_lcd_mipi_work.jpg](documentation/devterm_lcd_mipi_work.jpg)
+![devterm_lcd_mipi_work.jpg](documentation/Pics/devterm_lcd_mipi_work.jpg)
 
-Also could run in Sipeed Lichee RV and manage RGB LCD Display [lichee_lcd_rgb_work](documentation/lichee_lcd_rgb_work.jpg)
+Also could run in Sipeed Lichee RV and manage RGB LCD Display [lichee_lcd_rgb_work](documentation/Pics/lichee_lcd_rgb_work.jpg)
 
 # Installation
 In repository exist pre-builded images for SD card in folder [image](image), need to flash it to SD card and install to device.
@@ -222,14 +222,14 @@ Restoring binary file rt-thread/bsp/allwinner/d1s_d1h/rtthread.bin into memory (
 - MicroSD_Sniffer
 
 ### ClockworkPi DevTerm R01 assembly
-![Devterm_R01_assembly](documentation/Devterm_R01_assembly.jpg)
+![Devterm_R01_assembly](documentation/Pics/Devterm_R01_assembly.jpg)
 
 I figure out that integrated UART work very unstable. According [discussion](https://forum.clockworkpi.com/t/devterm-r-01-ext-board-uart-is-read-only/8704)
 "The problem is that the CH340C provides 5 V logic levels, whereas the D1 only supports 3.3 V I/O...A better solution would be to solder wires to pins 2 and 3 of the CH340C and use a different USB-UART adapter that runs at the correct voltage." So I do this:
-![Devterm_R01_uart](documentation/Devterm_R01_uart.jpg)
+![Devterm_R01_uart](documentation/Pics/Devterm_R01_uart.jpg)
 
 ### Sipeed Lichee RV assembly
-![Lichee_RV_assembly](documentation/Lichee_RV_assembly.jpg)
+![Lichee_RV_assembly](documentation/Pics/Lichee_RV_assembly.jpg)
 
 ## Links
 - https://linux-sunxi.org/Allwinner_Nezha  

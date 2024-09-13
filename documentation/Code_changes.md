@@ -247,7 +247,7 @@ According https://github.com/xboot/xboot/blob/master/src/arch/riscv64/mach-liche
 +++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/soc/RGB_LCD_ST7001s.c
 ```
 #### According this image:   
-![display_pinout](Sipeed_Lichee_RV/20181022143917_27009.jpg)
+![display_pinout](Pics/20181022143917_27009.jpg)
 
 #### Pinout for 4.3 RGB LCD Display:
 
@@ -685,20 +685,20 @@ After all modification in code Sipeed Lichee RV - RGB LCD Display successfully s
 ```sh
 lcd_draw_point 100 100:   
 ```
-![lichee_lcd_rgb_work](lichee_lcd_rgb_work.jpg)
+![lichee_lcd_rgb_work](Pics/lichee_lcd_rgb_work.jpg)
 
 ## LCD inc9707 chip reset
 DevTerm LCD MIPI DSI Display still not started. Lets figure out why.   
 
 Noticed in [ICNL9707_Datasheet.pdf](ClockworkPi_DevTerm\ICNL9707_Datasheet.pdf) that in startup siguence - first off all VCI and IOVCC voltage UP then reseted RESET pin.   
 
-![icnl9707_startup](ClockworkPi_DevTerm/icnl9707_startup.png)   
+![icnl9707_startup](Pics/icnl9707_startup.png)   
 
 But between powered up board, bootloaders, RTT loaded and the moment when the driver calls RESET pin obviously more time passes rather than on diagram.    
 Hypotise that it looks like we need to force reset VCI and IOVCC just before RESET pin.  
 
 According to pnout:
-![pinout](ClockworkPi_DevTerm/6.86-inch-IPS-TFT-Stretched-Bar-LCD-MIPI-480x1280-TTW686VVC-01-4.png)   
+![pinout](Pics/6.86-inch-IPS-TFT-Stretched-Bar-LCD-MIPI-480x1280-TTW686VVC-01-4.png)   
 
 IOVCC connected to LCD pins 18,19.  
 And in Devterm to IOVCC provided 1.8V from DCDC3 - AXP228 Power Managment chip.   
@@ -1233,7 +1233,7 @@ After all modification in code DevTerm R01 - LCD MIPI DSI Display successfully s
 ```sh
 lcd_draw_point 100 100:   
 ```
-![devterm_lcd_mipi_work.jpg](devterm_lcd_mipi_work.jpg)
+![devterm_lcd_mipi_work.jpg](Pics/devterm_lcd_mipi_work.jpg)
 
 ## Devterm Keyboard
 
