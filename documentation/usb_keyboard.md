@@ -1,28 +1,46 @@
 ## Devterm Keyboard
 
-So we have working display as output from board need to have way to enter information - keyboard.
+So we have working display as output from board need to have way to input information - keyboard.
 
-Keyboard in Devterm is actually standalone USB keyboard with STM32F103Rx chip connected to mainboard. 
+Keyboard in Devterm is actually standalone USB keyboard with STM32F103Rx chip connected to mainboard by USB interface. 
+![usb_keyboard_connector_1](Pics/usb_keyboard_connector_1.png)
 
-Keyboard connected to J502 connector (DM1/DP1 pins) then is go to => GL850G chip (is usb hub) DM0/DP0 => USB_DP/USB_DM to R01 Core board
+From [Mainboard PCB outline schematic file](ClockworkPi_DevTerm/pcb_3.14_botton.pdf) we can see is connected to J502 connector
+![usb_keyboard_connector_2](Pics/usb_keyboard_connector_2.png)
+
+As you can see from the [Mainboard schematic file](ClockworkPi_DevTerm/clockwork_Mainboard_V3.14_V5_Schematic.pdf) From J502 connector (DM1/DP1 pins) is go to => GL850G chip (is USB hub) DM0/DP0 => USB_DP/USB_DM then to R01 Core board
 
 ![usb_keyboard_mb_comm](Pics/usb_keyboard_mb_comm.png)
 
-In R01 Core is connected to D1H USB1-DP/USB1-DM (A8/B8 pins)  =>  => USB2.0 HOST
+In R01 Core [schematic file](ClockworkPi_DevTerm/clockwork_DevTerm_R01_Core_for_Mainboard_V3.14_Schematic.pdf) is connected to D1H USB1-DP/USB1-DM (A8/B8 pins)
 ![usb_keyboard_r01_comm](Pics/usb_keyboard_r01_comm.png)
 
+From [D1H Datasheet](Allwinner_D1H/D1_Datasheet_V0.1_Draft_Version.pdf) we can found A8/B8 pins connected to USB2.0 HOST number 1.
 ![D1H_usb_pins](Pics/D1H_usb_pins.png)
 ![D1H_system_diagram_usb](Pics/D1H_system_diagram_usb.png)
-![D1H_usb_host_phy](Pics/D1H_usb_host_phy.png)
 
+The [D1H User manual](Allwinner_D1H/D1_User_Manual_V0.1_Draft_Version.pdf) document does not contain much information about USB interface. Defined that
+* USB0 is USB2.0 Dual role device (Device/Host controller) we not interesting this.
+* USB1 is USB2.0 Host where we have our keyboard
 
+But before deep dive to this controller and communication lets look how this USB device powered.
 
-### Power
-DCDC1 -> SYS_3V -> SYS_5V
-DLDO2 / DLDO3 / DLDO4 -> 3V3 -> TPS2553 -> VBUS -> J502 Keyboard
+### Keyboard power
 
-### Add power for VBUS
-<details><summary>Code for AXP</summary>
+So J502 1st pin connected to VBAT line that provided from TPS2553 Power switch chip. This chip have main power SYS_5V and looks like signal for Enabling from 3V3 line. USB hub chip powered from SYS_5V line.
+
+![usb_keyboard_power_1](Pics/usb_keyboard_power_1.png)
+
+This 3V3 line provided from DLDO2 from AXP228 power management chip that we already know from Display powering part above. SYS_5V provided from DCDC1 AXP228.
+![usb_keyboard_power_2](Pics/usb_keyboard_power_2.png)
+
+For powering USB need to enable  
+* DCDC1 for SYS_3V -> SYS_5V
+* DLDO2 for 3V3 -> VBUS
+
+### Lets modify AXP228 driver to add power control for VBUS
+
+<details><summary>add _axp_USB_control() function</summary>
 
 ```patch
 diff --git a/rt-thread/bsp/allwinner/libraries/drivers/drv_axp228_simpl.c b/rt-thread/bsp/allwinner/libraries/drivers/drv_axp228_simpl.c
@@ -66,42 +84,11 @@ index 000000000..9bff5c7f4
 ```
 </details>
 
-### Change config to support USB Host in Components and HAL
-<details><summary>.config</summary>
+Now is can be powered. Look to software side in [rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/](rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/) folder we have folder usb.
 
-```patch
-
-diff --git a/rt-thread/bsp/allwinner/d1s_d1h/.config b/rt-thread/bsp/allwinner/d1s_d1h/.config
-index 25fa3db03..0619d4d8d 100644
---- a/rt-thread/bsp/allwinner/d1s_d1h/.config
-+++ b/rt-thread/bsp/allwinner/d1s_d1h/.config
-
-+CONFIG_RT_USING_USB=y
-+CONFIG_RT_USING_USB_HOST=y
-+CONFIG_RT_USBH_HID=y
-+CONFIG_RT_USBH_HID_MOUSE=y
-+CONFIG_RT_USBH_HID_KEYBOARD=y
-+CONFIG_BSP_USING_USB=y
-+CONFIG_DRIVERS_USB=y
-+#
-+# USB HOST
-+#
-+CONFIG_USB_HOST=y
-+CONFIG_HAL_TEST_HCI=y
-+# CONFIG_USB_STORAGE is not set
-+# CONFIG_USB_CAMERA is not set
-+CONFIG_USB_HID=y
-+#
-+# USB DEVICE
-+#
-+CONFIG_USB_DEVICE=y
-+CONFIG_HAL_TEST_UDC=y
-+CONFIG_USB_MANAGER=y
-```
-</details>
-
+File defined build rules for RTT sunxi-hal/hal/SConscript define onlyusb/platform/sun20iw1/usb_sun20iw1.c file at all. So lets define all host related stuff:
 ### Change build to support USB HAL
-<details><summary>build</summary>
+<details><summary>build files</summary>
 
 ```patch
 diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/SConscript b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/SConscript
@@ -214,340 +201,37 @@ index 971fa38b0..40ba78a6d 100644
 -#define CONFIG_USB_STORAGE 1
 +//#define CONFIG_USB_STORAGE 1
 +#define CONFIG_USB_HID 1
+
+diff --git a/rt-thread/bsp/allwinner/d1s_d1h/.config b/rt-thread/bsp/allwinner/d1s_d1h/.config
+index 25fa3db03..0619d4d8d 100644
+--- a/rt-thread/bsp/allwinner/d1s_d1h/.config
++++ b/rt-thread/bsp/allwinner/d1s_d1h/.config
+
++CONFIG_RT_USING_USB=y
++CONFIG_RT_USING_USB_HOST=y
++CONFIG_RT_USBH_HID=y
++CONFIG_RT_USBH_HID_MOUSE=y
++CONFIG_RT_USBH_HID_KEYBOARD=y
++CONFIG_BSP_USING_USB=y
++CONFIG_DRIVERS_USB=y
++#
++# USB HOST
++#
++CONFIG_USB_HOST=y
++CONFIG_HAL_TEST_HCI=y
++# CONFIG_USB_STORAGE is not set
++# CONFIG_USB_CAMERA is not set
++CONFIG_USB_HID=y
++#
++# USB DEVICE
++#
++CONFIG_USB_DEVICE=y
++CONFIG_HAL_TEST_UDC=y
++CONFIG_USB_MANAGER=y
 ```
 </details>
 
-### Fix USB HAL problems
-<details><summary>fix</summary>
-
-```patch
-diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/core/usb_gen_hcd.c b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/core/usb_gen_hcd.c
-index 57c6ac5d2..4cf06807f 100644
---- a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/core/usb_gen_hcd.c
-+++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/core/usb_gen_hcd.c
-@@ -556,6 +556,8 @@ s32 usb_add_hc_gen_dev(struct hc_gen_dev *hcd, u32  irqnum, u32 irqflags)
-     hal_log_info("----3--usb_add_hc_gen_dev\n");
-     //--<2>--此hcd设备支持的速度
-     rh_dev->speed = (hcd->driver->flags & HC_DRIVER_FLAG_HCD_USB2) ? USB_SPEED_HIGH : USB_SPEED_FULL;
-+/*
-+ * function start() is not assigned anywhere     
- 
-     //--<3>--start这个设备
-     if ((retval = hcd->driver->start(hcd)) < 0)
-@@ -563,6 +565,7 @@ s32 usb_add_hc_gen_dev(struct hc_gen_dev *hcd, u32  irqnum, u32 irqflags)
-         hal_log_err("PANIC : usb_add_hc_gen_dev() :startup error %d", retval);
-         goto err_hcd_driver_start;
-     }
-+*/
- 
-     hal_log_info("----4--usb_add_hc_gen_dev\n");
-     /* hcd->driver->start() reported can_wakeup, probably with
-diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/core/usb_gen_hub.c b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/core/usb_gen_hub.c
-index 45838d2a3..ddca5be68 100644
---- a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/core/usb_gen_hub.c
-+++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/core/usb_gen_hub.c
-@@ -1513,7 +1513,12 @@ static int config_descriptors_changed(struct usb_host_virt_dev *udev)
- static void hub_post_reset(struct usb_hub *hub)
- {
-     hub_activate(hub);
--    hub_power_on(hub);
-+/*
-+ * firmware stuck by some reason in hub_power_on() function. 
-+ * In Devterm power provided separetly from axp228
-+ * comment this funtion
-+ */
-+    // hub_power_on(hub);
- }
- 
- /*
-@@ -1760,7 +1765,12 @@ static void hub_events(u32 flag)
-             {
-                 hal_log_err("over-current change on port %d", i);
-                 clear_port_feature(hdev, i, USB_PORT_FEAT_C_OVER_CURRENT);
--                hub_power_on(hub);
-+/*
-+ * firmware stuck by some reason in hub_power_on() function. 
-+ * In Devterm power provided separetly from axp228
-+ * comment this funtion
-+ */
-+                //hub_power_on(hub);
-             }
- 
-             if (portchange & USB_PORT_STAT_C_RESET)
-@@ -1810,7 +1820,12 @@ static void hub_events(u32 flag)
-                 hal_msleep(50);  /* Cool down */
- #endif
-                 clear_hub_feature(hdev, C_HUB_OVER_CURRENT);
--                hub_power_on(hub);
-+/*
-+ * firmware stuck by some reason in hub_power_on() function. 
-+ * In Devterm power provided separetly from axp228
-+ * comment this funtion
-+ */
-+                //!hub_power_on(hub);
-             }
-         }
- 
-@@ -2028,8 +2043,13 @@ re_enumerate:
-  * USB_STATE_NOTATTACHED then all of udev's descendants' states are also set
-  * to USB_STATE_NOTATTACHED.
-  */
-+#ifdef RT_USING_USB 
-+void usb_set_device_state(struct usb_host_virt_dev *udev,
-+                          udevice_state_t new_state)
-+#else
- void usb_set_device_state(struct usb_host_virt_dev *udev,
-                           enum usb_device_state new_state)
-+#endif
- {
-     uint32_t flags;
-     //USB_OS_ENTER_CRITICAL(flags);
-@@ -2689,8 +2709,14 @@ static int _hub_config(struct usb_hub *hub, struct usb_endpoint_descriptor *endp
-     {
-         hub->indicator [0] = INDICATOR_CYCLE;
-     }
-+/*
-+ * firmware stuck by some reason in hub_power_on() function. 
-+ * In Devterm power provided separetly from axp228
-+ * comment this funtion
-+
- 
-     hub_power_on(hub);
-+*/
-     hal_log_info("_hub_config--15--");
-     //--<6>--发送get status的urb
-     hub_activate(hub);
-diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/core/usb_gen_hub.h b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/core/usb_gen_hub.h
-index a2670c45b..cbd4dfdd3 100644
---- a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/core/usb_gen_hub.h
-+++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/core/usb_gen_hub.h
-@@ -4,8 +4,11 @@
- 
- #include "usb_gen_hub_base.h"
- #define usb_endpoint_out(ep_dir)    (!((ep_dir) & USB_DIR_IN))
--
-+#ifdef RT_USING_USB 
-+void usb_set_device_state(struct usb_host_virt_dev *udev, udevice_state_t new_state);
-+#else
- void usb_set_device_state(struct usb_host_virt_dev *udev, enum usb_device_state new_state);
-+#endif
- void usb_disable_endpoint(struct usb_host_virt_dev *dev, unsigned int epaddr);
- 
- void usb_disconnect(struct usb_host_virt_dev **pdev);
-
- 
-diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/host/ehci-sunxi.c b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/host/ehci-sunxi.c
-index 180050279..ac0f56252 100644
---- a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/host/ehci-sunxi.c
-+++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/host/ehci-sunxi.c
-@@ -318,7 +318,11 @@ int sunxi_ehci_hcd_init(int hci_num)
-         sprintf(sunxi_ehci->hci_name, "%s", hci_table[hci_num].name);
- 
-         hci_clock_init(sunxi_ehci);
-+        /* 
-+         * As in system we dont have USB config, 
-+         * and seems this configuration related to GPIO that not used, comment this function
-         sunxi_hci_get_config_param(sunxi_ehci);
-+        */
- 
-         sunxi_ehci->open_clock          = open_clock;
-         sunxi_ehci->close_clock         = close_clock;
-diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/include/ch9.h b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/include/ch9.h
-index 586348eb5..f8a60dab3 100644
---- a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/include/ch9.h
-+++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/include/ch9.h
-@@ -404,6 +404,7 @@ struct usb_endpoint_descriptor {
- 
- 
- /* USB_DT_DEVICE_QUALIFIER: Device Qualifier descriptor */
-+#ifndef RT_USING_USB 
- struct __attribute__((packed)) usb_qualifier_descriptor
- {
-     uint8_t  bLength;
-@@ -417,6 +418,7 @@ struct __attribute__((packed)) usb_qualifier_descriptor
-     uint8_t  bNumConfigurations;
-     uint8_t  bRESERVED;
- };
-+#endif
- 
- 
- #define USB_DT_ENDPOINT_SIZE        7
-@@ -544,15 +546,20 @@ enum usb_device_speed {
-     USB_SPEED_SUPER,            /* usb 3.0 */
-     USB_SPEED_SUPER_PLUS,           /* usb 3.1 */
- };
-+#ifndef RT_USING_USB 
- enum usb_device_state {
-     USB_STATE_NOTATTACHED = 0,
-     USB_STATE_ATTACHED,
--    USB_STATE_POWERED,          /* wired */
--    USB_STATE_RECONNECTING,         /* auth */
--    USB_STATE_UNAUTHENTICATED,      /* auth */
--    USB_STATE_DEFAULT,          /* limited function */
-+    USB_STATE_POWERED,          // wired
-+    USB_STATE_RECONNECTING,         // auth 
-+    USB_STATE_UNAUTHENTICATED,      // auth 
-+    USB_STATE_DEFAULT,          // limited function 
-     USB_STATE_ADDRESS,
--    USB_STATE_CONFIGURED,           /* most functions */
-+    USB_STATE_CONFIGURED,           // most functions 
-     USB_STATE_SUSPENDED
- };
-+#else
-+#include <drivers/usb_common.h>
-+#endif
-+
- #endif /*__USB_CH9_H__*/
-diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/include/usb.h b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/include/usb.h
-index 0ef4dd27a..e85e50be1 100644
---- a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/include/usb.h
-+++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/include/usb.h
-@@ -465,7 +465,11 @@ struct usb_device {
-     int     devnum;
-     char        devpath[16];
-     u32     route;
-+    #ifdef RT_USING_USB 
-+    udevice_state_t   state;
-+    #else
-     enum usb_device_state   state;
-+    #endif
-     enum usb_device_speed   speed;
- 
-     struct usb_tt   *tt;
-diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/include/usb_host_common.h b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/include/usb_host_common.h
-index 73a69d4b5..c82520925 100644
---- a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/include/usb_host_common.h
-+++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/include/usb_host_common.h
-@@ -183,7 +183,11 @@ struct usb_host_virt_dev
-     hal_sem_t    usb_virt_dev_semi;
- 
-     int devnum;                     /* Address on USB bus */
--    enum usb_device_state   state;  /* 设备当前的state,configured, not attached */
-+    #ifdef RT_USING_USB 
-+    udevice_state_t   state;  /* 设备当前的state,configured, not attached */
-+    #else
-+    enum usb_device_state   state; 
-+    #endif
-     enum usb_device_speed   speed;  /* 设备的当前速度 */
-     int     ttport;                 /* device port on that tt hub  */
- 
-diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/manager/usb_manager.c b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/manager/usb_manager.c
-index 3a1e6e6ba..f90107831 100644
---- a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/manager/usb_manager.c
-+++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/manager/usb_manager.c
-@@ -185,6 +185,9 @@ static __s32 usb_script_parse(usb_cfg_t *cfg)
-     user_gpio_set_t gpio_set = {0};
- 
-     /* usbc enable */
-+/*
-+ * As in system we dont have USB config, override all values
-+
-     ret = Hal_Cfg_GetKeyValue(SET_USB0, KEY_USB_ENABLE, (int32_t *)&value, 1);
-     Usb_Manager_INFO("value:%d, ret:%d\n", value, ret);
-     if (ret)
-@@ -192,36 +195,47 @@ static __s32 usb_script_parse(usb_cfg_t *cfg)
-         Usb_Manager_Err("script_parser_fetch %s %s fail \n", SET_USB0, KEY_USB_ENABLE);
-         cfg->port.enable = 0;
-         return -1;
--    }
--    cfg->port.enable = value;
--    if (cfg->port.enable == 0)
-+    }   
-+*/
-+    cfg->port.enable = 1; //value;
-+
-+/*
-+     if (cfg->port.enable == 0)
-     {
-         Usb_Manager_INFO("%s not used!\n", SET_USB0);
-         return -1;
--    }
-+    } 
-+*/
-     /* usbc port type */
-+/*     
-+    
-     ret = Hal_Cfg_GetKeyValue(SET_USB0, KEY_USB_PORT_TYPE, (int32_t *)&value, 1);
-     Usb_Manager_INFO("port_type:%d, ret:%d\n", value, ret);
-     if (ret)
-     {
-         Usb_Manager_Err("script_parser_fetch %s %s fail \n", SET_USB0, KEY_USB_PORT_TYPE);
-         return -1;
--    }
--    cfg->port.port_type = value;
-+    } 
-+*/
-+    cfg->port.port_type = USB_PORT_TYPE_HOST; //value;
-+/* 
-     if (cfg->port.port_type != USB_PORT_TYPE_OTG)
-     {
-         Usb_Manager_INFO("%s cfg->port.port_type:%d!\n", SET_USB0, cfg->port.port_type);
-         return 0;
--    }
-+    }    
-+*/
-     /* usbc det mode */
--    ret = Hal_Cfg_GetKeyValue(SET_USB0, KEY_USB_DET_TYPE, (int32_t *)&value, 1);
-+/*
-+     ret = Hal_Cfg_GetKeyValue(SET_USB0, KEY_USB_DET_TYPE, (int32_t *)&value, 1);
-     Usb_Manager_Debug("detect_type:%d, ret:%d\n", value, ret);
-     if (ret)
-     {
-         Usb_Manager_Err("script_parser_fetch %s %s fail \n", SET_USB0, KEY_USB_DET_TYPE);
-         return -1;
-     }
--    cfg->port.detect_type = value;
-+ */
-+    cfg->port.detect_type = USB_DETECT_TYPE_DP_DM;//value;
- 
-     if (cfg->port.detect_type == USB_DETECT_TYPE_VBUS_ID)
-     {
-diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/udc/hal_udc.c b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/udc/hal_udc.c
-index 01e3a9e14..008a5136a 100644
---- a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/udc/hal_udc.c
-+++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb/udc/hal_udc.c
-@@ -1759,7 +1759,12 @@ int32_t hal_udc_init(void)
-         log_udc_err("open udc clk failed\n");
-         return -1;
-     }
-+    /*
-+    * As in system we dont have USB config, 
-+    * and seems this configuration related to GPIO that not used, comment this function
-+
-     sunxi_udc_get_config_param();
-+    */
-     udc_init();
- 
-     return 0;
- 
-diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/include/hal/sunxi_hal_common.h b/rt-thread/bsp/allwinner/libraries/sunxi-hal/include/hal/sunxi_hal_common.h
-index ab2d8ad10..d6cad7f7f 100644
---- a/rt-thread/bsp/allwinner/libraries/sunxi-hal/include/hal/sunxi_hal_common.h
-+++ b/rt-thread/bsp/allwinner/libraries/sunxi-hal/include/hal/sunxi_hal_common.h
-@@ -32,6 +32,26 @@ extern "C"
- #include <stdio.h>
- #include <kconfig.h>
- 
-+/* 
-+ * Add missing functions for usb hal
-+ */
-+
-+#if (defined(__GNUC__) && (__GNUC__ >= 3))
-+#define likely(expr)	(__builtin_expect(!!(expr), 1))
-+#define unlikely(expr)	(__builtin_expect(!!(expr), 0))
-+#else
-+#define likely(expr)	(!!(expr))
-+#define unlikely(expr)	(!!(expr))
-+#endif
-+
-+#define ERR_PTR(err)    ((void *)((long)(err)))
-+#define PTR_ERR(ptr)    ((long)(ptr))
-+#define IS_ERR(ptr)     ((unsigned long)(ptr) > (unsigned long)(-1000))
-+/* 
-+ * End add missing functions for usb hal
-+ */
-```
-</details>
+In test for HAL rt-thread\bsp\allwinner\libraries\sunxi-hal\hal\test\usb\host\test_hci.c understandable how USB stack should be inited so lets create driver for RTT to init HAL:
 
 ### Add USB driver
 <details><summary>driver</summary>
@@ -632,6 +316,11 @@ index 000000000..8b71888a1
 ```
 </details>
 
+But nothing happen
+
+LOG_D("start enumnation");
+
+
 
 
 ## USB RTT HAL variant
@@ -644,6 +333,11 @@ hcd->driver->start mean ehci_run()
 request_irq(sunxi_ehci->irq_no, ehci_irq_handler or hal_request_irq(sunxi_ehci->irq_no, ehci_irq_handler
 ```
 Interapt work ehci_irq: highspeed device connect
+
+
+
+
+![D1H_usb_host_phy](Pics/D1H_usb_host_phy.png)
 
 ## USB D1s Melis HAL variant
 
@@ -696,7 +390,7 @@ CONFIG_USB_SUNXI_USB_ADB=y
 
 
 ## Notes
-LOG_D("start enumnation");
+
 https://github.com/smaeul/linux/blob/d1/all/arch/riscv/boot/dts/allwinner/sun20i-d1.dtsi
 
 
