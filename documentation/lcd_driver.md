@@ -109,9 +109,121 @@ index 17f622d73..25fa3db03 100644
 ```
 </details>
 
-Lets run board
+Lets run board, notfing shown in console about display.<br>
+Need to change debug level in file rt-thread\bsp\allwinner\libraries\libos\include\log.h
+```c
+#define DBG_LVL DBG_INFO
+```
+<details><summary>Now in console present information about disp driver:</summary>
 
-TODO: RTT console output
+```sh
+Hello RISC-V
+[I/DBG] disp:[disp_probe 1078][DISP]disp_probe
+[I/DBG] disp:[disp_init 824]disp_init start
+[I/DBG] disp:[parser_disp_init_para 517]of_property_read screen0_output_format fail
+[I/DBG] disp:[parser_disp_init_para 524]of_property_read screen0_output_bits fail
+[I/DBG] disp:[parser_disp_init_para 531]of_property_read screen0_output_eotf fail
+[I/DBG] disp:[parser_disp_init_para 538]of_property_read screen0_output_cs fail
+[I/DBG] disp:[parser_disp_init_para 545]of_property_read screen0_output_dvi_hdmi fail
+[I/DBG] disp:[parser_disp_init_para 552]of_property_read screen0_output_range fail
+[I/DBG] disp:[parser_disp_init_para 559]of_property_read screen0_output_scan fail
+[I/DBG] disp:[parser_disp_init_para 566]of_property_read screen0_output_aspect_ratio fail
+[I/DBG] disp:[parser_disp_init_para 599]of_property_read screen1_output_mode fail
+[I/DBG] disp:[parser_disp_init_para 606]of_property_read screen1_output_format fail
+[I/DBG] disp:[parser_disp_init_para 614]of_property_read screen1_output_bits fail
+[I/DBG] disp:[parser_disp_init_para 622]of_property_read screen1_output_eotf fail
+[I/DBG] disp:[parser_disp_init_para 630]of_property_read screen1_output_cs fail
+[I/DBG] disp:[parser_disp_init_para 638]of_property_read screen1_output_dvi_hdmi fail
+[I/DBG] disp:[parser_disp_init_para 647]of_property_read screen1_output_range fail
+[I/DBG] disp:[parser_disp_init_para 655]of_property_read screen1_output_scan fail
+[I/DBG] disp:[parser_disp_init_para 664]read screen1_output_aspect_ratio fail
+[I/DBG] disp:[parser_disp_init_para 678]of_property_read disp_init.fb0_format fail
+[I/DBG] disp:[parser_disp_init_para 684]of_property_read fb0_width fail
+[I/DBG] disp:[parser_disp_init_para 690]of_property_read fb0_height fail
+[I/DBG] disp:[parser_disp_init_para 715]====display init para begin====
+[I/DBG] disp:[parser_disp_init_para 716]b_init:1
+[I/DBG] disp:[parser_disp_init_para 717]disp_mode:0
+[I/DBG] disp:[parser_disp_init_para 719]output_type[0]:1
+[I/DBG] disp:[parser_disp_init_para 720]output_mode[0]:0
+[I/DBG] disp:[parser_disp_init_para 719]output_type[1]:0
+[I/DBG] disp:[parser_disp_init_para 720]output_mode[1]:0
+[I/DBG] disp:[parser_disp_init_para 723]buffer_num[0]:2
+[I/DBG] disp:[parser_disp_init_para 724]format[0]:0
+[I/DBG] disp:[parser_disp_init_para 725]fb_width[0]:0
+[I/DBG] disp:[parser_disp_init_para 726]fb_height[0]:0
+[I/DBG] disp:[parser_disp_init_para 723]buffer_num[1]:0
+[I/DBG] disp:[parser_disp_init_para 724]format[1]:0
+[I/DBG] disp:[parser_disp_init_para 725]fb_width[1]:0
+[I/DBG] disp:[parser_disp_init_para 726]fb_height[1]:0
+[I/DBG] disp:[parser_disp_init_para 728]====display init para end====
+[I/DBG] disp:[disp_init 842]mod 0, base=0x5000000, irq=0
+[I/DBG] disp:[disp_init 842]mod 1, base=0x5460000, irq=0
+[I/DBG] disp:[disp_init 842]mod 2, base=0x5461000, irq=106
+[I/DBG] disp:[disp_init 842]mod 3, base=0x5470000, irq=107
+[I/DBG] disp:[disp_init 842]mod 4, base=0x0, irq=0
+[I/DBG] disp:[disp_init 842]mod 5, base=0x0, irq=0
+[I/DBG] disp:[disp_init 842]mod 6, base=0x5450000, irq=108
+[I/DBG] disp:[disp_init 842]mod 7, base=0x0, irq=0
+[I/DBG] disp:[disp_init 842]mod 8, base=0x0, irq=0
+[I/DBG] disp:[disp_init 842]mod 9, base=0x0, irq=0
+[I/DBG] disp:[disp_init 842]mod 10, base=0x0, irq=0
+[I/DBG] disp:[disp_init 842]mod 11, base=0x0, irq=0
+[I/DBG] disp:[disp_init 842]mod 12, base=0x0, irq=0
+[I/DBG] disp:[disp_init 842]mod 13, base=0x0, irq=0
+[I/DBG] disp:[disp_init 842]mod 14, base=0x0, irq=0
+[I/DBG] disp:[de_rtmx_set_gld_reg_base 485]sel=0x0, addr=0x0x00000000405e9d20
+[I/DBG] disp:[de_rtmx_init 291]disp_sys_malloc memory ok(0x0x00000000405e9d60) for video channel    
+[I/DBG] disp:[de_rtmx_set_overlay_reg_base 524]sel=0x0, overlayer 0, addr=0x0x00000000405e9d60
+[I/DBG] disp:[de_rtmx_set_overlay_reg_base 524]sel=0x0, overlayer 1, addr=0x0x00000000405ea2b0      
+[I/DBG] disp:[de_rtmx_set_bld_reg_base 502]sel=0, base=0x0x00000000405ea7e0
+[I/DBG] disp:[de_vsu_set_reg_base 196]sel=0, chno=0, base=0x0x00000000405ea908
+[I/DBG] disp:[de_gsu_set_reg_base 160]sel=0, chno=0, base=0x0x00000000405eb1b0
+[I/DBG] disp:[de_rtmx_set_gld_reg_base 485]sel=0x1, addr=0x0x00000000405eb418
+[I/DBG] disp:[de_rtmx_init 291]disp_sys_malloc memory ok(0x0x00000000405eb458) for video channel    
+[I/DBG] disp:[de_rtmx_set_overlay_reg_base 524]sel=0x1, overlayer 0, addr=0x0x00000000405eb458      
+[I/DBG] disp:[de_rtmx_set_bld_reg_base 502]sel=1, base=0x0x00000000405eb9f8
+[I/DBG] disp:[de_vsu_set_reg_base 196]sel=1, chno=0, base=0x0x00000000405ebb20
+[I/DBG] disp:[de_lti_init 69]sel 0, lti_base[0]=0x0x00000000051a4000
+[I/DBG] disp:[de_peak_init 79]sel 0, peak_base[0]=0x0x00000000051a6000
+[I/DBG] disp:[de_peak_set_reg_base 44]sel=0, chno=0, base=0x0x00000000405ed4e8
+[I/DBG] disp:[de_ase_init 68]sel 0, ase_base[0]=0x0x00000000051a8000
+[I/DBG] disp:[de_ccsc_set_reg_base 48]sel=0, chno=0, base=0x0x00000000405ed640
+[I/DBG] disp:[de_ccsc_init 212]sel0, Icsc_base[0]=0x0x00000000051a0040
+[I/DBG] disp:[de_icsc_set_reg_base 56]sel=0, chno=0, base=0x0x00000000405ed6b0
+[I/DBG] disp:[de_ccsc_set_reg_base 48]sel=1, chno=0, base=0x0x00000000405ed6f0
+[I/DBG] disp:[de_dcsc_init 177]sel 0, Dcsc_base=0x0x00000000051b0000
+[I/DBG] disp:[de_dcsc_set_reg_base 40]sel=0, base=0x0x00000000405ed760
+[I/DBG] disp:[de_dcsc_init 177]sel 1, Dcsc_base=0x0x00000000052b0000
+[I/DBG] disp:[de_dcsc_set_reg_base 40]sel=1, base=0x0x00000000405ed7d0
+[I/DBG] disp:[wb_ebios_set_reg_base 71]sel=0, base=0x0x0000000005010000
+[I/DBG] disp:[disp_init_lcd 2529]disp_init_lcd
+[I/DBG] disp:[disp_init_lcd 2598]total number of clk in dsi:1
+[I/DBG] disp:[disp_init_lcd 2600]lcd 0, irq_no=106, irq_no_dsi=108
+[I/DBG] disp:[lcd_clk_init 512]lcd 0 clk init
+[I/DBG] disp:[disp_init_mgr 1666]disp_init_mgr
+[I/DBG] disp:[disp_init_mgr 1698]mgr 0, 0x0x00000000405ef790
+[I/DBG] disp:[disp_init_mgr 1698]mgr 1, 0x0x00000000405ef8f8
+[I/DBG] disp:[disp_init_lyr 684]disp_init_lyr
+[I/DBG] disp:[disp_init_enhance 685]disp_init_enhance
+[I/DBG] disp:[disp_init_connections 421]disp_init_connections
+[I/DBG] disp:[disp_get_layer_1 121]disp0 layer0: 0,0,0
+[I/DBG] disp:[disp_get_layer_1 121]disp0 layer1: 0,0,1
+[I/DBG] disp:[disp_get_layer_1 121]disp0 layer2: 0,0,2
+[I/DBG] disp:[disp_get_layer_1 121]disp0 layer3: 0,0,3
+[I/DBG] disp:[disp_get_layer_1 121]disp0 layer4: 0,1,0
+[I/DBG] disp:[disp_get_layer_1 121]disp0 layer5: 0,1,1
+[I/DBG] disp:[disp_get_layer_1 121]disp0 layer6: 0,1,2
+[I/DBG] disp:[disp_get_layer_1 121]disp0 layer7: 0,1,3
+[I/DBG] disp:[disp_device_set_manager 22]device 0, mgr 0
+[I/DBG] disp:[disp_get_layer_1 121]disp1 layer8: 1,0,0
+[I/DBG] disp:[disp_get_layer_1 121]disp1 layer9: 1,0,1
+[I/DBG] disp:[disp_get_layer_1 121]disp1 layer10: 1,0,2
+[I/DBG] disp:[disp_get_layer_1 121]disp1 layer11: 1,0,3
+```
+</details>
+<br>
+
+But board stuck in some point. Need to debug where is happen try to use GDB.
 
 ### Change driver initialization
 In original RTT repo LCD driver init as a application inside main() function, in this case is impossible to debug it in GDB as is executed in RTT thread. So change it to init as device that executed before scheduler start.
@@ -152,7 +264,7 @@ index 327aa777f..0b1737df2 100644
 </details>
 
 ### LCD driver stuck
-With original implementation board stuck in function hal_msleep() by some reason, replace it to rt_hw_us_delay()
+With GDB understended that with original implementation board stuck in function hal_msleep() by some reason, replace it to rt_hw_us_delay()
 
 <details><summary>Change disp_sys_intf.c:</summary>
 
@@ -188,10 +300,15 @@ index 09c64b396..31f370d3d 100644
 ```
 </details>
 
-Looks like nothing happen with display
-TODO: RTT console output
+Now is not stuck but is not any confirmation is work. 
 
-## Linux
+When run test command:
+```sh
+lcd_draw_point 100 100
+```
+Nothing show in dispaly
+
+## Example in Linux
 
 So RTT sunxi-hal not affect display lets look how it work in Linux.<br>
 In Clockworkpi wiki https://github.com/clockworkpi/DevTerm/wiki/Create-DevTerm-R01-OS-image-from-scratch#how-to-compile-kernel says they used https://github.com/cuu/last_linux-5.4.git "it is a mirror kernel code from tina_d1_h of all winner with all patched for devterm R-01"
@@ -625,6 +742,31 @@ diff --git a/rt-thread/bsp/allwinner/d1s_d1h/.config b/rt-thread/bsp/allwinner/d
 +CONFIG_MIPI_DSI_LCD_ICN9707=y
 ```
 </details>
+
+Now all work fine LCD_open_flow called.
+
+```sh
+raoyiming +++ LCD_open_flow
+raoyiming +++ LCD_open_flow finish
+<0>raoyiming +++ LCD_panel_init
+[I/DBG] disp:[disp_lcd_pin_cfg 910]lcd 0 pin config, state on, 1
+<0>raoyiming +++ LCD_panel_init finish
+[I/DBG] disp:[disp_lcd_enable 1659]open flow:step 0 finish, to delay 0
+[I/DBG] disp:[disp_lcd_enable 1659]open flow:step 1 finish, to delay 200
+raoyiming +++ LCD_bl_open
+[I/DBG] disp:[disp_sys_pwm_enable 693]period_ns = 1000000 
+[I/DBG] disp:[disp_sys_pwm_enable 694]duty_ns = 195312 
+[I/DBG] disp:[disp_sys_pwm_enable 695]polarity = 0 
+[I/DBG] disp:[disp_sys_pwm_enable 696]channel = 2 
+[I/DBG] disp:[disp_lcd_enable 1659]open flow:step 2 finish, to delay 0
+[I/DBG] disp:[start_work 757]sel=1, output_type=0, lcd_reg=0,hdmi_reg=0
+```
+
+But display still blank, when run test command:
+```sh
+lcd_draw_point 100 100
+```
+Nothing show in dispaly
 
 ## LCD inc9707 chip reset
 
