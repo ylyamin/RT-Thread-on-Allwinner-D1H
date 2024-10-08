@@ -1,39 +1,39 @@
 # Devterm Keyboard
-So we have working display as output from board now need to have way to input information - use keyboard.
+So we have working display as output from the board now need to have way to input information - use keyboard.
 
 ## Keyboard connection
-Keyboard in Devterm is actually standalone USB keyboard with STM32F103Rx chip connected to mainboard by USB interface. 
+First of all lets look how keyboard connected to D1H. Keyboard in Devterm is actually standalone USB HID device with STM32F103Rx chip connected to main board by USB interface:
 
 ![usb_keyboard_connector_1](Pics/usb_keyboard_connector_1.png)
 
-From [Mainboard PCB outline schematic file](ClockworkPi_DevTerm/pcb_3.14_botton.pdf) we can see is connected to J502 connector.
+From Devterm Mainboard PCB outline file [pcb_3.14_botton.pdf](ClockworkPi_DevTerm/pcb_3.14_botton.pdf) we can see is connected to J502 connector:
 
 ![usb_keyboard_connector_2](Pics/usb_keyboard_connector_2.png)
 
-As you can see from the [Mainboard schematic file](ClockworkPi_DevTerm/clockwork_Mainboard_V3.14_V5_Schematic.pdf) from J502 connector (DM1/DP1 pins) is go to => GL850G chip (is USB hub) then from DM0/DP0 pins go to => USB_DP/USB_DM connected to R01 Core board.
+Then as you can see from the Mainboard schematic file [clockwork_Mainboard_V3.14_V5_Schematic.pdf](ClockworkPi_DevTerm/clockwork_Mainboard_V3.14_V5_Schematic.pdf) from J502 connector (DM1/DP1 pins) is go to => GL850G chip (is USB hub) then from DM0/DP0 pins go to => USB_DP/USB_DM connected to R01 Core board.
 
 ![usb_keyboard_mb_comm](Pics/usb_keyboard_mb_comm.png)
 
-In R01 Core [schematic file](ClockworkPi_DevTerm/clockwork_DevTerm_R01_Core_for_Mainboard_V3.14_Schematic.pdf) is connected to D1H USB1-DP/USB1-DM (A8/B8 pins)
+In R01 Core schematic file [clockwork_DevTerm_R01_Core_for_Mainboard_V3.14_Schematic.pdf](ClockworkPi_DevTerm/clockwork_DevTerm_R01_Core_for_Mainboard_V3.14_Schematic.pdf) is connected to D1H USB1-DP/USB1-DM (A8/B8 pins)
 
 ![usb_keyboard_r01_comm](Pics/usb_keyboard_r01_comm.png)
 
-From [D1H Datasheet](Allwinner_D1H/D1_Datasheet_V0.1_Draft_Version.pdf) we can found A8/B8 pins connected to USB2.0 HOST number 1.
+From D1H datasheet [D1_Datasheet_V0.1_Draft_Version.pdf](Allwinner_D1H/D1_Datasheet_V0.1_Draft_Version.pdf) we can found A8/B8 pins connected to USB2.0 HOST number 1.
 
 ![D1H_usb_pins](Pics/D1H_usb_pins.png)
 ![D1H_system_diagram_usb](Pics/D1H_system_diagram_usb.png)
 
-The [D1H User manual](Allwinner_D1H/D1_User_Manual_V0.1_Draft_Version.pdf) document does not contain much information about USB interface. 
+The D1H user manual [D1_User_Manual_V0.1_Draft_Version.pdf](Allwinner_D1H/D1_User_Manual_V0.1_Draft_Version.pdf) document does not contain much information about USB interface. 
 
 Defined that:
-* USB0 is USB2.0 Dual role device (Device/Host controller) we not interesting this.
-* USB1 is USB2.0 Host where we have our keyboard
+* USB0 is USB2.0 Dual role device (Device/Host controller) - we not interesting of this.
+* USB1 is USB2.0 Host - where we have our keyboard
 
 But before deep dive to this controller and communication lets look how this USB device powered.
 
-### Keyboard power
+## Keyboard power
 
-So J502 1st pin connected to VBAT line that provided from TPS2553 Power switch chip. This chip have main power SYS_5V and looks like signal for Enabling from 3V3 line. USB hub chip powered from SYS_5V line.
+So J502 1st power pin connected to VBAT line that provided from TPS2553 Power switch chip. This chip have main power SYS_5V and looks like signal for Enabling from 3V3 line. USB hub chip powered from SYS_5V line.
 
 ![usb_keyboard_power_1](Pics/usb_keyboard_power_1.png)
 
@@ -89,15 +89,15 @@ index 000000000..9bff5c7f4
 ```
 
 </details>
-Now is can be powered. 
+<br>
+Now USB device can be powered from board. 
 
 ## USB HAL
-Lets look to software side in [rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/](rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/) we have folder usb.
-
-File sunxi-hal/hal/SConscript defined build rules about HAL for RTT. 
-
-Now for usb folder defined only one source usb/platform/sun20iw1/usb_sun20iw1.c. So lets define all host related stuff.
-
+Lets look to software side.  
+In RTT sunxi-hal we have folder **usb** [rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb](rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb).  
+File sunxi-hal/hal/SConscript defined build rules about HAL for RTT.  
+Now for usb folder defined only one source file - usb/platform/sun20iw1/usb_sun20iw1.c.  
+So lets define all host related stuff.  
 Lets look to sunxi-hal/hal/source/usb/Makefile and child Makefile's in folders to understand what should be included, add then to SConscript
 <details><summary>Change build to support USB HAL</summary>
 
@@ -241,8 +241,8 @@ index 25fa3db03..0619d4d8d 100644
 +CONFIG_USB_MANAGER=y
 ```
 </details>
-
-In test for USB HAL rt-thread\bsp\allwinner\libraries\sunxi-hal\hal\test\usb\host\test_hci.c is understandable how USB stack should be initiated.
+<br>
+From test program for USB HAL rt-thread\bsp\allwinner\libraries\sunxi-hal\hal\test\usb\host\test_hci.c is understandable how USB stack should be initiated.
 Is done by functions:
 * hal_usb_core_init()
 * hal_usb_hcd_init()
@@ -302,10 +302,6 @@ index 000000000..8b71888a1
 +
 +extern void _axp_USB_control(int on);
 +
-+#include <HidSpec.h>
-+
-+#include <Hid_i.h>
-+
 +int drv_usb(void)
 +{
 +    _axp_USB_control(1);
@@ -324,8 +320,10 @@ index 000000000..8b71888a1
 +//INIT_DEVICE_EXPORT(drv_usb);
 ```
 </details>
-
-But after running RTT nothing happen. 
+<br>
+But after running RTT nothing happen.
+<br>
+<details><summary>Is RTT console output:</summary>
 
 ```shell
 phy_vbase : 0x4100400, usbc_no : 0, efuse : 0x1e9200f
@@ -342,41 +340,34 @@ phy_vbase : 0x4100400, usbc_no : 0, efuse : 0x1e9200f
 [sunxi-ohci1]: sunxi_set_vbus cnt.
 [usbh core]: adding sub dev  (config #1, interface 0)
 ```
+</details>
+<br>
 I expect some process of enumeration USB devices, but looks like is not rich this point.
-
-Try to use RTT function rt_usb_host_init() from rt-thread\components\drivers\usb\usbhost\core\usbhost.c also not show anything.
-
-### USB RTT HAL variant
-Noticed when USB device connected is called interrupt handler ehci_irq_handler() and reach point where print message "ehci_irq: highspeed device connect" but then communication not start 
+Trying to use RTT function rt_usb_host_init() from rt-thread\components\drivers\usb\usbhost\core\usbhost.c also not show anything.<br>
+Noticed when USB device connected is called interrupt handler ehci_irq_handler() and reach point where print message "ehci_irq: highspeed device connect" but then communication not start.  
 
 ### USB D1s Melis HAL variant
-Thinking maybe whole USB host HAL outdated or broken, lets look to other variants. I found different HAL https://github.com/Tina-Linux/d1s-melis/tree/master/ekernel/drivers
-Is compiled run but also nothing really happen, when device attached is failed in ehci_irq_handler() line &ehci->regs->status.
+Thinking maybe whole USB host HAL outdated or broken, lets look to other variants. I found different HAL in https://github.com/Tina-Linux/d1s-melis/tree/master/ekernel/drivers. I moved this usb HAL folder to RTT - is can be compiled and run but also nothing really happen, when device attached is failed in ehci_irq_handler() line &ehci->regs->status.
 
-## Documentation
+## D1H Documentation
 
-In the [D1H User manual](Allwinner_D1H/D1_User_Manual_V0.1_Draft_Version.pdf) 
-What we have about USB, not too much: 
+Looking to the D1H User manual [D1_User_Manual_V0.1_Draft_Version.pdf](Allwinner_D1H/D1_User_Manual_V0.1_Draft_Version.pdf)<br>
+What we have about USB ? Not too much: 
 * Short Overview 
-* Controller and Physical layer connection diagram ![D1H_usb_host_phy](Pics/D1H_usb_host_phy.png)
-* Registers list ![D1H_usb_register_list](Pics/D1H_usb_register_list.png)
+* Controller and Physical layer connection diagram
+* Registers list
 
-What is EHCI and OHCI ? 
+Is not clear how to control it.
 
-According [https://wiki.osdev.org/Enhanced_Host_Controller_Interface](https://wiki.osdev.org/Enhanced_Host_Controller_Interface) "The Enhanced Host Controller Interface (EHCI) is the single method of interfacing with USB 2.0"
-"On a PC you will normally find the EHCI USB controller on the PCI bus - in fact it is the only access method specified in the specification. USB 2.0 supports interfacing with USB 1.0 devices. However, EHCI is NOT expected to support them. Instead, you will find an UHCI or OHCI companion controller. "
+## Physical layer
 
-looking to [EHCI Intel specification](USB/ehci-specification-for-usb.pdf)
+Lets first start with Physical layer. This is Controller and Physical layer connection diagram from In the [D1H User manual](Allwinner_D1H/D1_User_Manual_V0.1_Draft_Version.pdf):
 
-![ehci_system_block_diagram](Pics/ehci_system_block_diagram.png)
+![D1H_usb_host_phy](Pics/D1H_usb_host_phy.png)
 
-EHCI and OHCI is low level controllers for High and Full speed USB devices. Device can be routed to EHCI or OHCI depend what speed device is.
+Does PHY initialized correctly and provide correct data to controller ? As is no explanation how is should be initialized in documentation need to look to code. But I'm can't be sure that RTT sunxi-hal code is correct as is not found USB devices. Need working example - in Devterm Linux work perfectly.
 
-![ehci_host_controller](Pics/ehci_host_controller.png)
-
-Lets first start with PHY does is initilised correctly and provide correct data to EHCI controller. As is no explanation how is should be initialized in documentation need to look to code. But I'm can't be sure that HAL code is correct. Need garanteed working example - is Linux
-
-## Let see how is implemented in Linux.
+### Let see how is implemented in Linux.
 
 I use article https://andreas.welcomes-you.com/boot-sw-debian-risc-v-lichee-rv and https://github.com/smaeul/linux to compile Linux kernel.
 
@@ -384,9 +375,9 @@ Created some scripts to atomized process:
 * build/linux_image_create.sh
 * build/linux_image_update_kernel.sh
 
-In Linux USB is up successfully and device enumerated.
+Burn image to SD card and run. In Linux USB is up successfully and device enumerated.
 
-<details><summary>linux console output</summary>
+<details><summary>linux console output:</summary>
 
 ```shell
 Starting kernel ...
@@ -461,12 +452,15 @@ Starting kernel ...
 [    2.877704] usb 4-1: SerialNumber: 'Ä000002
 ```
 </details>
-
+<br>
 Lets compare HAL and Linux drivers step by step to understand where can be mistake.
 
 ### Configuration
 
-Configuration for Linux https://andreas.welcomes-you.com/media/files/licheerv_linux_defconfig define several USB related values:
+Lets look how Linux kernel configured to support D1H USB host and then compare with RTT configuration.
+
+<details><summary>linux config:</summary>
+I use configuration for Linux from https://andreas.welcomes-you.com/media/files/licheerv_linux_defconfig is define several USB related values:
 
 ```conf
 CONFIG_PHY_SUN4I_USB=y
@@ -483,8 +477,10 @@ This config also affect what files will be compiled according linux/drivers/usb/
 obj-$(CONFIG_USB)			+= core/
 obj-$(CONFIG_USB_EHCI_HCD)	+= host/
 ```
+</details>
+<details><summary>On the other side in RTT config</summary>
+In rt-thread\bsp\allwinner\libraries\sunxi-hal\hal\kconfig.h file
 
-On the other side in RTT config rt-thread\bsp\allwinner\libraries\sunxi-hal\hal\kconfig.h defined
 ```c
 #define CONFIG_USB_HOST 1
 #define CONFIG_USB_EHCI 1
@@ -494,14 +490,15 @@ On the other side in RTT config rt-thread\bsp\allwinner\libraries\sunxi-hal\hal\
 #define CONFIG_USB_OHCI_0 1
 #define CONFIG_USB_OHCI_1 1
 ```
-
+</details>
+<br>
 Comparing Linux and RTT is nothing extra difference in config and build. 
 
 lets looks to Linux Device Tree Source files that describes the system's hardware layout:
+<details><summary>Linux DTS:</summary>
+From file https://github.com/smaeul/linux/blob/d1/all/arch/riscv/boot/dts/allwinner/sun20i-d1.dtsi
 
-https://github.com/smaeul/linux/blob/d1/all/arch/riscv/boot/dts/allwinner/sun20i-d1.dtsi
-
-```yaml
+```json
 		usbphy: phy@4100400 {
 			compatible = "allwinner,sun20i-d1-usb-phy";
 			reg = <0x4100400 0x100>,
@@ -551,7 +548,7 @@ https://github.com/smaeul/linux/blob/d1/all/arch/riscv/boot/dts/allwinner/sun20i
 		};
 ```
 
-According this memory layout for USB will be:
+According this memory layout for USB is:
 ```c
 OTG_PBASE		0x04100000
 phy otg        	0x04100400
@@ -564,25 +561,29 @@ EHCI1     		0x04200000
 OHCI1          	0x04200400
 phy hci1       	0x04200800
 ```
-
-And in RTT rt-thread\bsp\allwinner\libraries\sunxi-hal\hal\source\usb_melis\platform\sun20iw1\usb_sun20iw1.h
+</details>
+<details><summary>RTT analog:</summary>
+File rt-thread\bsp\allwinner\libraries\sunxi-hal\hal\source\usb_melis\platform\sun20iw1\usb_sun20iw1.h
 
 ```c
 #define SUNXI_USB_OTG_PBASE			0x04100000
 #define SUNXI_USB_HCI0_PBASE		0x04101000
 #define SUNXI_USB_HCI1_PBASE		0x04200000
 ```
+</details>
+
 Base registers seems the same.
 
 ### Look to clocks. 
 
-In sun20i-d1.dtsi included:
+<details><summary>Clock in Linux:</summary>
+sun20i-d1.dtsi included:
+
 ```c
 #include <dt-bindings/clock/sun20i-d1-ccu.h>
 #include <dt-bindings/reset/sun20i-d1-ccu.h>
 ```
 That can be found in linux/include/dt-bindings/clock/sun20i-d1-ccu.h
-
 ```c
 #define CLK_USB_OHCI0		97
 #define CLK_USB_OHCI1		98
@@ -592,9 +593,7 @@ That can be found in linux/include/dt-bindings/clock/sun20i-d1-ccu.h
 #define CLK_BUS_EHCI1		102
 #define CLK_BUS_OTG			103
 ```
-
 And linux/include/dt-bindings/reset/sun20i-d1-ccu.h
-
 ```c
 #define RST_USB_PHY0		40
 #define RST_USB_PHY1		41
@@ -604,8 +603,10 @@ And linux/include/dt-bindings/reset/sun20i-d1-ccu.h
 #define RST_BUS_EHCI1		45
 #define RST_BUS_OTG		    46
 ```
-
+</details>
+<details><summary>Clock in RTT:</summary>
 In RTT file rt-thread\bsp\allwinner\libraries\sunxi-hal\hal\source\ccmu\sunxi-ng\ccu-sun8iw20.h
+
 ```c
 #define CLK_USB_OHCI0       100
 #define CLK_USB_OHCI1       101
@@ -626,10 +627,14 @@ And rt-thread\bsp\allwinner\libraries\sunxi-hal\hal\source\ccmu\sunxi-ng\rst-sun
 #define RST_BUS_EHCI1       47
 #define RST_BUS_OTG         48
 ```
+</details>
 
-Strange it shifted to 3 for clock and 2 for reset. Display and UART clock inited seccusefull with htis shift so assum is specific of clock driver implementation.
+Strange it shifted to 3 for clock and 2 for reset. 
+Display and UART clock inited seccusefull with this shifts so assume is shifts is ok, just specific of clock driver implementation.
 
 ### Lets look how clock initialization implemented
+
+<details><summary>Linux driver:</summary>
 
 In Linux drivers/phy/allwinner/phy-sun4i-usb.c file sun4i_usb_phy_init() function:
 ```c
@@ -640,15 +645,17 @@ reset_control_deassert(phy->reset);     // is RST_USB_PHY1 = 41
 of_clk_get(dev->dev.of_node, clk);      //is CLK_BUS_EHCI1 = 102
 reset_control_deassert(priv->rsts);     //is RST_BUS_EHCI1 = 45
 ```
+</details>
+<details><summary>RTT driver:</summary>
 
 In RTT rt-thread\bsp\allwinner\libraries\sunxi-hal\hal\source\usb_melis\platform\sun20iw1\usb_sun20iw1.c
 
 ```c
 	ehci-1
-		.usb_clk = CLK_BUS_EHCI1 = 105
-		.usb_rst = RST_BUS_EHCI1 = 47
+		.usb_clk = CLK_BUS_EHCI1 // 105
+		.usb_rst = RST_BUS_EHCI1 // 47
 		.phy_clk = 0,
-		.phy_rst = RST_USB_PHY1  = 43
+		.phy_rst = RST_USB_PHY1  // 43
 
 	ohci-1
 		.ohci_clk = CLK_USB_OHCI1,
@@ -673,29 +680,33 @@ function hci_clock_init()
 function open_clock()
 
 ```c
-reset_control_get(reset_phy_clk)   RST_USB_PHY1  = 43
+reset_control_get(reset_phy_clk)   //RST_USB_PHY1  = 43
 reset_control_deassert(reset_phy)
 reset_control_put(reset_phy)
 
-reset_control_get(reset_bus_clk)   RST_BUS_EHCI1 = 47
+reset_control_get(reset_bus_clk)   //RST_BUS_EHCI1 = 47
 reset_control_deassert(reset_hci)
 reset_control_put(reset_hci)
 
-clock_get(phy_clk_id)    0
+clock_get(phy_clk_id)    //0
 clock_enable(phy_clk)
 
-clock_get(bus_clk_id)    CLK_BUS_EHCI1 = 105
+clock_get(bus_clk_id)    //CLK_BUS_EHCI1 = 105
 clock_enable(bus_clk)
 
-clock_get(ohci_clk_id)   CLK_USB_OHCI1 = 101
+clock_get(ohci_clk_id)   //CLK_USB_OHCI1 = 101
 clock_enable(ohci_clk)   
 
 ```
-Overall seems quite similar.
+</details>
+
+Overall seems Linux and RTT implementation quite similar.
 
 ### Lets look how PHY initialization implemented
 
 I add to drivers/phy/allwinner/phy-sun4i-usb.c help wrapper to understand what writed to registers
+
+<details><summary>writel wrapper</summary>
 
 ```c
 void writel_(u32 v, void __iomem *c)
@@ -710,8 +721,11 @@ But in Linux registers is ioremap so add some debug to sun4i_usb_phy_probe()
 	printk(KERN_WARNING "phy->pmu %s phy__addr: %x\n",name,platform_get_resource_byname(pdev,IORESOURCE_MEM,name)->start);
 
 ```
+</details>
 
-<details><summary>linux console output</summary>
+This result we have:
+
+<details><summary>linux console output:</summary>
 
 ```shell
 [    0.247663] usbcore: registered new interface driver usbfs
@@ -800,7 +814,9 @@ But in Linux registers is ioremap so add some debug to sun4i_usb_phy_probe()
 ```
 </details>
 
-let's highlight in output the most important:
+<details><summary>let's highlight in output the most important parts and change register value to real:
+</summary>
+
 ```sh
 sun4i_usb_phy_probe
 data->base phy_ctrl virt_addr: 4125 400
@@ -823,13 +839,17 @@ sun4i_usb_phy0_update_iscr	phy writel 4100 400<-40030000	// & 0 | 17
 sun4i_usb_phy_init			phy writel 4200 810<-0			// cntrl clear
 sun4i_usb_phy_passby		phy writel 4200 800<-701		// | 10 9 8 0
 ```
+</details>
 
-RTT add in functions print's like this:
+<details><summary>RTT add in functions print's like this:</summary>
+
 ```c
 	rt_kprintf("phy write: %x<-%x\n\r",(sunxi_hci->usb_vbase + SUNXI_HCI_PHY_CTRL),reg_value);
 ```
+</details>
 
-RTT Console output:
+<details><summary>RTT Console output:</summary>
+
 ```shell
 [ehci-usb1] insmod host driver!
 USBC_Clean_SIDDP
@@ -837,30 +857,759 @@ phy write: 4200810<-0
 usb_passby
 phy write: 4200800<-701
 ```
+</details>
 
-Overall seems quite similar.
+Overall seems Linux and RTT implementation quite similar.
 Lets asume clock and phy init is ok. So maybe problem in EHCI/OHCI
 
-Code for EHCI in HAL for me is quite complicated, I tryed to find simpl opensource implementation. RTT support several packages for USB stack Cherry USB and Tiny USB
+## EHCI/OHCI
 
+[D1H User manual](Allwinner_D1H/D1_User_Manual_V0.1_Draft_Version.pdf) contain usb related registers:
 
-## Cherry USB variant with RTT HAL
-```C
-    usbh_initialize(1, SUNXI_USB_HCI1_PBASE);
-```
-with chery init interapt not call
+![D1H_usb_register_list](Pics/D1H_usb_register_list.png)
 
+From registers we can understand that is used EHCI/OHCI. What is EHCI and OHCI ? 
 
+According [https://wiki.osdev.org/Enhanced_Host_Controller_Interface](https://wiki.osdev.org/Enhanced_Host_Controller_Interface) <br>
+"The Enhanced Host Controller Interface (EHCI) is the single method of interfacing with USB 2.0"<br>
+"On a PC you will normally find the EHCI USB controller on the PCI bus - in fact it is the only access method specified in the specification. USB 2.0 supports interfacing with USB 1.0 devices. However, EHCI is NOT expected to support them. Instead, you will find an UHCI or OHCI companion controller. "
 
+looking to EHCI Intel specification [ehci-specification-for-usb.pdf](USB/ehci-specification-for-usb.pdf)
 
-## Tiny USB variant with RTT or Melis HAL
-```C
+![ehci_system_block_diagram](Pics/ehci_system_block_diagram.png)
+
+EHCI and OHCI is low level controllers for High and Full speed USB devices accordantly. Device can be routed to EHCI or OHCI depend what speed of device is.
+
+![ehci_host_controller](Pics/ehci_host_controller.png)
+
+Code for work with EHCI in sunxi hal for me is quite complicated, and is not reach enumeration. So I tryed to find simple opensource implementation. 
+
+RTT support use of external packages https://packages.rt-thread.org/en/index.html for USB stack offers CherryUSB and TinyUSB packages.
+This packages downloads from differen repositories to folder rt-thread\bsp\allwinner\d1s_d1h\packages. 
+I created forks of this packages:
+* https://github.com/ylyamin/CherryUSB_fork
+* https://github.com/ylyamin/tinyusb_fork
+
+Created driver with commands for all USB stack varians:
+
+<details><summary>rt-thread\bsp\allwinner\libraries\drivers\drv_usbh.c</summary>
+
+```c
+int drv_usb_hal(void)
+{
+  hal_usb_core_init();
+	hal_usb_hcd_init(1);
+}
+MSH_CMD_EXPORT_ALIAS(drv_usb_hal, usb_hal, usb);
+
+int drv_usb_cherry(void)
+{
+    usbh_initialize(1, 0x04200000);
+}
+MSH_CMD_EXPORT_ALIAS(drv_usb_cherry, usb_cherry, usb);
+
+extern int init_tinyusb(void);
+
+int drv_usb_tiny(void)
+{
     init_tinyusb();
+}
+MSH_CMD_EXPORT_ALIAS(drv_usb_tiny, usb_tiny, usb);
 ```
+</details>
 
+### CherryUSB
+Lets start with CherryUSB.<br>
+I do some changes in CherryUSB to support D1H but will not describe it here becouse CherryUSB didn't suit me in the end.<br>
+But CherryUSB implementation have important moment.<br>
+<details><summary>Lets run CherryUSB variant and look to console output:</summary>
 
+```shell
+msh />usb_cherry
+[ehci-usb1] insmod host driver!
+[sunxi-ehci1]: sunxi_set_vbus cnt.
+[usbh core]: adding sub dev  (config #1, interface 0)
+[ohci-usb1] insmod host driver!
+[sunxi-ohci1]: sunxi_set_vbus cnt.
+[usbh core]: adding sub dev  (config #1, interface 0)[I/USB] EHCI HCIVERSION:0x0100
+[I/USB] EHCI HCSPARAMS:0x001101
+[I/USB] EHCI HCCPARAMS:0xa026
+[I/USB] EHCI caplength:0x0010
+[I/USB] EHCI ppc:0, n_ports:1, n_cc:1, n_pcc:1
+[I/USB] EHCI_HCOR addr:4200010
+OHCI_IRQHandler usbsts 40
+[I/USB] EHCI uses companion controller for ls/fs device
+[I/USB] OHCI hcrevision:0x10
+OHCI_IRQHandler usbsts 40
+OHCI_IRQHandler usbsts 40
+OHCI_IRQHandler usbsts 40
+[D/usbh_hub] Port change:0x02
+[D/usbh_hub] Port 1 change
+[D/usbh_hub] port 1, status:0x100, change:0x01
+OHCI_IRQHandler usbsts 40
+[D/usbh_hub] Port 1, status:0x100, change:0x00
+[D/usbh_hub] Port 1, status:0x100, change:0x00
+[D/usbh_hub] Port 1, status:0x100, change:0x00
+[D/usbh_hub] Port 1, status:0x100, change:0x00
+[I/usbh_hub] Device on Bus 1, Hub 1, Port 1 disconnected
+[D/usbh_hub] Port change:0x00
+OHCI_IRQHandler usbsts 40
+[D/usbh_hub] Port change:0x02
+[D/usbh_hub] Port 1 change
+[D/usbh_hub] port 1, status:0x101, change:0x01
+OHCI_IRQHandler usbsts 40
+[D/usbh_hub] Port 1, status:0x101, change:0x00
+[D/usbh_hub] Port 1, status:0x101, change:0x00
+[D/usbh_hub] Port 1, status:0x101, change:0x00
+[D/usbh_hub] Port 1, status:0x101, change:0x00
+[D/usbh_hub] Port 1, status:0x101, change:0x00
+OHCI_IRQHandler usbsts 40
+OHCI_IRQHandler usbsts 40
+OHCI_IRQHandler usbsts 40
+[I/usbh_hub] New full-speed device on Bus 1, Hub 1, Port 1 connected
+[E/usbh_core] Failed to get device descriptor,errorcode:-5
+[E/usbh_hub] Port 1 enumerate fail
+[D/usbh_hub] Port change:0x00
+```
+</details>
+<br>
+Looks like EHCI detect connection of full speed device and then use companion controller OHCI to this device
 
-RTT Console output
+According to [EHCI Intel specification](USB/ehci-specification-for-usb.pdf)
+
+![ehci_port_routing_diagram](Pics/ehci_port_routing_diagram.png)
+
+Cherry USB do switching from EHCI to OHCI companion controller but in Cherry USB - OHCI transfer functions is not implemented.
+<details><summary>rt-thread\bsp\allwinner\d1s_d1h\packages\CherryUSB\port\ohci\usb_hc_ohci.c</summary>
+
+```c
+int ohci_submit_urb(struct usbh_urb *urb)
+{
+    return -USB_ERR_NOTSUPP;
+}
+
+int ohci_kill_urb(struct usbh_urb *urb)
+{
+    return -USB_ERR_NOTSUPP;
+}
+```
+</details>
+
+### TinyUSB
+In TinyUSB  transfer functions is implemented for EHCI and OHCI
+
+/src/portable/ehci/ehci.c<br>
+/src/portable/ohci/ohci.c<br>
+
+But not implemented switching to OHCI companion controller. Lets try to do it.
+
+### First need to change TinyUSB build
+<details><summary>Change build and config files to support host stack:</summary>
+
+```patch
+diff --git a/rt-thread/SConscript b/rt-thread/SConscript
+index 628f6aabe..386e08f2a 100644
+--- a/rt-thread/SConscript
++++ b/rt-thread/SConscript
+@@ -5,11 +5,19 @@ cwd     = GetCurrentDir()
+ src     = Split("""
+ ../src/tusb.c
+ ../src/common/tusb_fifo.c
+-../src/device/usbd.c
+-../src/device/usbd_control.c
++../src/host/hub.c
++../src/host/usbh.c
++../src/class/hid/hid_host.c
++../src/portable/ehci/ehci.c
++../src/portable/ohci/ohci.c
+ ./tinyusb_port.c
+-./usb_descriptor.c
+ """)
++
++
++#../src/device/usbd.c
++#../src/device/usbd_control.c
++#./usb_descriptor.c
++
+ path = [cwd, cwd + "/../src"]
+ 
+ # BSP
+@@ -31,6 +39,11 @@ if GetDepend(["SOC_RP2040"]):
+             "../src/portable/raspberrypi/rp2040/rp2040_usb.c",
+             "../src/portable/raspberrypi/rp2040/dcd_rp2040.c"]
+ 
++if GetDepend(["ARCH_SUN20IW1"]):
++    src += ["bsp/sunxi_D1/drv_tinyusb.c"]
++    src += ["../examples/host/bare_api/src/main.c"]
++    src += ["../examples/host/hid_controller/src/hid_app.c"]
++
+
+diff --git a/rt-thread/tusb_config.h b/rt-thread/tusb_config.h
+index 710a54e07..9c5894b16 100644
+--- a/rt-thread/tusb_config.h
++++ b/rt-thread/tusb_config.h
+@@ -48,34 +48,39 @@ extern "C" {
+ #define CFG_TUSB_MCU    OPT_MCU_HPM
+ #elif defined(SOC_RP2040)
+ #define CFG_TUSB_MCU    OPT_MCU_RP2040
++#elif defined(ARCH_SUN20IW1)
++#define CFG_TUSB_MCU    OPT_MCU_SUN20IW1
+ #else
+ #error "Not support for current MCU"
+ #endif
+ 
+ #define CFG_TUSB_OS OPT_OS_RTTHREAD
+ 
++
+ //--------------------------------------------------------------------
+ // DEBUG CONFIGURATION
+ //--------------------------------------------------------------------
++#define CFG_TUSB_DEBUG 3
++
+ #ifdef CFG_TUSB_DEBUG
+ #define CFG_TUSB_DEBUG_PRINTF rt_kprintf
+ #endif /* CFG_TUSB_DEBUG */
+ 
+-#ifndef BOARD_DEVICE_RHPORT_NUM
+-#define BOARD_DEVICE_RHPORT_NUM     PKG_TINYUSB_RHPORT_NUM
+-#endif
++//#ifndef BOARD_DEVICE_RHPORT_NUM
++//#define BOARD_DEVICE_RHPORT_NUM     PKG_TINYUSB_RHPORT_NUM
++//#endif
+ 
+-#ifndef BOARD_DEVICE_RHPORT_SPEED
+-#define BOARD_DEVICE_RHPORT_SPEED   PKG_TINYUSB_DEVICE_PORT_SPEED
+-#endif
++//#ifndef BOARD_DEVICE_RHPORT_SPEED
++//#define BOARD_DEVICE_RHPORT_SPEED   PKG_TINYUSB_DEVICE_PORT_SPEED
++//#endif
+ 
+-#if   BOARD_DEVICE_RHPORT_NUM == 0
+-#define CFG_TUSB_RHPORT0_MODE     (OPT_MODE_DEVICE | BOARD_DEVICE_RHPORT_SPEED)
+-#elif BOARD_DEVICE_RHPORT_NUM == 1
+-#define CFG_TUSB_RHPORT1_MODE     (OPT_MODE_DEVICE | BOARD_DEVICE_RHPORT_SPEED)
+-#else
+-  #error "Incorrect RHPort configuration"
+-#endif
++//#if   BOARD_DEVICE_RHPORT_NUM == 0
++//#define CFG_TUSB_RHPORT0_MODE     (OPT_MODE_HOST | BOARD_DEVICE_RHPORT_SPEED)
++//#elif BOARD_DEVICE_RHPORT_NUM == 1
++//#define CFG_TUSB_RHPORT1_MODE     (OPT_MODE_HOST | BOARD_DEVICE_RHPORT_SPEED)
++//#else
++//  #error "Incorrect RHPort configuration"
++//#endif
+ 
+ /* USB DMA on some MCUs can only access a specific SRAM region with restriction on alignment.
+  * Tinyusb use follows macros to declare transferring memory so that they can be put
+@@ -99,35 +104,44 @@ extern "C" {
+ #define CFG_TUSB_MEM_ALIGN          ALIGN(PKG_TINYUSB_MEM_ALIGN)
+ #endif
+ #endif
+-
+ //--------------------------------------------------------------------
+-// DEVICE CONFIGURATION
++// HOST CONFIGURATION
+ //--------------------------------------------------------------------
++#define TUP_USBIP_EHCI
++#define TUP_USBIP_OHCI
++#define LPC_USB_BASE  0x4200000 + 0x400
+ 
+-#ifndef CFG_TUD_ENDPOINT0_SIZE
+-#define CFG_TUD_ENDPOINT0_SIZE        PKG_TINYUSB_EDPT0_SIZE
+-#endif
++#define CFG_TUH_ENABLED       1
++#define CFG_TUSB_RHPORT0_MODE OPT_MODE_HOST
++#define CFG_TUH_MAX_SPEED     OPT_MODE_HIGH_SPEED
++// Size of buffer to hold descriptors and other data used for enumeration
++#define CFG_TUH_ENUMERATION_BUFSIZE 2560
+ 
+-// CDC FIFO size of TX and RX
+-#define CFG_TUD_CDC_RX_BUFSIZE        PKG_TINYUSB_DEVICE_CDC_RX_BUFSIZE
+-#define CFG_TUD_CDC_TX_BUFSIZE        PKG_TINYUSB_DEVICE_CDC_TX_BUFSIZE
++// only hub class is enabled
++#define CFG_TUH_HUB                 1
++#define CFG_TUH_HID                 4 // typical keyboard + mouse device can have 3-4 HID interfaces
++#define CFG_TUH_HID_EP_BUFSIZE      640
+ 
+-#define CFG_TUD_MSC_EP_BUFSIZE        PKG_TINYUSB_DEVICE_MSC_EP_BUFSIZE
+ 
+-#define CFG_TUD_HID_EP_BUFSIZE        PKG_TINYUSB_DEVICE_HID_EP_BUFSIZE
++// max device support (excluding hub device)
++// 1 hub typically has 4 ports
++#define CFG_TUH_DEVICE_MAX          (CFG_TUH_HUB ? 4 : 1)
+ 
+-#ifndef PKG_TINYUSB_DEVICE_CDC_STRING
+-#define PKG_TINYUSB_DEVICE_CDC_STRING ""
+-#endif
++// Max endpoint per device
++#define CFG_TUH_ENDPOINT_MAX        8
+ 
+-#ifndef PKG_TINYUSB_DEVICE_MSC_STRING
+-#define PKG_TINYUSB_DEVICE_MSC_STRING ""
+-#endif
++// Enable tuh_edpt_xfer() API
++#define CFG_TUH_API_EDPT_XFER       1
+ 
+-#ifndef PKG_TINYUSB_DEVICE_HID_STRING
+-#define PKG_TINYUSB_DEVICE_HID_STRING ""
++// RHPort number used for host can be defined by board.mk, default to port 0
++#ifndef BOARD_TUH_RHPORT
++#define BOARD_TUH_RHPORT      0
+ #endif
+ 
++//--------------------------------------------------------------------
++// DEVICE CONFIGURATION
++//--------------------------------------------------------------------
++#define CFG_TUD_ENABLED 0
+ 
+ #ifdef __cplusplus
+ }
+
+diff --git a/src/tusb_option.h b/src/tusb_option.h
+index f4ce843d5..0d59062cd 100644
+--- a/src/tusb_option.h
++++ b/src/tusb_option.h
+@@ -159,6 +159,7 @@ typedef int make_iso_compilers_happy;
+ 
+ // Allwinner
+ #define OPT_MCU_F1C100S          2100 ///< Allwinner F1C100s family
++#define OPT_MCU_SUN20IW1         2101 ///< Allwinner SUN20IW1 family
+
+diff --git a/src/common/tusb_compiler.h b/src/common/tusb_compiler.h
+index 2c30daf6f..8d1c083e6 100644
+--- a/src/common/tusb_compiler.h
++++ b/src/common/tusb_compiler.h
+@@ -49,6 +49,8 @@
+ #else
+   #define _TU_COUNTER_ __LINE__
+ #endif
++#define __CCRX__ 1
+
+diff --git a/src/osal/osal_rtthread.h b/src/osal/osal_rtthread.h
+index 18eb9c693..e4d7b6af1 100644
+--- a/src/osal/osal_rtthread.h
++++ b/src/osal/osal_rtthread.h
+@@ -38,7 +38,8 @@ extern "C" {
+ // TASK API
+ //--------------------------------------------------------------------+
+ TU_ATTR_ALWAYS_INLINE static inline void osal_task_delay(uint32_t msec) {
+-  rt_thread_mdelay(msec);
++  //rt_thread_mdelay(msec);
++  rt_hw_us_delay(msec*1000);
+ }
+
+diff --git a/rt-thread/tinyusb_port.c b/rt-thread/tinyusb_port.c
+index 8ae20b04e..7a6e37c22 100644
+--- a/rt-thread/tinyusb_port.c
++++ b/rt-thread/tinyusb_port.c
+@@ -27,11 +27,11 @@ static void tusb_thread_entry(void *parameter)
+     (void) parameter;
+     while (1)
+     {
+-        tud_task();
++        tuh_task();
+     }
+ }
+ 
+-static int init_tinyusb(void)
++int init_tinyusb(void)
+ {
+     rt_thread_t tid;
+ 
+@@ -60,4 +60,4 @@ static int init_tinyusb(void)
+ 
+     return 0;
+ }
+-INIT_COMPONENT_EXPORT(init_tinyusb);
++//INIT_COMPONENT_EXPORT(init_tinyusb);
+```
+</details>
+
+### Rename OHCI functions
+In EHCI and OHCI several functions have the same name becouse of that linking filed. 
+<details><summary>Need to rename OHCI functions.</summary>
+
+```patch
+diff --git a/src/portable/ohci/ohci.c b/src/portable/ohci/ohci.c
+index 228da6ae0..b7719548f 100644
+--- a/src/portable/ohci/ohci.c
++++ b/src/portable/ohci/ohci.c
+
+-uint32_t hcd_frame_number(uint8_t rhport)
++uint32_t ohci_hcd_frame_number(uint8_t rhport)
+ {
+   (void) rhport;
+   return (ohci_data.frame_number_hi << 16) | OHCI_REG->frame_number;
+@@ -210,24 +226,24 @@ uint32_t hcd_frame_number(uint8_t rhport)
+ //--------------------------------------------------------------------+
+ // PORT API
+ //--------------------------------------------------------------------+
+-void hcd_port_reset(uint8_t hostid)
++void ohci_hcd_port_reset(uint8_t hostid)
+ {
+   (void) hostid;
+   OHCI_REG->rhport_status[0] = RHPORT_PORT_RESET_STATUS_MASK;
+ }
+ 
+-void hcd_port_reset_end(uint8_t rhport)
++void ohci_hcd_port_reset_end(uint8_t rhport)
+ {
+   (void) rhport;
+ }
+ 
+-bool hcd_port_connect_status(uint8_t hostid)
++bool ohci_hcd_port_connect_status(uint8_t hostid)
+ {
+   (void) hostid;
+   return OHCI_REG->rhport_status_bit[0].current_connect_status;
+ }
+ 
+-tusb_speed_t hcd_port_speed_get(uint8_t hostid)
++tusb_speed_t ohci_hcd_port_speed_get(uint8_t hostid)
+ {
+   (void) hostid;
+   return OHCI_REG->rhport_status_bit[0].low_speed_device_attached ? TUSB_SPEED_LOW : TUSB_SPEED_FULL;
+@@ -235,7 +251,7 @@ tusb_speed_t hcd_port_speed_get(uint8_t hostid)
+ 
+ // endpoints are tied to an address, which only reclaim after a long delay when enumerating
+ // thus there is no need to make sure ED is not in HC's cahed as it will not for sure
+-void hcd_device_close(uint8_t rhport, uint8_t dev_addr)
++void ohci_hcd_device_close(uint8_t rhport, uint8_t dev_addr)
+ {
+   // TODO OHCI
+   (void) rhport;
+@@ -398,7 +414,7 @@ static void td_insert_to_ed(ohci_ed_t* p_ed, ohci_gtd_t * p_gtd)
+ // Endpoint API
+ //--------------------------------------------------------------------+
+ 
+-bool hcd_edpt_open(uint8_t rhport, uint8_t dev_addr, tusb_desc_endpoint_t const * ep_desc)
++bool ohci_hcd_edpt_open(uint8_t rhport, uint8_t dev_addr, tusb_desc_endpoint_t const * ep_desc)
+ {
+   (void) rhport;
+ 
+@@ -432,7 +448,7 @@ bool hcd_edpt_open(uint8_t rhport, uint8_t dev_addr, tusb_desc_endpoint_t const
+   return true;
+ }
+ 
+-bool hcd_setup_send(uint8_t rhport, uint8_t dev_addr, uint8_t const setup_packet[8])
++bool ohci_hcd_setup_send(uint8_t rhport, uint8_t dev_addr, uint8_t const setup_packet[8])
+ {
+   (void) rhport;
+ 
+@@ -453,7 +469,7 @@ bool hcd_setup_send(uint8_t rhport, uint8_t dev_addr, uint8_t const setup_packet
+   return true;
+ }
+ 
+-bool hcd_edpt_xfer(uint8_t rhport, uint8_t dev_addr, uint8_t ep_addr, uint8_t * buffer, uint16_t buflen)
++bool ohci_hcd_edpt_xfer(uint8_t rhport, uint8_t dev_addr, uint8_t ep_addr, uint8_t * buffer, uint16_t buflen)
+ {
+   (void) rhport;
+ 
+@@ -495,7 +511,7 @@ bool hcd_edpt_xfer(uint8_t rhport, uint8_t dev_addr, uint8_t ep_addr, uint8_t *
+   return true;
+ }
+ 
+-bool hcd_edpt_clear_stall(uint8_t dev_addr, uint8_t ep_addr)
++bool ohci_hcd_edpt_clear_stall(uint8_t dev_addr, uint8_t ep_addr)
+ {
+   ohci_ed_t * const p_ed = ed_from_addr(dev_addr, ep_addr);
+ 
+@@ -604,13 +620,17 @@ static void done_queue_isr(uint8_t hostid)
+   }
+ }
+ 
+-void hcd_int_handler(uint8_t hostid)
++void ohci_hcd_int_handler(uint8_t hostid)
+ {
++  hostid = 0;
+```
+</details>
+
+### Implement TinyUSB driver for D1H
+<details><summary>Copy sunxi-hal usb initilization to tiny init, redefine inerrupt handlers for ehci/ohci:</summary>
+
+```patch
+diff --git a/rt-thread/bsp/sunxi_D1/drv_tinyusb.c b/rt-thread/bsp/sunxi_D1/drv_tinyusb.c
+new file mode 100644
+index 000000000..59d64a85f
+--- /dev/null
++++ b/rt-thread/bsp/sunxi_D1/drv_tinyusb.c
+@@ -0,0 +1,97 @@
++/*
++ */
++#include <rtthread.h>
++#include "host/usbh.h"
++#include <sunxi-hci.h>
++#include <interrupt.h>
++#include <usb_os_platform.h>
++#include <portable/ehci/ehci_api.h>
++
++void ehci_handler(void)
++{
++   rt_interrupt_enter();
++   ehci_hcd_int_handler(0);
++   rt_interrupt_leave();
++}
++
++void ohci_handler(void)
++{
++   rt_interrupt_enter();
++   ohci_hcd_int_handler(0);
++   rt_interrupt_leave();
++}
++
++bool hcd_init(uint8_t rhport)
++{
++    ehci_init(rhport, (uint32_t) 0x4200000, (uint32_t) 0x4200010);
++    #ifdef TUP_USBIP_OHCI
++    ohci_hcd_init_(rhport);
++    #endif
++    return 1;
++}
++
++void ehci_int_enable(void)
++{
++   int irq_no = 49;
++   disable_irq(irq_no);
++   request_irq(irq_no, ehci_handler, 0, "ehci", NULL);
++   enable_irq(irq_no);
++}
++
++void ohci_int_enable(void)
++{
++   int irq_no = 50;
++   disable_irq(irq_no);
++   request_irq(irq_no, ohci_handler, 0, "ohci", NULL);
++   enable_irq(irq_no);
++}
++
++void hcd_int_enable(uint8_t rhport)
++{
++    ehci_int_enable();
++    #ifdef TUP_USBIP_OHCI
++    ohci_int_enable();
++    #endif
++}
++
++
++int tusb_board_init(void)
++{
++    hal_usb_core_init();
++	   hal_usb_hcd_init(1);
++
++/* 
++    //assertion failed at function:_map_one_page
++    int hci_num = 1;
++    //ehci
++    struct sunxi_hci_hcd *sunxi_ehci;
++    struct platform_usb_config *ehci_table = platform_get_ehci_table();
++    struct platform_usb_config *otg_table = platform_get_otg_table();
++    sunxi_ehci->usbc_no     = hci_num;
++    sunxi_ehci->usb_vbase   = ehci_table[hci_num].pbase;
++    sunxi_ehci->irq_no      = ehci_table[hci_num].irq;
++    sunxi_ehci->otg_vbase   = otg_table->pbase;
++	   sprintf(sunxi_ehci->hci_name, "%s", ehci_table[hci_num].name);
++
++    hci_clock_init(sunxi_ehci,ehci_table);
++    open_clock(sunxi_ehci);
++    usb_passby(sunxi_ehci, 1);
++
++    //ohci
++    struct sunxi_hci_hcd *sunxi_ohci;
++    struct platform_usb_config *ohci_table = platform_get_ohci_table();
++    sunxi_ohci->usbc_no = hci_num;
++    sunxi_ohci->usb_vbase = ohci_table[hci_num].pbase;
++    sunxi_ohci->irq_no = ohci_table[hci_num].irq;
++    sunxi_ohci->otg_vbase = otg_table->pbase;
++    sprintf(sunxi_ohci->hci_name, "%s", ohci_table[hci_num].name);
++
++    hci_clock_init(sunxi_ohci, ohci_table);
++    open_clock(sunxi_ohci);
++    usb_passby(sunxi_ohci, 1);  
++
++ */
++    return 1;
++}
+```
+</details>
+
+### Add switching to companion support
+<details><summary>If ehci detect full speed device put port owner to 1</summary>
+
+```patch
+diff --git a/src/portable/ehci/ehci.c b/src/portable/ehci/ehci.c
+index 7140897a1..eec62ce46 100644
+--- a/src/portable/ehci/ehci.c
++++ b/src/portable/ehci/ehci.c
+
++void hcd_switch_to_companion(uint8_t rhport)
++{
++  (void) rhport;
++  rt_kprintf("hcd_switch_to_companion\n\r");
++  ehci_data.regs->config_flag = 0;
++  ehci_data.regs->portsc_bm.port_owner = 1;
++  uint32_t temp = ehci_data.regs->command;
++}
+
+diff --git a/src/host/usbh.c b/src/host/usbh.c
+index 5ac9e9cca..4fdf9c099 100644
+--- a/src/host/usbh.c
++++ b/src/host/usbh.c
+ 
++bool is_companion = 0;
+ 
+@@ -550,7 +557,16 @@ bool tuh_control_xfer (tuh_xfer_t* xfer)
+ 
+   if (xfer->complete_cb)
+   {
+-    TU_ASSERT( hcd_setup_send(rhport, daddr, (uint8_t const*) &_ctrl_xfer.request) );
++    #ifdef TUP_USBIP_OHCI
++    if(is_companion)
++    {
++      TU_ASSERT( ohci_hcd_setup_send(rhport, daddr, (uint8_t const*) &_ctrl_xfer.request) );
++    }
++    else
++    #endif
++    {
++      TU_ASSERT( hcd_setup_send(rhport, daddr, (uint8_t const*) &_ctrl_xfer.request) );
++    }
+   }else
+   {
+     // blocking if complete callback is not provided
+@@ -561,7 +577,16 @@ bool tuh_control_xfer (tuh_xfer_t* xfer)
+     _ctrl_xfer.user_data   = (uintptr_t) &result;
+     _ctrl_xfer.complete_cb = _control_blocking_complete_cb;
+ 
+-    TU_ASSERT( hcd_setup_send(rhport, daddr, (uint8_t*) &_ctrl_xfer.request) );
++    #ifdef TUP_USBIP_OHCI
++    if(is_companion)
++    {
++      TU_ASSERT( ohci_hcd_setup_send(rhport, daddr, (uint8_t*) &_ctrl_xfer.request) );
++    }
++    else
++    #endif
++    {
++      TU_ASSERT( hcd_setup_send(rhport, daddr, (uint8_t*) &_ctrl_xfer.request) );
++    }
+ 
+     while (result == XFER_RESULT_INVALID)
+     {
+@@ -640,7 +665,18 @@ static bool usbh_control_xfer_cb (uint8_t dev_addr, uint8_t ep_addr, xfer_result
+         {
+           // DATA stage: initial data toggle is always 1
+           _set_control_xfer_stage(CONTROL_STAGE_DATA);
+-          TU_ASSERT( hcd_edpt_xfer(rhport, dev_addr, tu_edpt_addr(0, request->bmRequestType_bit.direction), _ctrl_xfer.buffer, request->wLength) );
++          
++          #ifdef TUP_USBIP_OHCI
++
++          if(is_companion)
++          {
++            TU_ASSERT( ohci_hcd_edpt_xfer(rhport, dev_addr, tu_edpt_addr(0, request->bmRequestType_bit.direction), _ctrl_xfer.buffer, request->wLength) );
++          }
++          else
++          #endif
++          {
++            TU_ASSERT( hcd_edpt_xfer(rhport, dev_addr, tu_edpt_addr(0, request->bmRequestType_bit.direction), _ctrl_xfer.buffer, request->wLength) );
++          }
+           return true;
+         }
+         TU_ATTR_FALLTHROUGH;
+@@ -656,7 +692,17 @@ static bool usbh_control_xfer_cb (uint8_t dev_addr, uint8_t ep_addr, xfer_result
+ 
+         // ACK stage: toggle is always 1
+         _set_control_xfer_stage(CONTROL_STAGE_ACK);
+-        TU_ASSERT( hcd_edpt_xfer(rhport, dev_addr, tu_edpt_addr(0, 1-request->bmRequestType_bit.direction), NULL, 0) );
++        #ifdef TUP_USBIP_OHCI
++        if(is_companion)
++        {
++          TU_ASSERT( ohci_hcd_edpt_xfer(rhport, dev_addr, tu_edpt_addr(0, 1-request->bmRequestType_bit.direction), NULL, 0) );
++        }
++        else
++        #endif
++        {
++          TU_ASSERT( hcd_edpt_xfer(rhport, dev_addr, tu_edpt_addr(0, 1-request->bmRequestType_bit.direction), NULL, 0) );
++        }
++
+       break;
+ 
+       case CONTROL_STAGE_ACK:
+@@ -779,7 +825,19 @@ bool usbh_edpt_xfer_with_callback(uint8_t dev_addr, uint8_t ep_addr, uint8_t * b
+   dev->ep_callback[epnum][dir].user_data   = user_data;
+ #endif
+ 
+-  if ( hcd_edpt_xfer(dev->rhport, dev_addr, ep_addr, buffer, total_bytes) )
++  bool result;
++  #ifdef TUP_USBIP_OHCI
++  if(is_companion)
++  {
++    result = ohci_hcd_edpt_xfer(dev->rhport, dev_addr, ep_addr, buffer, total_bytes);
++  }
++  else
++  #endif
++  {
++    result = hcd_edpt_xfer(dev->rhport, dev_addr, ep_addr, buffer, total_bytes);
++  }
++
++  if ( result )
+   {
+     TU_LOG_USBH("OK\r\n");
+     return true;
+@@ -807,15 +865,31 @@ static bool usbh_edpt_control_open(uint8_t dev_addr, uint8_t max_packet_size)
+     .wMaxPacketSize   = max_packet_size,
+     .bInterval        = 0
+   };
+-
+-  return hcd_edpt_open(usbh_get_rhport(dev_addr), dev_addr, &ep0_desc);
++  #ifdef TUP_USBIP_OHCI
++  if(is_companion)
++  {
++    return ohci_hcd_edpt_open(usbh_get_rhport(dev_addr), dev_addr, &ep0_desc);
++  }
++  else
++  #endif
++  {
++    return hcd_edpt_open(usbh_get_rhport(dev_addr), dev_addr, &ep0_desc);
++  }
+ }
+ 
+ bool tuh_edpt_open(uint8_t dev_addr, tusb_desc_endpoint_t const * desc_ep)
+ {
+   TU_ASSERT( tu_edpt_validate(desc_ep, tuh_speed_get(dev_addr)) );
+-
+-  return hcd_edpt_open(usbh_get_rhport(dev_addr), dev_addr, desc_ep);
++  #ifdef TUP_USBIP_OHCI
++  if(is_companion)
++  {
++    return ohci_hcd_edpt_open(usbh_get_rhport(dev_addr), dev_addr, desc_ep);
++  }
++  else
++  #endif
++  {
++    return hcd_edpt_open(usbh_get_rhport(dev_addr), dev_addr, desc_ep);
++  }
+ }
+ 
+@@ -1387,13 +1462,26 @@ static bool enum_new_device(hcd_event_t* event)
+
++    #ifdef TUP_USBIP_OHCI
++    // go to companion
++    if(((tusb_speed_t)_dev0.speed) != TUSB_SPEED_HIGH)
++    {
++      if (!is_companion) hcd_switch_to_companion(_dev0.rhport);
++      is_companion = 1;
++      return true;
++    }
++    else
++    {
++      is_companion = 0;
++    }
++    #endif
+```
+</details>
+
+Lets run TinyUSB variant and look to console output:
+
+RTT Console output:
 ```shell
 [ehci-usb1] insmod host driver!
 phy write: 4200810<-0
@@ -1034,59 +1783,7 @@ $TOOLCHAIN_INSTALL_DIR/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin/riscv6
 ``` 
 
 
-
-
-
-
 ### TODO USB:
 
 - linux ehci reg
 - DMA, MMU ?
-
-
-
-
-
-
-
-
-
-### Some
-
-
-```s
-sun4i_usb_phy_probe
-sun4i_usb_phy_probe data->base 4125400
-
-sun4i_usb_phy_init				phy writel 412d 810<-0			cntrl clear
-								phy writel 4125 410<-20			| 5 & 3	SIDDQ
-sun4i_usb_phy_passby			phy writel 412d 800<-701		| 10 9 8 0
-phy->index == 0                                 
-sun4i_usb_phy0_update_iscr		phy writel 4125 400<-40010000	& 0 | 16 
-sun4i_usb_phy0_update_iscr		phy writel 4125 400<-40030000	& 0 | 17
-
-
-(1)sun4i_usb_phy0_id_vbus_det_scan					 								Changing dr_mode to 1
-(1)sun4i_usb_phy0_set_id_detect                    			
-(1)sun4i_usb_phy0_update_iscr		phy writel 4125 400<-4003c000	2?3 << 14 ISCR_FORCE_ID
-(1)sun4i_usb_phy0_set_vbus_detect                  
-(1)sun4i_usb_phy0_update_iscr		phy writel 4125 400<-4103f000	2?3 << 12  ISCR_FORCE_VBUS				External vbus detected, not enabling our own vbus
-(1)sun4i_usb_phy0_set_vbus_detect					 								ehci-platform 4101000.usb: EHCI Host Controller
-(1)sun4i_usb_phy0_update_iscr		phy writel 4125 400<-4303e000	2?3 << 12  ISCR_FORCE_VBUS
-											    
-sun4i_usb_phy_init				phy writel 4141 810<-0			cntrl clear
-sun4i_usb_phy_passby			phy writel 4141 800<-701		| 10 9 8 0		ehci-platform 4200000.usb: EHCI Host Controlle
-(1)sun4i_usb_phy0_set_vbus_detect	                
-(1)sun4i_usb_phy0_update_iscr		phy writel 4125 400<-4103f000					ohci-platform 4101400.usb: Generic Platform OHCI controller
-(1)sun4i_usb_phy_passby			phy writel 412d 800<-0			& 10 9 8 0	
-(1)sun4i_usb_phy0_reroute			phy writel 4125 420<-1			Route phy0 to MUSB
-
-(2)sun4i_usb_phy0_id_vbus_det_scan                 
-(2)sun4i_usb_phy0_set_vbus_detect                  
-(2)sun4i_usb_phy0_update_iscr		phy writel 4125 400<-4303e000					ohci-platform 4200400.usb: Generic Platform OHCI controller
-(2)sun4i_usb_phy0_set_vbus_detect                  
-(2)sun4i_usb_phy0_update_iscr		phy writel 4125 400<-4103f000
-								phy writel 4125 400<-4303b000
-(2)sun4i_usb_phy_passby			phy writel 412d 800<-701
-(2)sun4i_usb_phy0_reroute			phy writel 4125 420<-0			Route phy0 to EHCI/OHCI
-```
