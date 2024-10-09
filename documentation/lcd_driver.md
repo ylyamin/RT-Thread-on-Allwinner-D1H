@@ -1,10 +1,11 @@
 # LCD Display driver
 
-In this chapter we will learn haw control display in Devterm (found is MIPI DSI LCD display).
+In next chapter we will learn haw control display in Devterm (found is MIPI DSI LCD display).
 Also I have Sipeed Lichee RV with 4.3 RGB LCD Display. That we will bring up too, will be described at the end. 
 
-## DevTerm display type
+## DevTerm display
 
+### Define Display type
 DevTerm use 6.86 inch LCD Dispaly.<br>
 How I can control this dispaly ? First of all what interfaces and chip this dispaly have ?<br>
 
@@ -40,7 +41,7 @@ What is MIPI DSI ? Accroding https://en.wikipedia.org/wiki/Display_Serial_Interf
 In [ICNL9707_Datasheet.pdf](ClockworkPi_DevTerm/ICNL9707_Datasheet.pdf) we can see used 4 lines D0-D3 (each line is two wires N/P)
 ![icnl9707_mipi_lines.png](Pics/icnl9707_mipi_lines.png) 
 
-## Dispaly connection
+### Dispaly connection
 
 Lets look how is connected to D1H. Dispaly connected to Mainboard by 40pins ribbon cable: 
 
@@ -64,7 +65,7 @@ And then to R01 Core and to D1H chip pins PD0-PD9:
 
 Good. Understand how is connected to D1H, next how to control it ?
 
-## D1H Documentation
+### D1H Documentation
 
 Looking to the D1H User manual [D1_User_Manual_V0.1_Draft_Version.pdf](Allwinner_D1H/D1_User_Manual_V0.1_Draft_Version.pdf)<br>
 What we have about how control Video out and MIPI DSI ? Not too much: 
@@ -74,7 +75,7 @@ What we have about how control Video out and MIPI DSI ? Not too much:
 
 From manual is not clear how to control it.<br>
 
-## Display HAL driver
+### Display HAL driver
 
 As is no explanation how is should be initialized in documentation need to look to code.<br>
 In RTT sunxi-hal we have folder **disp2** [rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2](rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2).<br>
@@ -109,12 +110,17 @@ index 17f622d73..25fa3db03 100644
 ```
 </details>
 
-Lets run board, notfing shown in console about display.<br>
+Lets run board and see what happen. Notfing shown in console about display.<br>
 Need to change debug level in file rt-thread\bsp\allwinner\libraries\libos\include\log.h
-```c
-#define DBG_LVL DBG_INFO
+
+```patch
+-#define DBG_LVL DBG_ERROR
++#define DBG_LVL DBG_INFO
 ```
-<details><summary>Now in console present information about disp driver:</summary>
+
+Now in console present information about disp driver. I captured console out not at this moment I am much later, but the essence does not change.
+
+<details><summary>Console out:</summary>
 
 ```sh
 Hello RISC-V
@@ -223,10 +229,12 @@ Hello RISC-V
 </details>
 <br>
 
-But board stuck in some point. Need to debug where is happen try to use GDB.
+But board just stuck (freeze) in some point. Stop respond to command.<br>
+Need to debug where in code is happen.
 
-### Change driver initialization
-In original RTT repo LCD driver init as a application inside main() function, in this case is impossible to debug it in GDB as is executed in RTT thread. So change it to init as device that executed before scheduler start.
+#### Change driver initialization
+In original RTT repo LCD driver init as a application inside main() function, in this case is impossible to debug it in GDB as is executed in RTT thread. Maybe I can do something to use gdb thread command but didn't know how.<br>
+So change it to init display driver as a device that executed before scheduler start.
 
 <details><summary>Change main:</summary>
 
@@ -263,8 +271,8 @@ index 327aa777f..0b1737df2 100644
 ```
 </details>
 
-### LCD driver stuck
-With GDB understended that with original implementation board stuck in function hal_msleep() by some reason, replace it to rt_hw_us_delay()
+#### LCD driver stuck
+With GDB I understander that with original implementation board stuck by some reason in function hal_msleep() that call rt_thread_mdelay(), replace it to rt_hw_us_delay() then is help.
 
 <details><summary>Change disp_sys_intf.c:</summary>
 
@@ -300,18 +308,19 @@ index 09c64b396..31f370d3d 100644
 ```
 </details>
 
-Now is not stuck but is not any confirmation is work. 
-
-When run test command:
+Now is Not stuck but display still blank.<br>
+Try run test command:
 ```sh
 lcd_draw_point 100 100
 ```
-Nothing show in dispaly
+Nothing shown in display. So I do conclusion is not work properly.
 
-## Example in Linux
+### Example in Linux
 
-So RTT sunxi-hal not affect display lets look how it work in Linux.<br>
-In Clockworkpi wiki https://github.com/clockworkpi/DevTerm/wiki/Create-DevTerm-R01-OS-image-from-scratch#how-to-compile-kernel says they used https://github.com/cuu/last_linux-5.4.git "it is a mirror kernel code from tina_d1_h of all winner with all patched for devterm R-01"
+So looks like RTT sunxi-hal do something with display but is not run properly. Need to look to code that run in correctly. lets look how it work in Linux.<br> 
+First need to find proper Linux version.<br>
+In Clockworkpi wiki https://github.com/clockworkpi/DevTerm/wiki/Create-DevTerm-R01-OS-image-from-scratch#how-to-compile-kernel says they used https://github.com/cuu/last_linux-5.4.git<br>
+"it is a mirror kernel code from tina_d1_h of all winner with all patched for devterm R-01"
 
 And also looking to Clockworkpi repository is have patch for display https://github.com/clockworkpi/DevTerm/blob/main/Code/patch/d1/disp.patch that affect file linux/drivers/video/fbdev/sunxi/disp2/disp/dev_fb.c
 
@@ -329,7 +338,7 @@ According https://en.wikipedia.org/wiki/Linux_framebuffer<br>
 
 Anyway in RTT HAL use **fbdev** and we can figure out how it used in linux-5.4
 
-## Add LCD Display driver for MIPI DSI Display   
+### Add LCD Display driver   
 
 In RTT folder disp2/disp/lcd/ - looks like is folder with specific display IC implementation, but is not contain anything about inc9707.<br>
 In Linux the same folder sunxi/disp2/disp/lcd/ contain file https://github.com/cuu/last_linux-5.4/blob/master/drivers/video/fbdev/sunxi/disp2/disp/lcd/icn9707_480x1280.c.<br> 
@@ -447,11 +456,12 @@ diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/l
 ```
 </details>
 
-## Add configuration for board:   
+### Add configuration for board   
 
 Unlike Linux RTT contain special folder ***disp2/soc/*** looks like contain configs for different board specific's and is very similar that we can see in DTS's files but in format of C array of property structures.
 
-<details><summary>linux DTS https://github.com/clockworkpi/DevTerm/tree/main/Code/patch/d1/board.dts contains:</summary>
+Lets take >linux DTS https://github.com/clockworkpi/DevTerm/tree/main/Code/patch/d1/board.dts as golden source.
+<details><summary>board.dts:</summary>
 
 ```yaml
 &lcd0 {
@@ -468,7 +478,7 @@ Unlike Linux RTT contain special folder ***disp2/soc/*** looks like contain conf
 ```
 </details>
 <br>
-Need convert information to C array of structures and save file rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/soc/icn9707_mipi_config.c.
+Convert this information to C array of structures and save in file rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/soc/icn9707_mipi_config.c.
 
 <details><summary>icn9707_mipi_config.c:</summary>
 
@@ -624,7 +634,7 @@ diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/kconfig.h b/rt-thre
 </details>
 <br>
 
-## Remove hardcoded LCD config 
+#### Remove hardcoded LCD config 
 
 icn9707_mipi_config.c define this config array g_lcd0_config[] used in:
 * disp2\soc\disp_board_config.c
@@ -715,7 +725,7 @@ diff --git a/rt-thread/bsp/allwinner/libraries/drivers/lcd_cfg.c b/rt-thread/bsp
 <br>
 Couldn't use g_lcd0_config instead g_lcd0_config_soc for all drivers, looks like is just linking order problem.
 
-## Config for Devterm board
+### Config for Devterm board
 
 Create common config for board that include driver and config structure:
 
@@ -743,8 +753,8 @@ diff --git a/rt-thread/bsp/allwinner/d1s_d1h/.config b/rt-thread/bsp/allwinner/d
 ```
 </details>
 
-Now all work fine LCD_open_flow called.
-
+Now lets run board, all work fine LCD_open_flow function called.
+<details><summary>Console output:</summary>
 ```sh
 raoyiming +++ LCD_open_flow
 raoyiming +++ LCD_open_flow finish
@@ -761,17 +771,20 @@ raoyiming +++ LCD_bl_open
 [I/DBG] disp:[disp_lcd_enable 1659]open flow:step 2 finish, to delay 0
 [I/DBG] disp:[start_work 757]sel=1, output_type=0, lcd_reg=0,hdmi_reg=0
 ```
-
+</details>
+<br>
 But display still blank, when run test command:
+
 ```sh
 lcd_draw_point 100 100
 ```
-Nothing show in dispaly
+Nothing shown in dispaly.
 
-## LCD inc9707 chip reset
+### LCD inc9707 chip reset
 
 After all DSI Display still not started. Screen still blank. Lets figure out why.<br>
-Lets look closly to pinout. I can find in internet some schematic looks like very similar with dispaly used in Devterm, is 6.86-inch IPS TFT LCD MIPI 480x1280 TTW686VVC model document:
+Lets look closly to pinout.<br>
+I can find in internet some schematic looks like very similar with dispaly used in Devterm, is 6.86-inch IPS TFT LCD MIPI 480x1280 TTW686VVC model document:
 
 ![pinout](Pics/6.86-inch-IPS-TFT-Stretched-Bar-LCD-MIPI-480x1280-TTW686VVC-01-4.png)   
 
@@ -779,7 +792,7 @@ Compare with Clockworkpi Mainboard schematic file [clockwork_Mainboard_V3.14_V5_
 
 ![display_connector_3.png](Pics/display_connector_3.png)
 
-Connection table:
+Create mapping table:
 
 |	Pin N	|	Clockworkpi	|	LCD Display 	|
 |:---		|:---			|:---				|
@@ -826,18 +839,12 @@ Connection table:
 
 According [ICNL9707_Datasheet.pdf](ClockworkPi_DevTerm/ICNL9707_Datasheet.pdf) in 40pin connector we can see:
 
-* D0-D3(PN) - is 4 DSI lines as we known before.
-
-![icnl9707_mipi_lines.png](Pics/icnl9707_mipi_lines.png) 
+* D0-D3(PN) - is 4 DSI lines as we known before.![icnl9707_mipi_lines.png](Pics/icnl9707_mipi_lines.png) 
 
 * VCI   - Power supply to the analog circuit. Connected to Devterm DISP_3V3
-* IOVCC - Power supply for the logic power and I/O circuit. Connected to Devterm DISP_1V8
+* IOVCC - Power supply for the logic power and I/O circuit. Connected to Devterm DISP_1V8.![icnl9707_power_input.png](Pics/icnl9707_power_input.png) 
 
-![icnl9707_power_input.png](Pics/icnl9707_power_input.png) 
-
-* RSTB  - This signal will reset the device. Signal is active low. Connected to Devterm LCD_RESET and DISP_1V8
-
-![icnl9707_reset_input.png](Pics/icnl9707_reset_input.png) 
+* RSTB  - This signal will reset the device. Signal is active low. Connected to Devterm LCD_RESET and DISP_1V8. ![icnl9707_reset_input.png](Pics/icnl9707_reset_input.png) 
 
 * LEDK / LEDA - is backlight for LCD. Connected to Devterm OCP8178
 
@@ -845,15 +852,7 @@ Let's take a closer look to each point:
 
 1. LEDK / LEDA
 
-LEDK / LEDA I'm not very know what is mean but in Devterm Mainboard is connected to OCP8178 chip. 
-![display_bl_and_reset](Pics/display_bl_and_reset.png)   
-
-Found dtasheet for OCP8178 in internet  [OCP8178DatasheetV1.9.pdf](ClockworkPi_DevTerm/OCP8178DatasheetV1.9.pdf)
-![ocp8178_description.png](Pics/ocp8178_description.png) 
-OCP8178 is a boost converter that drives LEDs, and looks like is responcable for backlight for Display.<br>
-Also in datasheet says about CTRL input:
-![ocp8178_cntrl.png](Pics/ocp8178_cntrl.png) 
-"It is a multi-functional pin which can be used for enable control, PWM dimming." 
+LEDK / LEDA I'm not very know what is mean but in Devterm Mainboard is connected to OCP8178 chip.![display_bl_and_reset](Pics/display_bl_and_reset.png).Found dtasheet for OCP8178 in internet  [OCP8178DatasheetV1.9.pdf](ClockworkPi_DevTerm/OCP8178DatasheetV1.9.pdf)![ocp8178_description.png](Pics/ocp8178_description.png) OCP8178 is a boost converter that drives LEDs, and looks like is responcable for backlight for Display.<br> Also in datasheet says about CTRL input: ![ocp8178_cntrl.png](Pics/ocp8178_cntrl.png) "It is a multi-functional pin which can be used for enable control, PWM dimming." 
 
 Right now Im not want handle backlight level by PWM signal, need just On/Off backlight. So I asume I can just provide logical 1 or 0 to this pin to On/Off backlight.<br>
 According schematic BL_CNTRL connected to GPIO9 in main connetor then to PD20 pin in D1H. Need configure pin as Pull up.
@@ -861,14 +860,11 @@ According schematic BL_CNTRL connected to GPIO9 in main connetor then to PD20 pi
 2. LCD_RESET 
 
 RSTB Connected to DISP_1V8 throught pin LCD_RESET. LCD_RESET connected to GPIO8 in main connetor then to PD19 pin in D1H.<br>
-Also asume I can just provide logical 1 or 0 to this pin for reset.<br> But as is provide DISP_1V8 and signal is active low need configure pin as Pull down.
-
-R01 Core schematic show BL_CNTRL / LCD_RESET connected to PD19 / PD20:
-![display_r01_comm](Pics/display_r01_comm.png)   
+Also asume I can just provide logical 1 or 0 to this pin for reset.<br> But as is provide DISP_1V8 and signal is active low need configure pin as Pull down.<br>R01 Core schematic show BL_CNTRL / LCD_RESET connected to PD19 / PD20:![display_r01_comm](Pics/display_r01_comm.png)   
 
 So lets define this pins in C array of structures:
-PD19 will be pull down
-PD20 will be pull up
+* PD19 will be pull down
+* PD20 will be pull up
 
 <details><summary>icn9707_mipi_config.c:</summary>
 
@@ -903,21 +899,19 @@ PD20 will be pull up
 IOVCC provided from DISP_1V8<br>
 VCI provided from DISP_3V3<br>
 
-If we trace in Mainboard schematic file [clockwork_Mainboard_V3.14_V5_Schematic.pdf](ClockworkPi_DevTerm/clockwork_Mainboard_V3.14_V5_Schematic.pdf)
-![display_power](Pics/display_power.png)   
+If we trace in Mainboard schematic file [clockwork_Mainboard_V3.14_V5_Schematic.pdf](ClockworkPi_DevTerm/clockwork_Mainboard_V3.14_V5_Schematic.pdf).![display_power](Pics/display_power.png)   
 
 DISP_1V8 conected to SYS_1V8 then DCDC3 from AXP228 chip.<br>
 DISP_3V3 conected to ALDO2 from AXP228 chip.<br>
 AXP228 is Power Managment chip. How work with it will figure out later.
 
-Noticed in [ICNL9707_Datasheet.pdf](ClockworkPi_DevTerm\ICNL9707_Datasheet.pdf) that in Dispaly startup siguence - first off all VCI and IOVCC voltage UP then after T2 = 10ms reseted RESET pin.   
-
-![icnl9707_startup](Pics/icnl9707_startup.png)   
+Noticed in [ICNL9707_Datasheet.pdf](ClockworkPi_DevTerm\ICNL9707_Datasheet.pdf) that in Dispaly startup siguence - first off all VCI and IOVCC voltage UP then after T2 = 10ms reseted RESET pin.<br>![icnl9707_startup](Pics/icnl9707_startup.png)   
 
 But between powered up board, bootloaders up, RTT loaded and the moment when the driver calls RESET pin obviously more time passes rather than on diagram. Also Im not sure DISP_1V8 is powered from beggining.    
-Hypotise that it looks like we need to force reset VCI and IOVCC in RTT just before RESET pin. So need to understand how operate with AXP228. 
+Hypotise that it looks like we need to force reset VCI and IOVCC in RTT just before RESET pin.<br> 
+So need to understand how operate with AXP228. 
 
-## AXP228
+### AXP228
 Found dtasheet for AXP228 in internet  [AXP228_V1.1_20130106..pdf](ClockworkPi_DevTerm/AXP228_V1.1_20130106..pdf)
 
 ![axp228_overview.png](Pics/axp228_overview.png) 
@@ -1012,7 +1006,7 @@ DCDC3 and ALDO2 we can control by Reg 10H "DCDC1/2/3/4/5&ALDO1/2&DC5LDO Enable S
 | 0    | DC5LDO Enable Set | 			  | RW   | X 	   |
 
 
-## Enable I2C and configure TWI pins:
+### Enable I2C and configure TWI pins
 
 <details><summary>enable I2C in config:</summary>
 
@@ -1076,7 +1070,9 @@ index ad4515d8f..edcca13c4 100644
 </details>
 <br>
 
-## Lets implement a simple driver for control AXP228 (ALDO2 and DCDC30) by TWI interface:
+### AXP228 driver
+
+Lets implement a simple driver for control AXP228 (ALDO2 and DCDC30) by TWI interface.
 
 <details><summary>axp228 simple driver:</summary>
 
@@ -1339,7 +1335,7 @@ index 000000000..f8339d8cc
 </details>
 <br>
 
-## Modify LCD display driver
+### Modify LCD display driver
 
 Found in Linux power siguence defined in DRM driver:
 
@@ -1472,7 +1468,7 @@ static s32 LCD_open_flow(u32 sel)
 </details>
 <br> 
 
-## MIPI DSI LCD Display work
+### MIPI DSI LCD Display work
 
 After all modification in code DevTerm R01 - LCD MIPI DSI Display successfully started, can be tested by command:
 ```sh
@@ -1481,12 +1477,14 @@ lcd_draw_point 100 100:
 ![devterm_lcd_mipi_work.jpg](Pics/devterm_lcd_mipi_work.jpg)
 
 
-# LCD Display driver for RGB Display
+## LCD Display driver for RGB Display
 
 I also have Sipeed Lichee RV + Dock is smoll D1H board.<br>
 And Dock extension LCD adapter board + 4.3 RGB LCD Display (043026-N6(ML)) with IC ST7001s (SPI)
 
 So lets implement driver for this RGB display. I skip most of explanation as is the same as was before for Devterm MIPI DSI variant.
+
+### Add LCD Display driver 
 
 Found ST7001s SPI driver from https://github.com/Tina-Linux/LCD_Panel_Driver/tree/master/LCD/BH040I-01_ST7701s_RGB_480x480 <br>
 
@@ -1545,7 +1543,7 @@ diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/l
 </details>
 <br>
 
-## Add configuration for this board:   
+### Add configuration for this board:   
 
 Also I found that Sipeed Lichee RV work perfectly with https://github.com/xboot/xboot and RGB display show picture.<br>
 This is xboot display driver implementation https://github.com/xboot/xboot/blob/master/src/arch/riscv64/mach-lichee86p/driver/fb-d1-rgb.c<br>
@@ -1670,7 +1668,7 @@ diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/kconfig.h b/rt-thre
 </details>
 <br>
 
-## Config for Sipeed board
+### Config for Sipeed board
 
 Create common config for board that include driver and config structure:
 
@@ -1698,7 +1696,7 @@ diff --git a/rt-thread/bsp/allwinner/d1s_d1h/.config b/rt-thread/bsp/allwinner/d
 </details>
 <br>
 
-## RGB LCD Display work
+### RGB LCD Display work
 
 After all modification Sipeed Lichee RV - RGB LCD Display successfully started, tested by command:
 ```sh

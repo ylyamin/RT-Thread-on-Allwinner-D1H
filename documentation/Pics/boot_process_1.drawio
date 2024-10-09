@@ -1,0 +1,134 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.8 Chrome/128.0.6613.36 Electron/32.0.1 Safari/537.36" version="24.7.8">
+  <diagram name="Page-1" id="-c6Ry725GxhYZqOuj7hc">
+    <mxGraphModel dx="2835" dy="1298" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="g0l_ifj-5Xz2NjAmxus5-9" value="" style="rounded=0;whiteSpace=wrap;html=1;connectable=0;fillColor=#f8cecc;strokeColor=#b85450;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="-240" y="80" width="710" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="g0l_ifj-5Xz2NjAmxus5-1" value="" style="rounded=0;whiteSpace=wrap;html=1;connectable=0;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="-200" y="120" width="210" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="g0l_ifj-5Xz2NjAmxus5-2" value="0x0000 0000 - 0x0000 BFFF" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;connectable=0;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="-210" y="215" width="180" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="g0l_ifj-5Xz2NjAmxus5-4" value="0x0002 0000 - 0x0002 7FFF" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;connectable=0;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="10" y="215" width="170" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="g0l_ifj-5Xz2NjAmxus5-6" value="0x0002 8000 - 0x0004 7FFF" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;connectable=0;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="230" y="215" width="170" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="g0l_ifj-5Xz2NjAmxus5-10" value="D1H" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="-240" y="80" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="g0l_ifj-5Xz2NjAmxus5-11" value="" style="rounded=0;whiteSpace=wrap;html=1;connectable=0;fillColor=#dae8fc;strokeColor=#6c8ebf;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="520" y="80" width="760" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="g0l_ifj-5Xz2NjAmxus5-14" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;labelBackgroundColor=none;" parent="1" target="g0l_ifj-5Xz2NjAmxus5-1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-320" y="170" as="sourcePoint" />
+            <mxPoint x="-180" y="-50" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="g0l_ifj-5Xz2NjAmxus5-15" value="Sector 16 or 256" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;connectable=0;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="520" y="215" width="100" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="g0l_ifj-5Xz2NjAmxus5-16" value="" style="rounded=0;whiteSpace=wrap;html=1;connectable=0;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="530" y="120" width="180" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="g0l_ifj-5Xz2NjAmxus5-17" value="&lt;br&gt;&lt;div style=&quot;forced-color-adjust: none; color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;&quot;&gt;SD Card 16 Gb&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;connectable=0;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="520" y="80" width="100" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="g0l_ifj-5Xz2NjAmxus5-19" value="&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;Sector 32800&lt;/span&gt;" style="text;whiteSpace=wrap;html=1;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="720" y="220" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="g0l_ifj-5Xz2NjAmxus5-20" value="" style="rounded=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="720" y="120" width="190" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="g0l_ifj-5Xz2NjAmxus5-26" value="100MiB - 2GiB" style="text;whiteSpace=wrap;align=center;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="1050" y="220" width="100" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="g0l_ifj-5Xz2NjAmxus5-27" value="&lt;div&gt;&lt;span style=&quot;forced-color-adjust: none; color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;40MiB - 100MiB&lt;/span&gt;&lt;br style=&quot;forced-color-adjust: none; color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;&quot;&gt;&lt;/div&gt;" style="text;whiteSpace=wrap;html=1;align=center;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="920" y="220" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="g0l_ifj-5Xz2NjAmxus5-28" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="920" y="120" width="130" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="g0l_ifj-5Xz2NjAmxus5-29" value="" style="rounded=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="1060" y="120" width="130" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="g0l_ifj-5Xz2NjAmxus5-30" value="&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;BROM (&lt;/span&gt;&lt;span style=&quot;text-align: center;&quot;&gt;48 Kb)&lt;/span&gt;" style="text;whiteSpace=wrap;html=1;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="-200" y="120" width="100" height="30" as="geometry" />
+        </mxCell>
+        <UserObject label="&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;sun20i_d1_spl:&lt;/span&gt;&lt;div style=&quot;forced-color-adjust: none; color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;&quot;&gt;boot0_sdcard_sun20iw1p1.bin&lt;/div&gt;" id="g0l_ifj-5Xz2NjAmxus5-33">
+          <mxCell style="text;whiteSpace=wrap;html=1;labelBackgroundColor=none;" parent="1" vertex="1">
+            <mxGeometry x="540" y="120" width="200" height="50" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;TOC1: sd.bin&amp;nbsp;&lt;/span&gt;&lt;div style=&quot;forced-color-adjust: none; color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;&quot;&gt;&lt;br style=&quot;forced-color-adjust: none;&quot;&gt;&lt;/div&gt;&lt;div style=&quot;forced-color-adjust: none; color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;&quot;&gt;OpenSBI: fw_dynamic.bin&lt;/div&gt;&lt;div style=&quot;forced-color-adjust: none; color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;&quot;&gt;dtb:&amp;nbsp;sun20i-d1-lichee-rv-dock.dtb&lt;/div&gt;&lt;div style=&quot;forced-color-adjust: none; color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;&quot;&gt;u-boot:&amp;nbsp;u-boot-nodtb.bin&lt;/div&gt;" id="g0l_ifj-5Xz2NjAmxus5-34">
+          <mxCell style="text;whiteSpace=wrap;html=1;align=left;labelBackgroundColor=none;" parent="1" vertex="1">
+            <mxGeometry x="730" y="120" width="190" height="100" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;/boot&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;Image.gz&lt;/span&gt;&lt;div style=&quot;forced-color-adjust: none; color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;&quot;&gt;boot.scr&lt;/div&gt;&lt;/div&gt;" id="g0l_ifj-5Xz2NjAmxus5-35">
+          <mxCell style="text;whiteSpace=wrap;html=1;align=left;labelBackgroundColor=none;" parent="1" vertex="1">
+            <mxGeometry x="925" y="120" width="80" height="70" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="g0l_ifj-5Xz2NjAmxus5-36" value="rootfs&lt;br class=&quot;Apple-interchange-newline&quot;&gt;&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;/bin&lt;/span&gt;&lt;div style=&quot;forced-color-adjust: none; color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;&quot;&gt;/etc&lt;/div&gt;&lt;div style=&quot;forced-color-adjust: none; color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;&quot;&gt;/home&lt;/div&gt;&lt;div style=&quot;forced-color-adjust: none; color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;&quot;&gt;...&lt;/div&gt;&lt;/div&gt;" style="text;whiteSpace=wrap;html=1;align=left;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="1070" y="120" width="70" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="g0l_ifj-5Xz2NjAmxus5-40" value="" style="rounded=0;whiteSpace=wrap;html=1;connectable=0;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="20" y="120" width="210" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="g0l_ifj-5Xz2NjAmxus5-42" value="" style="rounded=0;whiteSpace=wrap;html=1;connectable=0;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="240" y="120" width="210" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="g0l_ifj-5Xz2NjAmxus5-31" value="&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;SRAM A1 (&lt;/span&gt;&lt;span style=&quot;text-align: center;&quot;&gt;32 Kb)&lt;/span&gt;" style="text;whiteSpace=wrap;html=1;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="20" y="120" width="105" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="g0l_ifj-5Xz2NjAmxus5-32" value="&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;DSP RAM (&lt;/span&gt;&lt;span style=&quot;text-align: center;&quot;&gt;128 Kb)&lt;/span&gt;" style="text;whiteSpace=wrap;html=1;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="240" y="120" width="110" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="g0l_ifj-5Xz2NjAmxus5-44" value="" style="endArrow=classic;html=1;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-30" y="180" as="sourcePoint" />
+            <mxPoint x="540" y="250" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="-30" y="320" />
+              <mxPoint x="540" y="320" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="g0l_ifj-5Xz2NjAmxus5-45" value="" style="endArrow=classic;html=1;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="620" y="220" as="sourcePoint" />
+            <mxPoint x="30" y="250" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="620" y="360" />
+              <mxPoint x="30" y="360" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="g0l_ifj-5Xz2NjAmxus5-54" value="Text" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=none;" parent="g0l_ifj-5Xz2NjAmxus5-45" vertex="1" connectable="0">
+          <mxGeometry x="0.0164" y="-2" relative="1" as="geometry">
+            <mxPoint x="-1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="g0l_ifj-5Xz2NjAmxus5-51" value="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontStyle=1;connectable=0;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="-350" y="155" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="g0l_ifj-5Xz2NjAmxus5-52" value="2" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontStyle=1;connectable=0;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="-46" y="160" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="g0l_ifj-5Xz2NjAmxus5-53" value="3" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontStyle=1;connectable=0;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="320" y="344" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="g0l_ifj-5Xz2NjAmxus5-55" value="1. BROM to SPL" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="-390" y="20" width="260" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
