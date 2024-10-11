@@ -1,6 +1,10 @@
 #!/bin/bash
-#make ARCH=riscv -C sunxi-linux/ O=$PWD/linux-build licheerv_defconfig
-#make -j `nproc` -C linux-build ARCH=riscv CROSS_COMPILE=/home/yury/toolchain/riscv64-glibc-gcc-thead_20200702/bin/riscv64-unknown-linux-gnu-
+
+# wget https://andreas.welcomes-you.com/media/files/licheerv-bootsw-linux-kernel_2022-03-07.tgz
+# wget  https://andreas.welcomes-you.com/media/files/licheerv-debian-rootfs_2022-03-11.tar.xz
+# git clone https://github.com/smaeul/linux sunxi-linux -t d1-wip-v5.17-rc2
+# make ARCH=riscv -C sunxi-linux/ O=$PWD/linux-build licheerv_defconfig
+# make -j `nproc` -C linux-build ARCH=riscv CROSS_COMPILE=/home/yury/toolchain/riscv64-glibc-gcc-thead_20200702/bin/riscv64-unknown-linux-gnu-
 
 IMG="image.img"
 echo "Creating Blank Image ${IMG}"

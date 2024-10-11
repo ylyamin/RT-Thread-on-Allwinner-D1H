@@ -119,7 +119,7 @@ $(SD_IMAGE): rt
 sd: $(SD_IMAGE)
 
 sd-burn:
-	sudo dd if=$(SD_IMAGE) of=$(SD_MOUNT) bs=512 seek=16 conv=sync
+	sudo dd if=$(SD_IMAGE) of=$(SD_MOUNT)
 
 #Debug
 $(DEBUGGER_INSTALL_DIR)/blisp:

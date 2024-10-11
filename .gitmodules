@@ -9,7 +9,7 @@
 	ignore = dirty
 [submodule "bootloaders/xfel"]
 	path = bootloaders/xfel
-	url = https://github.com/xboot/
+	url = https://github.com/xboot/xfel
 	ignore = dirty
 [submodule "rt-thread/bsp/allwinner/d1s_d1h/packages/CherryUSB"]
 	path = rt-thread/bsp/allwinner/d1s_d1h/packages/CherryUSB

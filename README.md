@@ -35,7 +35,7 @@ make sd_burn
 ```
 Or
 ```sh
-sudo dd if=image/sd_image_lichee.img of=/dev/sdb bs=512 seek=16 conv=sync
+sudo dd if=image/sd_image_lichee.img of=/dev/sdb
 ```
 *where /dev/sdb - your SD card device
 
@@ -147,7 +147,7 @@ To compile bootloaders use command
 ```sh
 make bootloaders
 ```
-Will be installed:
+Will be compiled:
 - sun20i_d1_spl (first bootloader after BROM, used for init DRAM and load TOC image from MMC)
 - u-boot (could used to load Linux image but now just tool to create TOC image)
 - opensbi (Supervisor Binary Interface for platform in M mode)
@@ -186,7 +186,7 @@ For flash firmware to Sipeed RV-Debugger Plus - Press and hold the boot pin then
 ```sh
 make debug-burn
 ```
-To start GDB session need to use FEL button but surprisingly this works even without it somehow just after power up. Anyway in device that have FEL button (Sipeed Lichee RV) - press and hold the FEL button then press RESET button to go to the FEL mode, then execute command or just execute command (for Clockwork Devterm):
+To start GDB session in device that have FEL button (Sipeed Lichee RV) - press and hold the FEL button then press RESET button to go to the FEL mode, then execute command OR for device without FEL button (Clockwork Devterm) just don't insert boot SD card, press POWER button and execute command:
 ```sh
 make debug
 ```
@@ -233,12 +233,12 @@ I figure out that integrated UART work very unstable. According [discussion](htt
 
 ## Links
 - https://linux-sunxi.org/Allwinner_Nezha  
-- https://andreas.welcomes-you.com/boot-sw-debian-risc-v-lichee-rv-2/
+- https://andreas.welcomes-you.com/boot-sw-debian-risc-v-lichee-rv
 - https://github.com/clockworkpi/DevTerm/tree/main/Code/patch/d1
 - https://github.com/smaeul/linux/tree/d1/all
 
 ## TODO
 - Keyboard, trackball
-- Build env and RTT gui
+- Build RTT gui
 
 
