@@ -41,5 +41,5 @@ set *(unsigned long *)($dyninfo_addr + 32) = 0
 set *(unsigned long *)($dyninfo_addr + 40) = 0
 set $a2 = $dyninfo_addr
 
-#b sunxi_ehci_hcd_init
+#b rt_hw_uart_init
 j *$opensbi_addr

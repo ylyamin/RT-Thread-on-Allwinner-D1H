@@ -1,9 +1,9 @@
 # Boot process
 
-How D1H started. <br> 
-First we will look bootloaders and example with Linux then RT-Thread.
+Lets figure out how Allwinner D1H booting.<br> 
+In this chapter firstly we will look to Booting ROM, existing bootloaders best practice in example with Linux and RT-Thread, also looks to JTAG and GDB debugging.
 
-Good articles is:
+Based on information from this articles:
 * https://linux-sunxi.org/Allwinner_Nezha
 * https://fedoraproject.org/wiki/Architectures/RISC-V/Allwinner
 * https://andreas.welcomes-you.com/boot-sw-debian-risc-v-lichee-rv/
@@ -16,11 +16,10 @@ So looking to the D1H User manual [D1_User_Manual_V0.1_Draft_Version.pdf](Allwin
 
 ![D1H_brom_overview.png](Pics/D1H_brom_overview.png) 
 
-We have two mode of booting: FEL and Media boot
+We have two mode of booting: FEL and Media boot.
 
 1. FEL is mode when D1H became special USB device communicate with PC fel tools to execute commands or upload programs.<br>
 2. Media boot support fallowing media:
-
     * SD card
     * eMMC
     * SPI NOR FLASH
@@ -78,10 +77,9 @@ FEL is actually communicate with BROM by special USB protocol, user can command 
     ```  
 
     That actually will exec rogram with code this initialize clocks,uart and DDR DRAM:<br>
-
-    xfel\payloads\d1_f133\d1-ddr\source\sys-clock.c<br>
-    xfel\payloads\d1_f133\d1-ddr\source\sys-uart.c<br>
-    xfel\payloads\d1_f133\d1-ddr\source\sys-dram.c<br>
+    * xfel\payloads\d1_f133\d1-ddr\source\sys-clock.c<br>
+    * xfel\payloads\d1_f133\d1-ddr\source\sys-uart.c<br>
+    * xfel\payloads\d1_f133\d1-ddr\source\sys-dram.c<br>
     
     In UART output (115200 baud rate) we could see debug about DRAM init:
     ```sh
@@ -275,7 +273,7 @@ As described before TOC1 image could include OpenSBI, DTB, U-Boot. Lets compile 
 
 OpenSBI:
 ```sh
-$ git clone https://github.com/smaeul/opensbi
+$ git clone https://github.com/riscv-software-src/opensbi
 $ cd opensbi
 $ make CROSS_COMPILE=$(RISCV64_GLIBC_GCC_BIN) PLATFORM=generic FW_PIC=y FW_OPTIONS=0x2
 ```
@@ -385,7 +383,7 @@ Boot HART MEDELEG         : 0x000000000000b109
 
 OpenSBI then jump to U-Boot.<br>
 When U-boot loaded is will try to found boot partition and execute boot.scr script.<br>
-U-boot will load Linux kernel Image.gz to DDR 0x4020_0000 address.<br>
+U-boot will check that Image.gz have special booting image header. Then load Linux kernel to DDR memory.<br>
 
 UART output:
 ```sh
@@ -423,7 +421,6 @@ Starting kernel ...
 [    0.000000] Linux version 5.17.0-rc2-379425-g06b026a8b714-dirty (yury@yury) (riscv64-unknown-linux-gnu-gcc (C-SKY RISCV Tools V1.8.4 B20200702) 8.1.0, GNU ld (GNU Binutils) 2.32) #20 PREEMPT Mon Sep 9 07:05:32 UTC 2024
 ```
 
-
 ![boot_process_3.png](Pics/boot_process_3.png) 
 
 7. Start SBI
@@ -444,7 +441,7 @@ Linux kernel work in S System mode and interacts with OpenSBI that work in M Mac
 
 ## How to compile Linux kernel byself
 
-According article https://andreas.welcomes-you.com/boot-sw-debian-risc-v-lichee-rv download precompiled image
+According article https://andreas.welcomes-you.com/boot-sw-debian-risc-v-lichee-rv we can download precompiled image:
 
 ```sh
 $ wget https://andreas.welcomes-you.com/media/files/licheerv-bootsw-linux-kernel_2022-03-07.tgz
@@ -502,7 +499,7 @@ The login for Linux via ssh is rv/licheerv and via serial interface root/rootpwd
 ## Booting RT-Thread kernel
 
 RT-Thread use OpenSBI for syscals so is needed to be in SDcard.<br>
-U-boot is not nessesery, also U-boot check for Linux header in image that absent in RTT so we just not use U-boot.<br>
+U-boot is not nessesery, also U-boot check for Linux booting image header that absent in RTT image so we just not use U-boot.<br>
 So lets create TOC1 image where instead U-boot used RTT kernel image:
 
 toc1_D1H.cfg file:
@@ -570,47 +567,123 @@ https://club.rt-thread.org/ask/article/389ac36250b57737.html
 
 ## Debbuging GDB via JTAG
 
+Allwinner D1H have JTAG pins that could be handled by CKLink adaper and T-Head-DebugServer that will route data to GDB.<br>
+So instead usually used OpenOCD I use T-Head-DebugServer software.<br>
+CKLink hardware quite expensive it could be replaced by Sipeed RV-Debugger or even STM32F103 with special firmware https://github.com/cjacker/cklink-lite-fw-convertor.<br>
+Problem that JTAG pins mapped to the same pins as used for SDcard so I use MicroSD breakout board to connect this pins to Sipeed RV-Debugger (will explain all needed hardware modifiactions in other chapter).<br>
 
-
-
-
-
-For debugging used Sipeed RV-Debugger Plus with [T-Head CKLink firmware](https://github.com/bouffalolab/bouffalo_sdk/tree/master/tools/cklink_firmware).   
-To connect debugger to board need use MicroSD breakout board because in D1H JTAG pins mapped to SD Card [pins](https://linux-sunxi.org/JTAG) as shown in [Hardware section](#hardware).  
-
-
-OpenSBI
-CONFIG_SERIAL_SEMIHOSTING is not set
-
-Install T-Head-DebugServer
-
+Install T-Head-DebugServer:
+```sh
 wget https://occ-oss-prod.oss-cn-hangzhou.aliyuncs.com/resource//1666331533949/T-Head-DebugServer-linux-x86_64-V5.16.5-20221021.sh.tar.gz
 tar -xvzf T-Head-DebugServer-linux-x86_64-V5.16.5-20221021.sh.tar.gz 
 T-Head-DebugServer-linux-x86_64-V5.16.5-20221021.sh -i
+```
 
-Flash bl702
+As now we will don't have SDcard, need to do work that SPL do:
+- init DDR
+- Load OpenSBI, DTB, Kernel to DDR
+- and also configure pins to JTAG
 
-wget https://github.com/bouffalolab/bouffalo_sdk/blob/master/tools/cklink_firmware/bl702_cklink_whole_img_v2.2.bin
-wget https://github.com/pine64/blisp/releases/download/v0.0.4/blisp-linux-x86_64-v0.0.4.zip
-unzip blisp-linux-x86_64-v0.0.4.zip
-Press and hold the boot pin then plug the usb in the computer to go to the boot mode.
-blisp iot -c bl70x --reset -s bl702_cklink_whole_img_v2.2.bin -l 0x0
+Execute commands:
 
-
+```sh
 xfel ddr d1
 xfel jtag
 T-HEAD_DebugServer/DebugServerConsole.elf&
 $(RISCV64_GLIBC_GCC_BIN)gdb -x .gdbinit
+```
 
+Where in .gdbinit defined:
 
+1. Connection to T-HEAD_DebugServer
+```conf
+target remote localhost:1025
+```
 
+2. Define addresses in memory
+```conf
+set $opensbi_addr = 0x40000000
+set $dtb_addr = 0x40200000
+set $kernel_addr = 0x40400000
+set $dyninfo_addr = 0x43000000
+```
 
- 
+3. Load binnary
+```conf
+restore bootloaders/opensbi/build/platform/generic/firmware/fw_dynamic.bin binary $opensbi_addr
+restore build/sun20i-d1-lichee-rv-dock.dtb binary $dtb_addr
+restore rt-thread/bsp/allwinner/d1s_d1h/rtthread.bin binary $kernel_addr
+```
 
+4. Load elf for symbols information
+```conf
+file rt-thread/bsp/allwinner/d1s_d1h/rtthread.elf
+```
 
+Was used OpenSBI Firmware with Dynamic Information (FW_DYNAMIC). Nedd to proped init this firmware due GDB session.
+
+https://github.com/riscv-software-src/opensbi/blob/master/docs/firmware/fw_dynamic.md :
+"Is a firmware which gets information about next booting stage (e.g. a bootloader or an OS) and runtime OpenSBI library options from previous booting stage. The previous booting stage will pass information to FW_DYNAMIC by creating struct fw_dynamic_info in memory and passing its address to FW_DYNAMIC via a2 register of RISC-V CPU."
+
+https://github.com/riscv-software-src/opensbi/blob/master/docs/firmware/fw.md:
+"The previous booting stage will pass information via the following registers of RISC-V CPU:
+* hartid via a0 register
+* device tree blob address in memory via a1 register. The address must be aligned to 8 bytes."
+
+5. Add fw_dynamic_info and load a0 a1 a2 
+
+```conf
+#Set opensbi dynamic info param
+#- Magic
+#- Version
+#- Next booting stage address
+#- Next booting stage mode 1 - S, 3 - M
+#- Options for OpenSBI library 
+#- boot_hart
+
+set $a0 = 0
+set $a1 = $dtb_addr
+set *(unsigned long *)($dyninfo_addr)      = 0x4942534f
+set *(unsigned long *)($dyninfo_addr + 8)  = 2
+set *(unsigned long *)($dyninfo_addr + 16) = $kernel_addr
+set *(unsigned long *)($dyninfo_addr + 24) = 1
+set *(unsigned long *)($dyninfo_addr + 32) = 0
+set *(unsigned long *)($dyninfo_addr + 40) = 0
+set $a2 = $dyninfo_addr
+```
+
+Also with default config OpenSBI will not output debug information to UART but instead try to put it to GDB.<br>
+I figureout that if change CONFIG_SERIAL_SEMIHOSTING to not set then is start work properly, out to UART.
+
+6. Change OpenSBI config and re-compile
+comment #CONFIG_SERIAL_SEMIHOSTING in bootloaders/opensbi/build/platform/generic/kconfig/.config
+
+7. Finnaly set brakepoint and jump to OpenSBI
+
+```conf
+b rt_hw_uart_init
+j *$opensbi_addr
+```
+
+Now we can debug code execution. Problem that in RTT we can easely debug in GDB board initialisation but after this mostly all stuff done inside threads. GDB could operate with Linux threads, I can't figure out how to configure to debug RTT threads.
+
+```sh
+GNU gdb (C-SKY RISCV Tools V1.8.4 B20200702) 8.2.50.20190202-git
+Copyright (C) 2019 Free Software Foundation, Inc.
+.
+.
+.
+Breakpoint 1 at 0x4040660a: file /mnt/hgfs/allwinner_d1/RT-Thread-on-Allwinner-D1H/rt-thread/bsp/allwinner/libraries/drivers/drv_uart.c, line 1029.
+Breakpoint 1, rt_hw_uart_init () at /mnt/hgfs/allwinner_d1/RT-Thread-on-Allw
+   inner-D1H/rt-thread/bsp/allwinner/libraries/drivers/drv_uart.c:1029
+1029    {
+(gdb) i r
+ra             0x4044d954       0x4044d954 <rt_hw_board_init+146>
+sp             0x4053a760       0x4053a760
+gp             0x4052a960       0x4052a960 <sun8iw20_hw_clks+920>
+```
 
 Usefull articles:
-
 https://github.com/orangecms/RV-Debugger-BL702/tree/nezha
 https://github.com/bouffalolab/bouffalo_sdk/tree/master/tools/cklink_firmware
 https://gist.github.com/btashton/6af120ff16d6beeccbbde74e6733535c

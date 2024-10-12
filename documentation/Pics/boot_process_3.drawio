@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.8 Chrome/128.0.6613.36 Electron/32.0.1 Safari/537.36" version="24.7.8">
   <diagram name="Page-1" id="-c6Ry725GxhYZqOuj7hc">
-    <mxGraphModel dx="1985" dy="1298" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="794" dy="519" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -128,9 +128,6 @@
         </mxCell>
         <mxCell id="g0l_ifj-5Xz2NjAmxus5-165" value="11" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontStyle=1;connectable=0;labelBackgroundColor=none;" parent="1" vertex="1">
           <mxGeometry x="1020" y="1354" width="30" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="g0l_ifj-5Xz2NjAmxus5-263" value="0x40200000" style="text;whiteSpace=wrap;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="1080" y="1560" width="100" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
