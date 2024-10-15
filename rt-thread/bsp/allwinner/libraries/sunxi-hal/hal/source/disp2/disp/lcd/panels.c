@@ -118,6 +118,10 @@ struct __lcd_panel *panel_array[] = {
     &icn9707_480x1280_panel,
 #endif
 
+#ifdef CONFIG_LCD_SUPPORT_CWU50
+    &cwu50_panel,
+#endif
+
     NULL,
 };
 

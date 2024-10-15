@@ -112,6 +112,10 @@ $(SD_IMAGE): rt
 		@echo "${RED}ClockworkPi DevTerm R01 board used${NC}"
 		$(eval SD_IMAGE = image/sd_image_devterm.img)
     endif
+    ifeq ($(CONFIG_BSP_USING_CWP_UC_R01),y)
+		@echo "${RED}ClockworkPi uConsole R01 board used${NC}"
+		$(eval SD_IMAGE = image/sd_image_uconsole.img)
+    endif
 	$(U_BOOT_INSTALL_DIR)/tools/mkimage -T sunxi_toc1 -d $(BUILD)/toc1_D1H.cfg $(BUILD)/sd.bin
 	sudo dd if=bootloaders/sun20i_d1_spl/nboot/boot0_sdcard_sun20iw1p1.bin of=$(SD_IMAGE) bs=8192 seek=16
 	sudo dd if=$(BUILD)/sd.bin of=$(SD_IMAGE) bs=512 seek=32800

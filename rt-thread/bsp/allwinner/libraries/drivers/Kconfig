@@ -20,6 +20,12 @@ choice
         select MIPI_DSI_LCD_ICN9707
         select ARCH_SUN20IW1
 
+    config BSP_USING_CWP_UC_R01
+        bool "ClockworkPi uConsole R01 board"
+        select LCD_SUPPORT_CWU50
+        select MIPI_DSI_LCD_CWU50
+        select ARCH_SUN20IW1
+
 endchoice
 
 menu "General Purpose UARTs"

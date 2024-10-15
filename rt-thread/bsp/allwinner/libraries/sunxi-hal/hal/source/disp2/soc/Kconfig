@@ -54,6 +54,12 @@ config MIPI_DSI_LCD_ICN9707
     ---help---
       Clockworkpi Devterm R01 board with MIPI DSI display ICN9707
 
+config MIPI_DSI_LCD_CWU50
+      bool "Clockworkpi uConsole R01 board with MIPI DSI display CWU50"
+      default n
+      ---help---
+        Clockworkpi uConsole R01 board with MIPI DSI display CWU50
+
 endmenu
 
 menu "Soc Select"

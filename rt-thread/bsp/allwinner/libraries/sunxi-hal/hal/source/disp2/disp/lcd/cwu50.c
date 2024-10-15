@@ -1,0 +1,358 @@
+#include "panels.h"
+#include "cwu50.h"
+
+static void LCD_power_on(u32 sel);
+static void LCD_power_off(u32 sel);
+static void LCD_bl_open(u32 sel);
+static void LCD_bl_close(u32 sel);
+
+static void LCD_panel_init(u32 sel);
+static void LCD_panel_exit(u32 sel);
+
+static void LCD_cfg_panel_info(struct panel_extend_para * info)
+{
+}
+
+static s32 LCD_open_flow(u32 sel)
+{
+    printk("raoyiming +++ LCD_open_flow\n");
+    LCD_OPEN_FUNC(sel, LCD_power_on, 100);   //open lcd power, and delay 50ms
+    LCD_OPEN_FUNC(sel, LCD_panel_init, 200);   //open lcd power, than delay 200ms
+    LCD_OPEN_FUNC(sel, sunxi_lcd_tcon_enable, 200);     //open lcd controller, and delay 100ms
+    LCD_OPEN_FUNC(sel, LCD_bl_open, 0);     //open lcd backlight, and delay 0ms
+
+    return 0;
+}
+
+static s32 LCD_close_flow(u32 sel)
+{
+    LCD_CLOSE_FUNC(sel, LCD_bl_close, 0);       //close lcd backlight, and delay 0ms
+    LCD_CLOSE_FUNC(sel, sunxi_lcd_tcon_disable, 0);         //close lcd controller, and delay 0ms
+    LCD_CLOSE_FUNC(sel, LCD_panel_exit, 200);   //open lcd power, than delay 200ms
+    printk("raoyiming +++ LCD_close_flow\n");
+    LCD_CLOSE_FUNC(sel, LCD_power_off, 500);   //close lcd power, and delay 500ms
+
+    return 0;
+}
+
+static void LCD_power_on(u32 sel)
+{
+    sunxi_lcd_power_enable(sel, 0);//config lcd_power pin to open lcd power0
+    sunxi_lcd_pin_cfg(sel, 1);
+
+	sunxi_lcd_delay_us(100);
+//	sunxi_lcd_gpio_set_value(0,1,1);//stby
+	sunxi_lcd_delay_ms(1);
+	printk("<0>raoyiming +++ sunxi_lcd_gpio_set_value\n");
+	//sunxi_lcd_gpio_set_value(0,0,1);//reset
+}
+
+static void LCD_power_off(u32 sel)
+{
+    sunxi_lcd_pin_cfg(sel, 0);
+    sunxi_lcd_power_disable(sel, 0);//config lcd_power pin to close lcd power0
+}
+
+static void LCD_bl_open(u32 sel)
+{
+    sunxi_lcd_pwm_enable(sel);//open pwm module
+    panel_bl_enable(1);//config lcd_bl_en pin to open lcd backlight
+    //sunxi_lcd_backlight_disable(sel);//config lcd_bl_en pin to close lcd backlight
+    //sunxi_lcd_pwm_disable(sel);//close pwm module
+}
+
+static void LCD_bl_close(u32 sel)
+{
+    panel_bl_enable(0);//config lcd_bl_en pin to close lcd backlight
+    sunxi_lcd_pwm_disable(sel);//close pwm module
+}
+
+#define REGFLAG_END_OF_TABLE     0x102
+#define REGFLAG_DELAY            0x101
+
+struct lcd_setting_table {
+    u16 cmd;
+    u32 count;
+    u8 para_list[64];
+};
+
+static struct lcd_setting_table lcd_init_setting[] = {
+
+	{0xE1, 1, {0x93} },
+	{0xE2, 1, {0x65} },
+	{0xE3, 1, {0xF8} },
+	{0x70, 1, {0x20} },
+	{0x71, 1, {0x13} },
+	{0x72, 1, {0x06} },
+	{0x75, 1, {0x03} },
+	{0xE0, 1, {0x01} },
+	{0x00, 1, {0x00} },
+	{0x01, 1, {0x47} },
+	{0x03, 1, {0x00} },
+	{0x04, 1, {0x4D} },
+	{0x0C, 1, {0x64} },
+	{0x17, 1, {0x00} },
+	{0x18, 1, {0xBF} },
+	{0x19, 1, {0x00} },
+	{0x1A, 1, {0x00} },
+	{0x1B, 1, {0xBF} },
+	{0x1C, 1, {0x00} },
+	{0x1F, 1, {0x7E} },
+	{0x20, 1, {0x24} },
+	{0x21, 1, {0x24} },
+	{0x22, 1, {0x4E} },
+	{0x24, 1, {0xFE} },
+	{0x37, 1, {0x09} },
+	{0x38, 1, {0x04} },
+	{0x3C, 1, {0x76} },
+	{0x3D, 1, {0xFF} },
+	{0x3E, 1, {0xFF} },
+	{0x3F, 1, {0x7F} },
+	{0x40, 1, {0x04} },
+	{0x41, 1, {0xA0} },
+	{0x44, 1, {0x11} },
+	{0x55, 1, {0x02} },
+	{0x56, 1, {0x01} },
+	{0x57, 1, {0x49} },
+	{0x58, 1, {0x09} },
+	{0x59, 1, {0x2A} },
+	{0x5A, 1, {0x1A} },
+	{0x5B, 1, {0x1A} },
+	{0x5D, 1, {0x78} },
+	{0x5E, 1, {0x6E} },
+	{0x5F, 1, {0x66} },
+	{0x60, 1, {0x5E} },
+	{0x61, 1, {0x60} },
+	{0x62, 1, {0x54} },
+	{0x63, 1, {0x5C} },
+	{0x64, 1, {0x47} },
+	{0x65, 1, {0x5F} },
+	{0x66, 1, {0x5D} },
+	{0x67, 1, {0x5B} },
+	{0x68, 1, {0x76} },
+	{0x69, 1, {0x61} },
+	{0x6A, 1, {0x63} },
+	{0x6B, 1, {0x50} },
+	{0x6C, 1, {0x45} },
+	{0x6D, 1, {0x34} },
+	{0x6E, 1, {0x1C} },
+	{0x6F, 1, {0x07} },
+	{0x70, 1, {0x78} },
+	{0x71, 1, {0x6E} },
+	{0x72, 1, {0x66} },
+	{0x73, 1, {0x5E} },
+	{0x74, 1, {0x60} }, 
+	{0x75, 1, {0x54} },
+	{0x76, 1, {0x5C} },
+	{0x77, 1, {0x47} },
+	{0x78, 1, {0x5F} },
+	{0x79, 1, {0x5D} },
+	{0x7A, 1, {0x5B} },
+	{0x7B, 1, {0x76} },
+	{0x7C, 1, {0x61} },
+	{0x7D, 1, {0x63} },
+	{0x7E, 1, {0x50} },
+	{0x7F, 1, {0x45} },
+	{0x80, 1, {0x34} },
+	{0x81, 1, {0x1C} },
+	{0x82, 1, {0x07} },
+	{0xE0, 1, {0x02} },
+	{0x00, 1, {0x44} },
+	{0x01, 1, {0x46} },
+	{0x02, 1, {0x48} },
+	{0x03, 1, {0x4A} },
+	{0x04, 1, {0x40} },
+	{0x05, 1, {0x42} },
+	{0x06, 1, {0x1F} },
+	{0x07, 1, {0x1F} },
+	{0x08, 1, {0x1F} },
+	{0x09, 1, {0x1F} },
+	{0x0A, 1, {0x1F} },
+	{0x0B, 1, {0x1F} },
+	{0x0C, 1, {0x1F} },
+	{0x0D, 1, {0x1F} },
+	{0x0E, 1, {0x1F} },
+	{0x0F, 1, {0x1F} },
+	{0x10, 1, {0x1F} },
+	{0x11, 1, {0x1F} },
+	{0x12, 1, {0x1F} },
+	{0x13, 1, {0x1F} },
+	{0x14, 1, {0x1E} },
+	{0x15, 1, {0x1F} },
+	{0x16, 1, {0x45} },
+	{0x17, 1, {0x47} },
+	{0x18, 1, {0x49} },
+	{0x19, 1, {0x4B} },
+	{0x1A, 1, {0x41} },
+	{0x1B, 1, {0x43} },
+	{0x1C, 1, {0x1F} },
+	{0x1D, 1, {0x1F} },
+	{0x1E, 1, {0x1F} },
+	{0x1F, 1, {0x1F} },
+	{0x20, 1, {0x1F} },
+	{0x21, 1, {0x1F} },
+	{0x22, 1, {0x1F} },
+	{0x23, 1, {0x1F} },
+	{0x24, 1, {0x1F} },
+	{0x25, 1, {0x1F} },
+	{0x26, 1, {0x1F} },
+	{0x27, 1, {0x1F} },
+	{0x28, 1, {0x1F} },
+	{0x29, 1, {0x1F} },
+	{0x2A, 1, {0x1E} },
+	{0x2B, 1, {0x1F} },
+	{0x2C, 1, {0x0B} },
+	{0x2D, 1, {0x09} },
+	{0x2E, 1, {0x07} },
+	{0x2F, 1, {0x05} },
+	{0x30, 1, {0x03} },
+	{0x31, 1, {0x01} },
+	{0x32, 1, {0x1F} },
+	{0x33, 1, {0x1F} },
+	{0x34, 1, {0x1F} },
+	{0x35, 1, {0x1F} },
+	{0x36, 1, {0x1F} },
+	{0x37, 1, {0x1F} },
+	{0x38, 1, {0x1F} },
+	{0x39, 1, {0x1F} },
+	{0x3A, 1, {0x1F} },
+	{0x3B, 1, {0x1F} },
+	{0x3C, 1, {0x1F} },
+	{0x3D, 1, {0x1F} },
+	{0x3E, 1, {0x1F} },
+	{0x3F, 1, {0x1F} },
+	{0x40, 1, {0x1F} },
+	{0x41, 1, {0x1E} },
+	{0x42, 1, {0x0A} },
+	{0x43, 1, {0x08} },
+	{0x44, 1, {0x06} },
+	{0x45, 1, {0x04} },
+	{0x46, 1, {0x02} },
+	{0x47, 1, {0x00} },
+	{0x48, 1, {0x1F} },
+	{0x49, 1, {0x1F} },
+	{0x4A, 1, {0x1F} },
+	{0x4B, 1, {0x1F} },
+	{0x4C, 1, {0x1F} },
+	{0x4D, 1, {0x1F} },
+	{0x4E, 1, {0x1F} },
+	{0x4F, 1, {0x1F} },
+	{0x50, 1, {0x1F} },
+	{0x51, 1, {0x1F} },
+	{0x52, 1, {0x1F} },
+	{0x53, 1, {0x1F} },
+	{0x54, 1, {0x1F} },
+	{0x55, 1, {0x1F} },
+	{0x56, 1, {0x1F} },
+	{0x57, 1, {0x1E} },
+	{0x58, 1, {0x40} },
+	{0x59, 1, {0x00} },
+	{0x5A, 1, {0x00} },
+	{0x5B, 1, {0x30} },
+	{0x5C, 1, {0x02} },
+	{0x5D, 1, {0x40} },
+	{0x5E, 1, {0x01} },
+	{0x5F, 1, {0x02} },
+	{0x60, 1, {0x00} },
+	{0x61, 1, {0x01} },
+	{0x62, 1, {0x02} },
+	{0x63, 1, {0x65} },
+	{0x64, 1, {0x66} },
+	{0x65, 1, {0x00} },
+	{0x66, 1, {0x00} },
+	{0x67, 1, {0x74} },
+	{0x68, 1, {0x06} },
+	{0x69, 1, {0x65} },
+	{0x6A, 1, {0x66} },
+	{0x6B, 1, {0x10} },
+	{0x6C, 1, {0x00} },
+	{0x6D, 1, {0x04} },
+	{0x6E, 1, {0x04} },
+	{0x6F, 1, {0x88} },
+	{0x70, 1, {0x00} },
+	{0x71, 1, {0x00} },
+	{0x72, 1, {0x06} },
+	{0x73, 1, {0x7B} },
+	{0x74, 1, {0x00} },
+	{0x75, 1, {0x87} },
+	{0x76, 1, {0x00} },
+	{0x77, 1, {0x5D} },
+	{0x78, 1, {0x17} },
+	{0x79, 1, {0x1F} },
+	{0x7A, 1, {0x00} },
+	{0x7B, 1, {0x00} },
+	{0x7C, 1, {0x00} },
+	{0x7D, 1, {0x03} },
+	{0x7E, 1, {0x7B} },
+	{0xE0, 1, {0x04} },
+	{0x09, 1, {0x10} },
+	{0xE0, 1, {0x00} },
+	{0xE6, 1, {0x02} },
+	{0xE7, 1, {0x02} },
+	{0x11, 1, {0x00} },
+	{REGFLAG_DELAY, 120, {} },
+	{0x29, 1, {0x00} }, 
+	{REGFLAG_DELAY, 20, {} },
+	{0x35, 1, {0x00} },
+
+	{REGFLAG_END_OF_TABLE, 0x00, {} }
+
+};
+
+extern void _axp_LCD_control(bool on);
+
+static void LCD_panel_init(u32 sel)
+{
+	
+    u32 i;
+    printk("<0>raoyiming +++ LCD_panel_init\n");
+	
+    /**/
+    panel_rst(1);
+	_axp_LCD_control(1);
+    sunxi_lcd_delay_ms(10);
+    
+	panel_rst(0);
+    sunxi_lcd_delay_ms(50);
+    
+	panel_rst(1);
+    sunxi_lcd_delay_ms(200);
+
+    for (i = 0; ; i++) {
+        if(lcd_init_setting[i].cmd == REGFLAG_END_OF_TABLE) {
+            break;
+        } else if (lcd_init_setting[i].cmd == REGFLAG_DELAY) {
+            sunxi_lcd_delay_ms(lcd_init_setting[i].count);
+        } else {
+            dsi_dcs_wr(sel, (u8)lcd_init_setting[i].cmd, lcd_init_setting[i].para_list, lcd_init_setting[i].count);
+        }
+    }
+
+   sunxi_lcd_dsi_clk_enable(sel);
+
+    return;
+}
+
+static void LCD_panel_exit(u32 sel)
+{
+    sunxi_lcd_dsi_clk_disable(sel);
+    panel_rst(0);
+    return ;
+}
+
+//sel: 0:lcd0; 1:lcd1
+static s32 LCD_user_defined_func(u32 sel, u32 para1, u32 para2, u32 para3)
+{
+    return 0;
+}
+
+struct __lcd_panel cwu50_panel = {
+    /* panel driver name, must mach the name of lcd_drv_name in sys_config.fex */
+    .name = "cwu50",
+    .func = {
+        .cfg_panel_info = LCD_cfg_panel_info,
+        .cfg_open_flow = LCD_open_flow,
+        .cfg_close_flow = LCD_close_flow,
+        .lcd_user_defined_func = LCD_user_defined_func,
+    },
+};

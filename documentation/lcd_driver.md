@@ -1,6 +1,7 @@
 # LCD Display driver
 
-In next chapter we will learn haw control display in Devterm (found is MIPI DSI LCD display).
+In this chapter we will learn haw control display in Devterm (found is MIPI DSI LCD display).<br>
+And some experiment with uConsole dispaly.<br>
 Also I have Sipeed Lichee RV with 4.3 RGB LCD Display. That we will bring up too, will be described at the end. 
 
 ## DevTerm display
@@ -1472,10 +1473,261 @@ static s32 LCD_open_flow(u32 sel)
 
 After all modification in code DevTerm R01 - LCD MIPI DSI Display successfully started, can be tested by command:
 ```sh
-lcd_draw_point 100 100:   
+lcd_draw_point 100 100
 ```
 ![devterm_lcd_mipi_work.jpg](Pics/devterm_lcd_mipi_work.jpg)
 
+## uConsole dispaly
+
+uConsole display initialisation process looks like very similar as DevTerm 6.86 inch LCD Dispaly.<br>
+I skip most of explanation as is the same as was before for Devterm MIPI DSI variant.<br>
+Please refer to paragraph abow for additional information.
+
+From path to uConsole R01 https://github.com/clockworkpi/uConsole/blob/master/Code/patch/r01/20230614/r01_v1.01_230614.patch<br>
+extracted driver for cwu50 display.
+
+- rt-thread\bsp\allwinner\libraries\sunxi-hal\hal\source\disp2\disp\lcd\cwu50.c
+- rt-thread\bsp\allwinner\libraries\sunxi-hal\hal\source\disp2\disp\lcd\cwu50.h
+
+In LCD_panel_init modify siguense to use axp228:
+
+```patch
++extern void _axp_LCD_control(bool on);
+
+static void LCD_panel_init(u32 sel)
+{
+	
+    u32 i;
+    printk("<0>raoyiming +++ LCD_panel_init\n");
+	
+    /**/
+    panel_rst(1);
++	_axp_LCD_control(1);
+```
+
+<details><summary>Need add this driver file to RTT build:</summary>
+
+```patch
+diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/SConscript b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/SConscript
++if GetDepend('LCD_SUPPORT_CWU50'):
++    disp2_src += ['./source/disp2/disp/lcd/cwu50.c']
+```
+</details>
+<br>
+<details><summary>And define config values:</summary>
+
+```patch
+diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/lcd/Kconfig b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/lcd/Kconfig
++config LCD_SUPPORT_CWU50
++    bool "LCD support CWU50 panel"
++    default n
++    ---help---
++        If you want to support CWU50 panel for display driver, select it.
+```
+</details>
+<br>
+<details><summary>RTT cuts off CONFIG_ prefix so redefine this:</summary>
+
+```patch
+diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/kconfig.h b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/kconfig.h
++#if defined(LCD_SUPPORT_CWU50)
++#define CONFIG_LCD_SUPPORT_CWU50 1
++#endif
+```
+</details>
+<br>
+<details><summary>Need add structure to panels.c/.h files to possibility to use by disp driver</summary>
+
+```patch
+diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/lcd/panels.c b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/lcd/panels.c
+
++#ifdef CONFIG_LCD_SUPPORT_CWU50
++    &cwu50_panel,
++#endif
+ 
+diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/lcd/panels.h b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/lcd/panels.h
+
++#ifdef CONFIG_LCD_SUPPORT_CWU50
++extern struct __lcd_panel cwu50_panel;
++#endif
+```
+</details>
+<br>
+
+### Add configuration for this board:   
+
+From path to uConsole R01 https://github.com/clockworkpi/uConsole/blob/master/Code/patch/r01/20230614/r01_v1.01_230614.patch<br>
+extracted Device tree file uc_board.dts with LCD difinition.
+
+<details><summary>uc_board.dts:</summary>
+
+```yaml
+	lcd_driver_name     = "cwu50";
+	lcd_backlight       = <50>;
+	lcd_if              = <4>;
+
+	lcd_x               = <720>;
+	lcd_y               = <1280>;
+	lcd_width           = <90>;
+	lcd_height          = <160>;
+	lcd_dclk_freq       = <62>;
+
+	lcd_pwm_used        = <1>;
+	lcd_pwm_ch          = <2>;
+	lcd_pwm_freq        = <1000>;
+	lcd_pwm_pol         = <0>;
+	lcd_pwm_max_limit   = <255>;
+
+	lcd_hbp             = <40>;
+	lcd_ht              = <790>;
+	lcd_hspw            = <20>;
+	lcd_vbp             = <18>;
+	lcd_vt              = <1306>;
+	lcd_vspw            = <2>;
+
+	lcd_dsi_if          = <0>;
+	lcd_dsi_lane        = <4>;
+	lcd_lvds_if         = <0>;
+	lcd_lvds_colordepth = <0>;
+	lcd_lvds_mode       = <0>;
+	lcd_frm             = <0>;
+	lcd_hv_clk_phase    = <0>;
+	lcd_hv_sync_polarity= <0>;
+	lcd_io_phase        = <0x0000>;
+	lcd_gamma_en        = <0>;
+	lcd_bright_curve_en = <0>;
+	lcd_cmap_en         = <0>;
+	lcd_fsync_en        = <0>;
+	lcd_fsync_act_time  = <1000>;
+	lcd_fsync_dis_time  = <1000>;
+	lcd_fsync_pol       = <0>;
+
+	deu_mode            = <0>;
+	lcdgamma4iep        = <22>;
+	smart_color         = <90>;
+
+	lcd_gpio_0 =  <&pio PD 19 GPIO_ACTIVE_HIGH>;
+	pinctrl-0 = <&dsi4lane_pins_a>;
+	pinctrl-1 = <&dsi4lane_pins_b>;
+```
+</details>
+<br>
+Convert this information to C array of structures and save in file rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/soc/cwu50_config.c
+
+<details><summary>cwu50_config.c:</summary>
+
+```c
+struct property_t g_lcd0_config_soc[] = {
+    {
+        .name = "lcd_used",
+        .type = PROPERTY_INTGER,
+        .v.value = 1,
+    },
+    {
+        .name = "lcd_driver_name",
+        .type = PROPERTY_STRING,
+        .v.str = "cwu50",
+    },
+    {
+        .name = "lcd_backlight",
+        .type = PROPERTY_INTGER,
+        .v.value = 50,
+    },
+    {
+        .name = "lcd_if",
+        .type = PROPERTY_INTGER,
+        .v.value = 4,
+    },
+    {
+        .name = "lcd_x",
+        .type = PROPERTY_INTGER,
+        .v.value = 720,
+    },
+    {
+        .name = "lcd_y",
+        .type = PROPERTY_INTGER,
+        .v.value = 1280,
+.
+.
+.        
+```
+</details>
+<br>
+<details><summary>Need add this config file to RTT build:</summary>
+
+```patch
+diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/SConscript b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/SConscript
+
++if GetDepend('MIPI_DSI_LCD_CWU50'):
++    disp2_src += ['./source/disp2/soc/cwu50_config.c']
+```
+</details>
+<br>
+<details><summary>And define config values:</summary>
+
+```patch
+diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/soc/Kconfig b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/soc/Kconfig
++config MIPI_DSI_LCD_CWU50
++      bool "Clockworkpi uConsole R01 board with MIPI DSI display CWU50"
++      default n
++      ---help---
++        Clockworkpi uConsole R01 board with MIPI DSI display CWU50
+```
+</details>
+<br>
+<details><summary>RTT cuts off CONFIG_ prefix so redefine this:</summary>
+
+```patch
+diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/kconfig.h b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/kconfig.h
++#if defined(MIPI_DSI_LCD_CWU50)
++#define CONFIG_MIPI_DSI_LCD_CWU50 1
++#endif
+```
+</details>
+<br>
+
+### Config for uConsole R01 board
+
+Create common config for board that include driver and config structure:
+
+<details><summary>Kconfig:</summary>
+
+```patch
+diff --git a/rt-thread/bsp/allwinner/libraries/drivers/Kconfig b/rt-thread/bsp/allwinner/libraries/drivers/Kconfig
+ choice
+     prompt "Choose Board"
++    config BSP_USING_CWP_UC_R01
++        bool "ClockworkPi uConsole R01 board"
++        select LCD_SUPPORT_CWU50
++        select MIPI_DSI_LCD_CWU50
++        select ARCH_SUN20IW1
+```
+</details>
+<br>
+<details><summary>.config:</summary>
+
+```patch
+diff --git a/rt-thread/bsp/allwinner/d1s_d1h/.config b/rt-thread/bsp/allwinner/d1s_d1h/.config
++CONFIG_LCD_SUPPORT_CWU50=y
++CONFIG_MIPI_DSI_LCD_CWU50=y
+```
+</details>
+<br>
+
+### After all modification 
+
+RT-Thread console output shown driver init:
+```sh
+Hello RISC-V
+raoyiming +++ LCD_open_flow
+<0>raoyiming +++ sunxi_lcd_gpio_set_value
+<0>raoyiming +++ LCD_panel_init
+```
+
+Can't know if Display works as I didn'r have uConsole, is could tested by command:
+```sh
+lcd_draw_point 100 100
+```
 
 ## LCD Display driver for RGB Display
 
@@ -1700,6 +1952,6 @@ diff --git a/rt-thread/bsp/allwinner/d1s_d1h/.config b/rt-thread/bsp/allwinner/d
 
 After all modification Sipeed Lichee RV - RGB LCD Display successfully started, tested by command:
 ```sh
-lcd_draw_point 100 100:   
+lcd_draw_point 100 100
 ```
 ![lichee_lcd_rgb_work](Pics/lichee_lcd_rgb_work.jpg)

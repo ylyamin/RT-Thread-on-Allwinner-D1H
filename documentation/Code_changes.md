@@ -15,6 +15,8 @@ This document describes changes in the code compare of to the original repo.
 
 ### TODO:
 - uConsole display support
+- Battery not garanted
+
 - try [PR](https://github.com/RT-Thread/rt-thread/pull/9142) for d1s in d1h
 - create RTT mirror and new PR for d1h common folder
 - create new PR for display drivers

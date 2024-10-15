@@ -18,11 +18,14 @@ RT-Thread could run in ClockworkPi DevTerm R01 and manage MIPI DSI LCD Display
 
 ![devterm_lcd_mipi_work.jpg](documentation/Pics/devterm_lcd_mipi_work.jpg)
 
+Hope RT-Thread could run in ClockworkPi uConsole R01 and manage MIPI DSI LCD Display. But can't test as I didn't have uConsole.
+
 Also could run in Sipeed Lichee RV and manage RGB LCD Display [lichee_lcd_rgb_work](documentation/Pics/lichee_lcd_rgb_work.jpg)
 
 # Installation
 In repository exist pre-builded images for SD card in folder [image](image), need to flash it to SD card and install to device.
 - For ClockworkPi DevTerm R01 board please use [image/sd_image_devterm.img](image/sd_image_devterm.img)
+- For ClockworkPi uConsole R01 board please use [image/sd_image_uconsole.img](image/sd_image_uconsole.img)
 - For Sipeed Lichee RV board please use [image/sd_image_lichee.img](image/sd_image_lichee.img)
 
 ## Windows

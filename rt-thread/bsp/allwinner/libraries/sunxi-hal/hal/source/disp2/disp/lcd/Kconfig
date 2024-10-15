@@ -190,3 +190,9 @@ config LCD_SUPPORT_ICN9707_480x1280
     default n
     ---help---
         If you want to support ICN9707_480x1280 panel for display driver, select it.
+
+config LCD_SUPPORT_CWU50
+    bool "LCD support CWU50 panel"
+    default n
+    ---help---
+        If you want to support CWU50 panel for display driver, select it.
