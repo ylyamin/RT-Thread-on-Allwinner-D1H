@@ -1,87 +1,26 @@
-# Overview
-This is an experimentation with the [RT-Thread Operating System](https://www.rt-thread.io/) with the [Allwinner D1H](https://d1.docs.aw-ol.com/en/) RISC-V SOC and a Collection of Bootloaders and Developer environment for programming and debugging.  
+# Makefile and Hardware changes
 
-Executed at hardware such as [ClockworkPi DevTerm R01](https://www.clockworkpi.com/home-devterm) and [Sipeed Lichee RV + Dock](https://wiki.sipeed.com/hardware/en/lichee/RV/Dock.html).   
+In this chapter I more detailed explain repository structure Makefile and what Hardware changes and extension was done.<br>
+https://github.com/ylyamin/RT-Thread-on-Allwinner-D1H
 
-The intention is to easily run peripherals in D1, exactly Display. RT-Thread OS was chosen because it looks like has the most extensive HAL layer for D1, similar to the [Linux kernel](https://github.com/cuu/last_linux-5.4/tree/master/drivers/video/fbdev/sunxi/) but not so overcomplicated.
 
-At the original repository [RT-Thread](https://github.com/RT-Thread/rt-thread) the compilation is not streamlined for D1H [^1].
-So was performed fork from [v5.0.2](https://github.com/RT-Thread/rt-thread/releases/tag/v5.0.2) and introduced several changes to make it runnable in D1H. Added also bootloaders, compiler, debugger, build system.
-
-Introduced code changes described in [Code_changes](documentation/Code_changes.md) document.
-
- > [^1]: At time when I'm tried to compile was [issue 9063](https://github.com/RT-Thread/rt-thread/issues/9063) after it was solved by [PR](https://github.com/RT-Thread/rt-thread/pull/9142) in Master.
-
-## Current progress
-
-RT-Thread could run in ClockworkPi DevTerm R01 and manage MIPI DSI LCD Display  
-
-![devterm_lcd_mipi_work.jpg](documentation/Pics/devterm_lcd_mipi_work.jpg)
-
-Also could run in Sipeed Lichee RV and manage RGB LCD Display [lichee_lcd_rgb_work](documentation/Pics/lichee_lcd_rgb_work.jpg)
-
-# Installation
-In repository exist pre-builded images for SD card in folder [image](image), need to flash it to SD card and install to device.
-- For ClockworkPi DevTerm R01 board please use [image/sd_image_devterm.img](image/sd_image_devterm.img)
-- For Sipeed Lichee RV board please use [image/sd_image_lichee.img](image/sd_image_lichee.img)
-
-## Windows
-Could use https://etcher.balena.io/#download-etcher for flash image to SD card.
-
-## Linux
-Could use command 
-```sh
-make sd_burn
-```
-Or
-```sh
-sudo dd if=image/sd_image_lichee.img of=/dev/sdb
-```
-*where /dev/sdb - your SD card device
-
-# Run
-Configure UART adapter to 115200 baud rate, 8N1. And connect to UART pins as shown in [Hardware section](#hardware).    
-
-Insert flashed SD card to device and power on, should see at the end of output like this:
-```
- \ | /
-- RT -     Thread Smart Operating System
- / | \     5.0.2 build Jun  9 2024 21:11:05
- 2006 - 2022 Copyright by RT-Thread team
-hal_sdc_create 0
-card_detect insert
-Initial card success. capacity :15200MB
-sdmmc bytes_per_secotr:200, sector count:1db0000
-not found partition of mbr, construct sd0 at offset 8M, size:0xffffffffb5800000
-[D/FAL] (fal_flash_init:47) Flash device |                  sdcard0 | addr: 0x00000000 | len: 0xb6000000 | blk_size: 0x00000200 |initialized finish.
-[I/FAL] ==================== FAL partition table ====================
-[I/FAL] | name       | flash_dev |   offset   |    length  |
-[I/FAL] -------------------------------------------------------------
-[I/FAL] | download   | sdcard0   | 0x00800000 | 0x00800000 |
-[I/FAL] | easyflash  | sdcard0   | 0x01000000 | 0x00100000 |
-[I/FAL] | filesystem | sdcard0   | 0x01100000 | 0x00c00000 |
-[I/FAL] =============================================================
-[I/FAL] RT-Thread Flash Abstraction Layer initialize success.
-Hello RISC-V
-msh />Mount "sd0p0" on "/" fail
-```
 ## Repo structure
 ```sh
 $tree -L 2
 
 RT-Thread-on-Allwinner-D1H
-    ├── bootloaders
-    │   ├── opensbi
-    │   ├── sun20i_d1_spl
-    │   ├── u-boot         # U-boot repo. Folder originally not exist, will be created after make will executed
-    │   └── xfel
-    │   ├── opensbi_config
+    ├── bootloaders                             
+    │   ├── opensbi                             
+    │   ├── sun20i_d1_spl                       
+    │   ├── u-boot                              # U-boot repo. Folder originally not exist, will be created after make will executed
+    │   └── xfel                                
+    │   ├── opensbi_config                     
     ├── build
-    │   ├── sd.bin
-    │   ├── sun20i-d1-lichee-rv-dock.dtb
-    │   ├── toc1_D1H.cfg
-    │   └── .gdbinit
-    ├── debugger            # Folder will be created by make
+    │   ├── sd.bin                             
+    │   ├── sun20i-d1-lichee-rv-dock.dtb       
+    │   ├── toc1_D1H.cfg                       
+    │   └── .gdbinit                           
+    ├── debugger                                # Folder will be created by make
     │   ├── bl702_cklink_whole_img_v2.2.bin
     │   ├── blisp
     ├── documentation
@@ -97,7 +36,7 @@ RT-Thread-on-Allwinner-D1H
     ├── rt-thread
     │   ├── bsp/allwinner/d1s_d1h/
     │   ...
-    ├── toolchain           # Folder will be created by make
+    ├── toolchain                                # Folder will be created by make
     │   └── riscv64-linux-musleabi_for_x86_64-pc-linux-gnu
     │   └── riscv64-glibc-gcc-thead_20200702     
     │   └── T-HEAD_DebugServer
@@ -106,6 +45,7 @@ RT-Thread-on-Allwinner-D1H
     ├── LICENSE
     └── README.md
 ```
+
 ## Environment
 Tested on Ubuntu 22.04.3 64x. On machine need to be installed make environment:
 ```sh
@@ -179,6 +119,15 @@ For flash to SD card:
 ```sh
 make sd_burn
 ```
+Or
+```sh
+sudo dd if=image/sd_image_lichee.img of=/dev/sdb
+```
+*where /dev/sdb - your SD card device
+
+## Windows
+Could use https://etcher.balena.io/#download-etcher for flash image to SD card.
+
 
 ## Debugging
 For debugging used Sipeed RV-Debugger Plus with [T-Head CKLink firmware](https://github.com/bouffalolab/bouffalo_sdk/tree/master/tools/cklink_firmware).   
@@ -224,23 +173,11 @@ Restoring binary file rt-thread/bsp/allwinner/d1s_d1h/rtthread.bin into memory (
 - MicroSD_Sniffer
 
 ### ClockworkPi DevTerm R01 assembly
-![Devterm_R01_assembly](documentation/Pics/Devterm_R01_assembly.jpg)
+![Devterm_R01_assembly](Pics/Devterm_R01_assembly.jpg)
 
 I figure out that integrated UART work very unstable. According [discussion](https://forum.clockworkpi.com/t/devterm-r-01-ext-board-uart-is-read-only/8704)
 "The problem is that the CH340C provides 5 V logic levels, whereas the D1 only supports 3.3 V I/O...A better solution would be to solder wires to pins 2 and 3 of the CH340C and use a different USB-UART adapter that runs at the correct voltage." So I do this:
-![Devterm_R01_uart](documentation/Pics/Devterm_R01_uart.jpg)
+![Devterm_R01_uart](Pics/Devterm_R01_uart.jpg)
 
 ### Sipeed Lichee RV assembly
-![Lichee_RV_assembly](documentation/Pics/Lichee_RV_assembly.jpg)
-
-## Links
-- https://linux-sunxi.org/Allwinner_Nezha  
-- https://andreas.welcomes-you.com/boot-sw-debian-risc-v-lichee-rv
-- https://github.com/clockworkpi/DevTerm/tree/main/Code/patch/d1
-- https://github.com/smaeul/linux/tree/d1/all
-
-## TODO
-- Keyboard, trackball
-- Build RTT gui
-
-
+![Lichee_RV_assembly](Pics/Lichee_RV_assembly.jpg)

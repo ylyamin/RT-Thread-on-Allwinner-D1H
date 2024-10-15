@@ -331,8 +331,8 @@ u-boot/tools/mkimage -T script -O linux -d bootscr.txt boot.scr
 ```
 
 So due booting process SPL jump to OpenSBI.<br>
+<details><summary>UART output:</summary>
 
-UART output:
 ```sh
 OpenSBI v0.9-188-gd78eef3
    ____                    _____ ____ _____
@@ -380,12 +380,13 @@ Boot HART MHPM Count      : 0
 Boot HART MIDELEG         : 0x0000000000000222
 Boot HART MEDELEG         : 0x000000000000b109
 ```
-
+</details>
+<br>
 OpenSBI then jump to U-Boot.<br>
 When U-boot loaded is will try to found boot partition and execute boot.scr script.<br>
 U-boot will check that Image.gz have special booting image header. Then load Linux kernel to DDR memory.<br>
+<details><summary>UART output:</summary>
 
-UART output:
 ```sh
 U-Boot 2022.04-rc2-33696-gac8ca120a5 (Mar 05 2022 - 15:05:03 +0100)
 
@@ -420,7 +421,8 @@ Starting kernel ...
 
 [    0.000000] Linux version 5.17.0-rc2-379425-g06b026a8b714-dirty (yury@yury) (riscv64-unknown-linux-gnu-gcc (C-SKY RISCV Tools V1.8.4 B20200702) 8.1.0, GNU ld (GNU Binutils) 2.32) #20 PREEMPT Mon Sep 9 07:05:32 UTC 2024
 ```
-
+</details>
+<br>
 ![boot_process_3.png](Pics/boot_process_3.png) 
 
 7. Start SBI
@@ -684,8 +686,8 @@ gp             0x4052a960       0x4052a960 <sun8iw20_hw_clks+920>
 ```
 
 Usefull articles:
-https://github.com/orangecms/RV-Debugger-BL702/tree/nezha
-https://github.com/bouffalolab/bouffalo_sdk/tree/master/tools/cklink_firmware
-https://gist.github.com/btashton/6af120ff16d6beeccbbde74e6733535c
-https://github.com/cjacker/cklink-lite-fw-convertor
-https://github.com/XUANTIE-RV/zero_stage_boot/tree/master
+- https://github.com/orangecms/RV-Debugger-BL702/tree/nezha
+- https://github.com/bouffalolab/bouffalo_sdk/tree/master/tools/cklink_firmware
+- https://gist.github.com/btashton/6af120ff16d6beeccbbde74e6733535c
+- https://github.com/cjacker/cklink-lite-fw-convertor
+- https://github.com/XUANTIE-RV/zero_stage_boot/tree/master
