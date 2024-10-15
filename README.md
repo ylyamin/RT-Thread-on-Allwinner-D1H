@@ -1,7 +1,7 @@
 # Overview
 This is an experimentation with the [RT-Thread Operating System](https://www.rt-thread.io/) with the [Allwinner D1H](https://d1.docs.aw-ol.com/en/) RISC-V SOC and a Collection of Bootloaders and Developer environment for programming and debugging.  
 
-Executed at hardware such as [ClockworkPi DevTerm R01](https://www.clockworkpi.com/home-devterm) and [Sipeed Lichee RV + Dock](https://wiki.sipeed.com/hardware/en/lichee/RV/Dock.html).   
+Executed at hardware such as [ClockworkPi DevTerm R01](https://www.clockworkpi.com/home-devterm) and [Sipeed Lichee RV + Dock](https://wiki.sipeed.com/hardware/en/lichee/RV/Dock.html). Also hope it will work at [ClockworkPi uConsole R01](https://www.clockworkpi.com/uconsole).  
 
 The intention is to easily run peripherals in D1, exactly Display. RT-Thread OS was chosen because it looks like has the most extensive HAL layer for D1, similar to the [Linux kernel](https://github.com/cuu/last_linux-5.4/tree/master/drivers/video/fbdev/sunxi/) but not so overcomplicated.
 
@@ -14,18 +14,18 @@ Introduced code changes described in [Code_changes](documentation/Code_changes.m
 
 ## Current progress
 
-RT-Thread could run in ClockworkPi DevTerm R01 and manage MIPI DSI LCD Display  
+1. RT-Thread could run in ClockworkPi DevTerm R01 and manage MIPI DSI LCD Display  
 
 ![devterm_lcd_mipi_work.jpg](documentation/Pics/devterm_lcd_mipi_work.jpg)
 
-Hope RT-Thread could run in ClockworkPi uConsole R01 and manage MIPI DSI LCD Display. But can't test as I didn't have uConsole.
+2. Hope RT-Thread could run in ClockworkPi uConsole R01 and manage MIPI DSI LCD Display. But can't test as I didn't have uConsole.
 
-Also could run in Sipeed Lichee RV and manage RGB LCD Display [lichee_lcd_rgb_work](documentation/Pics/lichee_lcd_rgb_work.jpg)
+3. Also could run in Sipeed Lichee RV and manage RGB LCD Display [lichee_lcd_rgb_work](documentation/Pics/lichee_lcd_rgb_work.jpg)
 
 # Installation
 In repository exist pre-builded images for SD card in folder [image](image), need to flash it to SD card and install to device.
 - For ClockworkPi DevTerm R01 board please use [image/sd_image_devterm.img](image/sd_image_devterm.img)
-- For ClockworkPi uConsole R01 board please use [image/sd_image_uconsole.img](image/sd_image_uconsole.img)
+- For ClockworkPi uConsole R01 board please use [image/sd_image_uconsole.img](image/sd_image_uconsole.img) (not tested yet)
 - For Sipeed Lichee RV board please use [image/sd_image_lichee.img](image/sd_image_lichee.img)
 
 ## Windows
@@ -93,9 +93,11 @@ RT-Thread-on-Allwinner-D1H
     │   ├── Pics
     │   ├── RISC-V    
     │   ├── Sipeed_Lichee_RV
+    │   ├── uConsole
     │   └── USB
     ├── image
     │   ├── sd_image_devterm.img
+    │   ├── sd_image_uconsole.img
     │   └── sd_image_lichee.img
     ├── rt-thread
     │   ├── bsp/allwinner/d1s_d1h/
@@ -219,6 +221,7 @@ Restoring binary file rt-thread/bsp/allwinner/d1s_d1h/rtthread.bin into memory (
 
 ## Hardware
 - [ClockworkPi DevTerm R01](https://www.clockworkpi.com/home-devterm)
+- [ClockworkPi uConsole R01](https://www.clockworkpi.com/uconsole)
 - [Sipeed Lichee RV + Dock](https://wiki.sipeed.com/hardware/en/lichee/RV/Dock.html)
 - Lichee RV Dock extension LCD adapter board
 - 4.3 RGB LCD Display (043026-N6(ML)) with IC ST7001s (SPI)

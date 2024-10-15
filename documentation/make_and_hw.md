@@ -29,9 +29,11 @@ RT-Thread-on-Allwinner-D1H
     │   ├── Pics
     │   ├── RISC-V    
     │   ├── Sipeed_Lichee_RV
+    │   ├── uConsole
     │   └── USB
     ├── image
     │   ├── sd_image_devterm.img
+    │   ├── sd_image_uconsole.img
     │   └── sd_image_lichee.img
     ├── rt-thread
     │   ├── bsp/allwinner/d1s_d1h/
@@ -165,6 +167,7 @@ Restoring binary file rt-thread/bsp/allwinner/d1s_d1h/rtthread.bin into memory (
 
 ## Hardware
 - [ClockworkPi DevTerm R01](https://www.clockworkpi.com/home-devterm)
+- [ClockworkPi uConsole R01](https://www.clockworkpi.com/uconsole)
 - [Sipeed Lichee RV + Dock](https://wiki.sipeed.com/hardware/en/lichee/RV/Dock.html)
 - Lichee RV Dock extension LCD adapter board
 - 4.3 RGB LCD Display (043026-N6(ML)) with IC ST7001s (SPI)
@@ -178,6 +181,9 @@ Restoring binary file rt-thread/bsp/allwinner/d1s_d1h/rtthread.bin into memory (
 I figure out that integrated UART work very unstable. According [discussion](https://forum.clockworkpi.com/t/devterm-r-01-ext-board-uart-is-read-only/8704)
 "The problem is that the CH340C provides 5 V logic levels, whereas the D1 only supports 3.3 V I/O...A better solution would be to solder wires to pins 2 and 3 of the CH340C and use a different USB-UART adapter that runs at the correct voltage." So I do this:
 ![Devterm_R01_uart](Pics/Devterm_R01_uart.jpg)
+
+### ClockworkPi uConsole R01 assembly
+Didn't have uConsole board. Can't check
 
 ### Sipeed Lichee RV assembly
 ![Lichee_RV_assembly](Pics/Lichee_RV_assembly.jpg)
