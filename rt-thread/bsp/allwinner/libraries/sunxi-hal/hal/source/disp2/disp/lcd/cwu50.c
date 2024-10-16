@@ -35,8 +35,13 @@ static s32 LCD_close_flow(u32 sel)
     return 0;
 }
 
+extern void _axp_LCD_control(bool on);
+
 static void LCD_power_on(u32 sel)
 {
+	_axp_LCD_control(0);    //power off
+	sunxi_lcd_delay_us(200);
+	_axp_LCD_control(1);    //power on
     sunxi_lcd_power_enable(sel, 0);//config lcd_power pin to open lcd power0
     sunxi_lcd_pin_cfg(sel, 1);
 
@@ -299,17 +304,13 @@ static struct lcd_setting_table lcd_init_setting[] = {
 
 };
 
-extern void _axp_LCD_control(bool on);
-
 static void LCD_panel_init(u32 sel)
 {
-	
     u32 i;
     printk("<0>raoyiming +++ LCD_panel_init\n");
 	
     /**/
     panel_rst(1);
-	_axp_LCD_control(1);
     sunxi_lcd_delay_ms(10);
     
 	panel_rst(0);

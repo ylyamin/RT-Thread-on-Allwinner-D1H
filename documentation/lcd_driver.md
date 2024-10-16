@@ -1479,33 +1479,35 @@ lcd_draw_point 100 100
 
 ## uConsole dispaly
 
-uConsole display initialisation process looks like very similar as DevTerm 6.86 inch LCD Dispaly.<br>
+uConsole display initialisation process looks like very similar as DevTerm LCD Dispaly.<br>
 I skip most of explanation as is the same as was before for Devterm MIPI DSI variant.<br>
-Please refer to paragraph abow for additional information.
+Please refer to paragraph above for additional information about each step.
 
-From path to uConsole R01 https://github.com/clockworkpi/uConsole/blob/master/Code/patch/r01/20230614/r01_v1.01_230614.patch<br>
-extracted driver for cwu50 display.
+From ClockworkPi path to uConsole R01 https://github.com/clockworkpi/uConsole/blob/master/Code/patch/r01/20230614/r01_v1.01_230614.patch<br>
+I extracted driver for cwu50 display, lets put it to **lcd** folder:
+- rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/lcd/cwu50.c
+- rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/lcd/cwu50.h
 
-- rt-thread\bsp\allwinner\libraries\sunxi-hal\hal\source\disp2\disp\lcd\cwu50.c
-- rt-thread\bsp\allwinner\libraries\sunxi-hal\hal\source\disp2\disp\lcd\cwu50.h
+Looking to ClockworkPi repository looks like they have datasheet for uConsole display IC [JD9365DA-H3_DS_V0.01_20200819.pdf](uConsole/JD9365DA-H3_DS_V0.01_20200819.pdf). Is JADART JD9365DA-H3 Single chip solution for a WXGA a-Si type LCD display.
 
-In LCD_panel_init modify siguense to use axp228:
+At "9.5.2. Power on sequence for differential power mode" paragraph defined Power on sequence diagram:
+
+![display_jadart_power.png](Pics/display_jadart_power.png)
+
+Lets modify LCD_power_on function in cwu50.c to use axp228 power manager:
 
 ```patch
 +extern void _axp_LCD_control(bool on);
 
-static void LCD_panel_init(u32 sel)
+static void LCD_power_on(u32 sel)
 {
-	
-    u32 i;
-    printk("<0>raoyiming +++ LCD_panel_init\n");
-	
-    /**/
-    panel_rst(1);
-+	_axp_LCD_control(1);
++	_axp_LCD_control(0);    //power off
++	sunxi_lcd_delay_us(200);
++	_axp_LCD_control(1);    //power on
+    sunxi_lcd_power_enable(sel, 0);//config lcd_power pin to open lcd power0
 ```
 
-<details><summary>Need add this driver file to RTT build:</summary>
+<details><summary>Add this driver file to RTT build:</summary>
 
 ```patch
 diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/SConscript b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/SConscript
@@ -1556,8 +1558,8 @@ diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/l
 
 ### Add configuration for this board:   
 
-From path to uConsole R01 https://github.com/clockworkpi/uConsole/blob/master/Code/patch/r01/20230614/r01_v1.01_230614.patch<br>
-extracted Device tree file uc_board.dts with LCD difinition.
+From ClockworkPi path to uConsole R01 https://github.com/clockworkpi/uConsole/blob/master/Code/patch/r01/20230614/r01_v1.01_230614.patch<br>
+I extracted Device tree file uc_board.dts with LCD difinition.
 
 <details><summary>uc_board.dts:</summary>
 
@@ -1687,7 +1689,6 @@ diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/kconfig.h b/rt-thre
 <br>
 
 ### Config for uConsole R01 board
-
 Create common config for board that include driver and config structure:
 
 <details><summary>Kconfig:</summary>
@@ -1716,7 +1717,8 @@ diff --git a/rt-thread/bsp/allwinner/d1s_d1h/.config b/rt-thread/bsp/allwinner/d
 
 ### After all modification 
 
-RT-Thread console output shown driver init:
+in RT-Thread console output shown driver init:
+
 ```sh
 Hello RISC-V
 raoyiming +++ LCD_open_flow
@@ -1724,7 +1726,8 @@ raoyiming +++ LCD_open_flow
 <0>raoyiming +++ LCD_panel_init
 ```
 
-Can't know if Display works as I didn'r have uConsole, is could tested by command:
+Can't know if Display works as I didn'r have uConsole, previos Devterm implementation work perfectly.<br>
+This driver could be tested by command:
 ```sh
 lcd_draw_point 100 100
 ```
