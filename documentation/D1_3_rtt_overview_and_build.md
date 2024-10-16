@@ -1,5 +1,7 @@
-## RT-Thread overview
+# D1-3. RT-Thread overview and Build
+[Prev chapter](D1_2_boot_process.md) | [Index](D1_0_index.md) | [Next chapter](D1_4_make_and_hw.md)
 
+## RT-Thread overview
 RT-Thread OS was chosen because it looks like has the most extensive HAL layer (Hardware Abstraction Layer) for Allwinner D1.<br>
 HAL is similar to the Linux kernel but not so overcomplicated and is placed in one folder.<br>
 RT-Thread repository: https://github.com/RT-Thread/rt-thread/
@@ -126,11 +128,11 @@ Is used configuration menu entries defined in Kconfig files in different project
 When we call menuconfig generated config file rt-thread/bsp/allwinner/d1s/.config and based of this generated C header with define expressions rt-thread/bsp/allwinner/d1s/rtconfig.h<br> 
 Also this config values used in SConscript scripts used by Scons build: rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/SConscript<br>
 
-### Compile RT-Thread for D1H platform:
+## Compile RT-Thread for D1H platform:
 
 I tried to compile RTT for D1H, first try with Master brunch.
 
-#### RT-Thread [Master](https://github.com/RT-Thread/rt-thread/commit/2866da37a02dae72200e02ad87480718002760a5) or [v5.1.0](https://github.com/RT-Thread/rt-thread/releases/tag/v5.1.0)
+### RT-Thread [Master](https://github.com/RT-Thread/rt-thread/commit/2866da37a02dae72200e02ad87480718002760a5) or [v5.1.0](https://github.com/RT-Thread/rt-thread/releases/tag/v5.1.0)
 
 1) bsp/allwinner/d1/ - not compiled looks outdated, had error due compilation:
 ```sh
@@ -147,7 +149,7 @@ board/board.c:45:5: error: unknown type name 'rt_mmu_info'
       |                              fops
 ```
 
-#### RT-Thread [v5.0.2](https://github.com/RT-Thread/rt-thread/releases/tag/v5.0.2):  
+### RT-Thread [v5.0.2](https://github.com/RT-Thread/rt-thread/releases/tag/v5.0.2):  
 
 3) bsp/allwinner/d1/ - not compiled looks outdated, had error due compilation:
 ```sh
@@ -159,7 +161,7 @@ board/board.c:45:5: error: unknown type name 'rt_mmu_info'
 4) bsp/allwinner/d1s/ - **compiled**
 Is generat rt-thread/bsp/allwinner/d1s/rtthread.bin kenel binary file, but when I run it in board was no any output to UART. 
 
-#### Conclusion:
+### Conclusion:
 
 At the original repository [RT-Thread](https://github.com/RT-Thread/rt-thread) the compilation is not streamlined for D1H.<br>
 Create a [issue 9063](https://github.com/RT-Thread/rt-thread/issues/9063). (Later this issue was solved by [PR](https://github.com/RT-Thread/rt-thread/pull/9142) in Master)
@@ -171,7 +173,7 @@ So as v5.0.2 seems to be the closest to be success for D1H - was performed fork 
 
 Created repository in github: https://github.com/ylyamin/RT-Thread-on-Allwinner-D1H
 
-## Change bootloaders
+### Change bootloaders
 
 How in RTT prepares an image for booting D1s or D1H ?<br>
 In file rt-thread/bsp/allwinner/d1s/rtconfig.py defined:
@@ -307,9 +309,9 @@ Boot HART MEDELEG         : 0x000000000000b109
 </details>
 <br>
 
-## Change UART for D1H
+### Change UART for D1H
 
-### Configure UART pins for D1H
+#### Configure UART pins for D1H
 ```patch
 diff --git a/bsp/allwinner/d1s_d1h/.config b/bsp/allwinner/d1s_d1h/.config
 index bc8986a8e..17f622d73 100644
@@ -322,7 +324,7 @@ index bc8986a8e..17f622d73 100644
 +CONFIG_UART0_RX_USING_GPIOB9=y
 ```
 
-### Change UART baud rate in driver
+#### Change UART baud rate in driver
 ```patch
 diff --git a/bsp/allwinner/libraries/drivers/drv_uart.c b/bsp/allwinner/libraries/drivers/drv_uart.c
 index 18956e5e8..7b7efb7c4 100644
@@ -336,7 +338,7 @@ index 18956e5e8..7b7efb7c4 100644
 +#define UART_DEFAULT_BAUDRATE 115200
 ```
 
-### Extend config to support simultaneously D1S and D1H SOC
+#### Extend config to support simultaneously D1S and D1H SOC
 ```patch
 git diff f40e63c...16181b0 > diff.patch
 
@@ -389,8 +391,7 @@ hal_sdc_create 0
 card_detect insert
 ```
 
-## Problem with SD card
-
+### Problem with SD card
 Looks like is frozen on rt_thread_mdelay function by some reason in files
 - bsp/allwinner/libraries/drivers/sdmmc/drv_sdmmc.c
 - bsp/allwinner/libraries/sunxi-hal/include/hal/sdmmc/osal/RT-Thread/_os_time.h
@@ -462,3 +463,5 @@ msh />Mount "sd0p0" on "/" fail
 msh />
 msh />
 ```
+
+[Prev chapter](D1_2_boot_process.md) | [Index](D1_0_index.md) | [Next chapter](D1_4_make_and_hw.md)

@@ -1,4 +1,5 @@
-# Makefile and Hardware changes
+# D1-4. Makefile and Hardware changes
+[Prev chapter](D1_3_rtt_overview_and_build.md) | [Index](D1_0_index.md) | [Next chapter](D1_5_lcd_driver.md)
 
 In this chapter I more detailed explain repository structure Makefile and what Hardware changes and extension was done.<br>
 https://github.com/ylyamin/RT-Thread-on-Allwinner-D1H
@@ -187,3 +188,5 @@ Didn't have uConsole board. Can't check
 
 ### Sipeed Lichee RV assembly
 ![Lichee_RV_assembly](Pics/Lichee_RV_assembly.jpg)
+
+[Prev chapter](D1_3_rtt_overview_and_build.md) | [Index](D1_0_index.md) | [Next chapter](D1_5_lcd_driver.md)

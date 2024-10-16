@@ -1,4 +1,5 @@
-# Boot process
+# D1-2. Boot process
+[Prev chapter](D1_1_introduction.md) | [Index](D1_0_index.md) | [Next chapter](D1_3_rtt_overview_and_build.md)
 
 Lets figure out how Allwinner D1H booting.<br> 
 In this chapter firstly we will look to Booting ROM, existing bootloaders best practice in example with Linux and RT-Thread, also looks to JTAG and GDB debugging.
@@ -691,3 +692,5 @@ Usefull articles:
 - https://gist.github.com/btashton/6af120ff16d6beeccbbde74e6733535c
 - https://github.com/cjacker/cklink-lite-fw-convertor
 - https://github.com/XUANTIE-RV/zero_stage_boot/tree/master
+
+[Prev chapter](D1_1_introduction.md) | [Index](D1_0_index.md) | [Next chapter](D1_3_rtt_overview_and_build.md)

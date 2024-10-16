@@ -1,4 +1,6 @@
-# Devterm Keyboard
+# D1-6. Devterm Keyboard
+[Prev chapter](D1_5_lcd_driver.md) | [Index](D1_0_index.md)
+
 So we have working display as output from the board now need to have way to input information - use keyboard.
 
 ## Keyboard connection
@@ -1787,3 +1789,5 @@ $TOOLCHAIN_INSTALL_DIR/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin/riscv6
 
 - linux ehci reg
 - DMA, MMU ?
+
+[Prev chapter](D1_5_lcd_driver.md) | [Index](D1_0_index.md)

@@ -1,4 +1,5 @@
-# LCD Display driver
+# D1-5. LCD Display driver
+[Prev chapter](D1_4_make_and_hw.md) | [Index](D1_0_index.md) | [Next chapter](D1_6_usb_keyboard.md)
 
 In this chapter we will learn haw control display in Devterm (found is MIPI DSI LCD display).<br>
 And some experiment with uConsole dispaly.<br>
@@ -1958,3 +1959,5 @@ After all modification Sipeed Lichee RV - RGB LCD Display successfully started, 
 lcd_draw_point 100 100
 ```
 ![lichee_lcd_rgb_work](Pics/lichee_lcd_rgb_work.jpg)
+
+[Prev chapter](D1_4_make_and_hw.md) | [Index](D1_0_index.md) | [Next chapter](D1_6_usb_keyboard.md)
