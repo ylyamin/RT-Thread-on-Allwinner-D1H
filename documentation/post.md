@@ -33,3 +33,5 @@ lcd_draw_point 100 100
 ```
 
 - Battery work not guaranteed
+
+Maybe someone can help me with USB driver, please. I am ready for pull requests.

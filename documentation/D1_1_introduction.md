@@ -13,7 +13,7 @@ Next chapters will describe:
 Long story short:<br>
 Initially my dream was to understand how Operating System work at a low level mean: scheduler, memory management and drivers.<br>
 And with Allwinner D1H my dream has come true ... sort of.<br>
-Now my hobby is reverse engineering Allwinner products.<br>
+Now seems my hobby is reverse engineering Allwinner products.<br>
 
 I'm not professional programmer, at the beginning thought that studying OS by diving to Linux Kernel will be too complex and I need to start from ground. Interested in the RISC-V architecture. Play with RISC-V virtualizer is good but not so fun. I want real hardware but without lots of wires, oscilloscope and soldering, just ready-made solution with user input and output to a display (later at some point I bought a soldering iron).<br>
 
