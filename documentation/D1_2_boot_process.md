@@ -1,8 +1,8 @@
 # D1-2. Boot process
 [Prev chapter](D1_1_introduction.md) | [Index](D1_0_index.md) | [Next chapter](D1_3_rtt_overview_and_build.md)
 
-Lets figure out how Allwinner D1H booting.<br> 
-In this chapter firstly we will look to Booting ROM, existing bootloaders best practice in example with Linux and RT-Thread, also looks to JTAG and GDB debugging.
+Let's figure out how Allwinner D1H booting.<br> 
+In this chapter firstly we will look to Booting ROM, then existing bootloaders best practice with examples for Linux and RT-Thread, and also explore JTAG and GDB debugging.
 
 Based on information from this articles:
 * https://linux-sunxi.org/Allwinner_Nezha
@@ -19,7 +19,7 @@ So looking to the D1H User manual [D1_User_Manual_V0.1_Draft_Version.pdf](Allwin
 
 We have two mode of booting: FEL and Media boot.
 
-1. FEL is mode when D1H became special USB device communicate with PC fel tools to execute commands or upload programs.<br>
+1. FEL is mode when D1H became special USB device communicate with PC FEL tools to execute commands or upload programs.<br>
 2. Media boot support fallowing media:
     * SD card
     * eMMC
@@ -28,23 +28,23 @@ We have two mode of booting: FEL and Media boot.
 
 ![D1H_fel_select.png](Pics/D1H_fel_select.png) 
 
-Entering to FEL mode could be through a special FEL button hold it during power-up OR if the BROM doesn't find any valid boot image.<br>
+Entering to FEL mode could be through a special FEL button hold it during power-up OR if the BROM doesn't find any valid boot image is go to FEL.<br>
 According memory layout:
 
 ![D1H_brom_memmory.png](Pics/D1H_brom_memmory.png) 
 
 BROM placed in N-BROM section 48 Kb<br>
-First program will be executed in buildin SRAM A1 32 Kb starting from 0x0000_2000 + could be used 128 Kb of DSP RAM.
+First program will be executed in build-in SRAM A1 32 Kb starting from 0x0000_2000 + could be used 128 Kb of DSP RAM.
 
 External DDR DRAM space is 2 Gb starting from 0x4000_0000:
 
 ![D1H_dram_space.png](Pics/D1H_dram_space.png) 
 
-Is good articale about BROM https://linux-sunxi.org/BROM and deassembling of BROM https://github.com/hno/Allwinner-Info/blob/master/BROM/ffff4000.s
+Is good article about BROM https://linux-sunxi.org/BROM and disassembling of BROM https://github.com/hno/Allwinner-Info/blob/master/BROM/ffff4000.s
 
 ## FEL
 
-Lets look in detail about FEL mode.<br>
+Let’s take a detailed look at FEL mode.<br>
 First install FEL tools to PC, I use xfel:
 ```sh
 $ git clone https://github.com/xboot/xfel
@@ -63,7 +63,7 @@ AWUSBFEX ID=0x00185900(D1/F133) dflag=0x44 dlength=0x08 scratchpad=0x00045000
 ```
 ### How FEL works: 
 
-FEL is actually communicate with BROM by special USB protocol, user can command FEL to do some:<br> 
+FEL is actually communicate with BROM by special USB protocol, user can command FEL to do something:<br> 
 
 1. FEL can execute some actions in chip like:
     ```sh
@@ -72,35 +72,33 @@ FEL is actually communicate with BROM by special USB protocol, user can command 
     ```
 2. Or FEL could load build-in mini program to SRAM starting from 0x0000_2000 and execute.<br>
 
-    For example to initialize external DDR DRAM need to execute command:
-    ```sh
-    $ xfel ddr d1
-    ```  
-
-    That actually will exec rogram with code this initialize clocks,uart and DDR DRAM:<br>
-    * xfel\payloads\d1_f133\d1-ddr\source\sys-clock.c<br>
-    * xfel\payloads\d1_f133\d1-ddr\source\sys-uart.c<br>
-    * xfel\payloads\d1_f133\d1-ddr\source\sys-dram.c<br>
-    
-    In UART output (115200 baud rate) we could see debug about DRAM init:
-    ```sh
-    DRAM only have internal ZQ!!
-    get_pmu_exist() = 4294967295
-    ddr_efuse_type: 0x0
-    [AUTO DEBUG] single rank and full DQ!
-    ddr_efuse_type: 0x0
-    [AUTO DEBUG] rank 0 row = 16
-    [AUTO DEBUG] rank 0 bank = 8
-    [AUTO DEBUG] rank 0 page size = 2 KB 
-    DRAM BOOT DRIVE INFO: %s
-    DRAM CLK = 792 MHz
-    DRAM Type = 3 (2:DDR2,3:DDR3)        
-    DRAMC ZQ value: 0x7b7bfb
-    DRAM ODT value: 0x42.
-    ddr_efuse_type: 0x0
-    DRAM SIZE =1024 M
-    DRAM simple test OK.
-    ```
+   For example to initialize external DDR DRAM need to execute command:
+   ```sh
+   $ xfel ddr d1
+   ```  
+   That actually will execute program with code this initialize clocks, uart and DDR DRAM:<br>
+   - xfel\payloads\d1_f133\d1-ddr\source\sys-clock.c<br>
+   - xfel\payloads\d1_f133\d1-ddr\source\sys-uart.c<br>
+   - xfel\payloads\d1_f133\d1-ddr\source\sys-dram.c<br><br>
+   In UART output (115200 baud rate) we could see debug about DRAM init:
+   ```sh
+   DRAM only have internal ZQ!!
+   get_pmu_exist() = 4294967295
+   ddr_efuse_type: 0x0
+   [AUTO DEBUG] single rank and full DQ!
+   ddr_efuse_type: 0x0
+   [AUTO DEBUG] rank 0 row = 16
+   [AUTO DEBUG] rank 0 bank = 8
+   [AUTO DEBUG] rank 0 page size = 2 KB 
+   DRAM BOOT DRIVE INFO: %s
+   DRAM CLK = 792 MHz
+   DRAM Type = 3 (2:DDR2,3:DDR3)        
+   DRAMC ZQ value: 0x7b7bfb
+   DRAM ODT value: 0x42.
+   ddr_efuse_type: 0x0
+   DRAM SIZE =1024 M
+   DRAM simple test OK.
+   ```
 3. Or FEL could load user program to memory and execute.<br> 
 
 ### This is how we can run user program by FEL:
@@ -168,18 +166,17 @@ Good article about EGON header: https://linux-sunxi.org/EGON
 
 This program first time loaded from SD card by BROM, usually used as Secondary Program Loader.
 
-Secondary Program Loader should do minimum:
-* MCU Clock's for buses and peripheral
-* UART output for debugging
-* Initilyze DDR DRAM where main program/kernel will be executed
+Secondary Program Loader should do the bare minimum:
+* Initialize MCU Clock's for buses and peripheral
+* Initialize UART output for debugging
+* Initialize DDR DRAM where main program/kernel will be executed
 * Load program/kernel from SDcard/Flash to DRAM and handover execution
 
-As SPL can be used U-BOOT that compatible to run Linux karnel.
-
+As SPL can be used U-BOOT that compatible to load Linux karnel.
 lates U-BOOT include eGON header support https://github.com/smaeul/u-boot d1-wip branch.
 But as for RT-thread U-BOOT not needed so I will use old approach: Samuel Holland SPL and old U-BOOT. More in https://linux-sunxi.org/Allwinner_Nezha.
 
-So how to use Samuel Holland SPL. <br>
+How to use Samuel Holland SPL.<br>
 First install riscv compiler. I use t-head patched gcc:
 
 ```sh
@@ -204,7 +201,7 @@ sudo dd if=sun20i_d1_spl/nboot/boot0_sdcard_sun20iw1p1.bin of=/dev/sdX bs=8192 s
 ```
 Sector 256 = (8192 * 16) / 512
 
-Ok when we power board BROM load SPL from SDcard check eGON header and execute SPL.<br>
+Ok when we power board then BROM load SPL from SDcard, check eGON header and execute SPL.<br>
 Then SPL initialize clocks, uart, and DDR DRAM. <br> 
 
 UART output:
@@ -306,7 +303,7 @@ To create TOC1 image need to use u-boot tool mkimage:
 $ u-boot/tools/mkimage -T sunxi_toc1 -d toc1.cfg sd.bin
 ```
 
-Then flash it ti SDcard:
+Then flash it to SDcard:
 ```sh
 $ dd if=sd.bin of=/dev/sdX bs=512 seek=32800
 ```
@@ -331,7 +328,7 @@ To generate boot.scr need to use u-boot tool mkimage:
 u-boot/tools/mkimage -T script -O linux -d bootscr.txt boot.scr
 ```
 
-So due booting process SPL jump to OpenSBI.<br>
+After load TOC1 image SPL jump to OpenSBI.<br>
 <details><summary>UART output:</summary>
 
 ```sh
@@ -383,6 +380,7 @@ Boot HART MEDELEG         : 0x000000000000b109
 ```
 </details>
 <br>
+OpenSBI use DTB file to determine platform.<br>
 OpenSBI then jump to U-Boot.<br>
 When U-boot loaded is will try to found boot partition and execute boot.scr script.<br>
 U-boot will check that Image.gz have special booting image header. Then load Linux kernel to DDR memory.<br>
@@ -424,9 +422,10 @@ Starting kernel ...
 ```
 </details>
 <br>
+
 ![boot_process_3.png](Pics/boot_process_3.png) 
 
-7. Start SBI
+7. Start OpenSBI
 8. Load DTB
 9. Start U-BOOT
 10. Find boot partition and boot.scr
@@ -442,7 +441,7 @@ Linux kernel work in S System mode and interacts with OpenSBI that work in M Mac
 12. Starting kernel
 13. Load root fs
 
-## How to compile Linux kernel byself
+## How to compile Linux kernel
 
 According article https://andreas.welcomes-you.com/boot-sw-debian-risc-v-lichee-rv we can download precompiled image:
 
@@ -563,17 +562,18 @@ msh />
 7. load bin partition with applications
 
 Usefull articles:
-
-https://github.com/RT-Thread/rt-thread/blob/master/bsp/allwinner/d1s/README-M7.md
-https://github.com/RT-Thread/rt-thread/blob/master/bsp/allwinner/d1s/README-MQ.md
-https://club.rt-thread.org/ask/article/389ac36250b57737.html
+- https://github.com/RT-Thread/rt-thread/blob/master/bsp/allwinner/d1s/README-M7.md
+- https://github.com/RT-Thread/rt-thread/blob/master/bsp/allwinner/d1s/README-MQ.md
+- https://club.rt-thread.org/ask/article/389ac36250b57737.html
 
 ## Debbuging GDB via JTAG
 
 Allwinner D1H have JTAG pins that could be handled by CKLink adaper and T-Head-DebugServer that will route data to GDB.<br>
-So instead usually used OpenOCD I use T-Head-DebugServer software.<br>
+
+So instead often used OpenOCD I use T-Head-DebugServer software.<br>
 CKLink hardware quite expensive it could be replaced by Sipeed RV-Debugger or even STM32F103 with special firmware https://github.com/cjacker/cklink-lite-fw-convertor.<br>
-Problem that JTAG pins mapped to the same pins as used for SDcard so I use MicroSD breakout board to connect this pins to Sipeed RV-Debugger (will explain all needed hardware modifiactions in other chapter).<br>
+
+Problem that JTAG pins mapped to the same pins as used for SDcard so I use MicroSD breakout board to connect this pins to Sipeed RV-Debugger. Will explain all needed hardware modifiactions in other chapter [D1-4. Makefile and Hardware changes](D1_4_make_and_hw.md).<br>
 
 Install T-Head-DebugServer:
 ```sh
@@ -582,9 +582,9 @@ tar -xvzf T-Head-DebugServer-linux-x86_64-V5.16.5-20221021.sh.tar.gz
 T-Head-DebugServer-linux-x86_64-V5.16.5-20221021.sh -i
 ```
 
-As now we will don't have SDcard, need to do work that SPL do:
+And now as we don't have access to SDcard, need to do all work that SPL do before:
 - init DDR
-- Load OpenSBI, DTB, Kernel to DDR
+- Load OpenSBI, DTB and Kernel to DDR
 - and also configure pins to JTAG
 
 Execute commands:
@@ -598,12 +598,12 @@ $(RISCV64_GLIBC_GCC_BIN)gdb -x .gdbinit
 
 Where in .gdbinit defined:
 
-1. Connection to T-HEAD_DebugServer
+1. Connection to T-HEAD_DebugServer:
 ```conf
 target remote localhost:1025
 ```
 
-2. Define addresses in memory
+2. Define target addresses in memory:
 ```conf
 set $opensbi_addr = 0x40000000
 set $dtb_addr = 0x40200000
@@ -611,27 +611,25 @@ set $kernel_addr = 0x40400000
 set $dyninfo_addr = 0x43000000
 ```
 
-3. Load binnary
+3. Load binnary's:
 ```conf
 restore bootloaders/opensbi/build/platform/generic/firmware/fw_dynamic.bin binary $opensbi_addr
 restore build/sun20i-d1-lichee-rv-dock.dtb binary $dtb_addr
 restore rt-thread/bsp/allwinner/d1s_d1h/rtthread.bin binary $kernel_addr
 ```
 
-4. Load elf for symbols information
+4. Load elf for symbols information:
 ```conf
 file rt-thread/bsp/allwinner/d1s_d1h/rtthread.elf
 ```
 
-Was used OpenSBI Firmware with Dynamic Information (FW_DYNAMIC). Nedd to proped init this firmware due GDB session.
+Was used OpenSBI Firmware with Dynamic Information (FW_DYNAMIC). Nedd to proper init this firmware due GDB session.
 
-https://github.com/riscv-software-src/opensbi/blob/master/docs/firmware/fw_dynamic.md :
+https://github.com/riscv-software-src/opensbi/blob/master/docs/firmware/fw_dynamic.md:
 "Is a firmware which gets information about next booting stage (e.g. a bootloader or an OS) and runtime OpenSBI library options from previous booting stage. The previous booting stage will pass information to FW_DYNAMIC by creating struct fw_dynamic_info in memory and passing its address to FW_DYNAMIC via a2 register of RISC-V CPU."
 
 https://github.com/riscv-software-src/opensbi/blob/master/docs/firmware/fw.md:
-"The previous booting stage will pass information via the following registers of RISC-V CPU:
-* hartid via a0 register
-* device tree blob address in memory via a1 register. The address must be aligned to 8 bytes."
+"The previous booting stage will pass information via the following registers of RISC-V CPU: hartid via a0 register, device tree blob address in memory via a1 register. The address must be aligned to 8 bytes."
 
 5. Add fw_dynamic_info and load a0 a1 a2 
 
@@ -656,10 +654,14 @@ set $a2 = $dyninfo_addr
 ```
 
 Also with default config OpenSBI will not output debug information to UART but instead try to put it to GDB.<br>
-I figureout that if change CONFIG_SERIAL_SEMIHOSTING to not set then is start work properly, out to UART.
+I figureout that if change CONFIG_SERIAL_SEMIHOSTING to not set then is start work properly.
 
-6. Change OpenSBI config and re-compile
-comment #CONFIG_SERIAL_SEMIHOSTING in bootloaders/opensbi/build/platform/generic/kconfig/.config
+6. Change OpenSBI config and re-compile.<br>
+
+Commenting in opensbi/build/platform/generic/kconfig/.config
+```conf
+#CONFIG_SERIAL_SEMIHOSTING 
+```
 
 7. Finnaly set brakepoint and jump to OpenSBI
 
@@ -668,7 +670,7 @@ b rt_hw_uart_init
 j *$opensbi_addr
 ```
 
-Now we can debug code execution. Problem that in RTT we can easely debug in GDB board initialisation but after this mostly all stuff done inside threads. GDB could operate with Linux threads, I can't figure out how to configure to debug RTT threads.
+Now we can debug code execution:
 
 ```sh
 GNU gdb (C-SKY RISCV Tools V1.8.4 B20200702) 8.2.50.20190202-git
@@ -686,11 +688,11 @@ sp             0x4053a760       0x4053a760
 gp             0x4052a960       0x4052a960 <sun8iw20_hw_clks+920>
 ```
 
-Usefull articles:
-- https://github.com/orangecms/RV-Debugger-BL702/tree/nezha
-- https://github.com/bouffalolab/bouffalo_sdk/tree/master/tools/cklink_firmware
+Problem that in RTT we can easely debug in GDB board initialisation but after this mostly all stuff done inside threads. <br>
+Known GDB could operate with Linux threads, but I can't figure out how to configure to debug RTT threads.
+
+Useful articles:
 - https://gist.github.com/btashton/6af120ff16d6beeccbbde74e6733535c
-- https://github.com/cjacker/cklink-lite-fw-convertor
 - https://github.com/XUANTIE-RV/zero_stage_boot/tree/master
 
 [Prev chapter](D1_1_introduction.md) | [Index](D1_0_index.md) | [Next chapter](D1_3_rtt_overview_and_build.md)

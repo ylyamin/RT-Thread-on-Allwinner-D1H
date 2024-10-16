@@ -1,9 +1,8 @@
 # D1-4. Makefile and Hardware changes
 [Prev chapter](D1_3_rtt_overview_and_build.md) | [Index](D1_0_index.md) | [Next chapter](D1_5_lcd_driver.md)
 
-In this chapter I more detailed explain repository structure Makefile and what Hardware changes and extension was done.<br>
-https://github.com/ylyamin/RT-Thread-on-Allwinner-D1H
-
+In this chapter I more detailed explain repository structure, Makefile and what Hardware changes and extension was done.<br>
+ The code is available at: https://github.com/ylyamin/RT-Thread-on-Allwinner-D1H
 
 ## Repo structure
 ```sh
@@ -131,7 +130,6 @@ sudo dd if=image/sd_image_lichee.img of=/dev/sdb
 ## Windows
 Could use https://etcher.balena.io/#download-etcher for flash image to SD card.
 
-
 ## Debugging
 For debugging used Sipeed RV-Debugger Plus with [T-Head CKLink firmware](https://github.com/bouffalolab/bouffalo_sdk/tree/master/tools/cklink_firmware).   
 To connect debugger to board need use MicroSD breakout board because in D1H JTAG pins mapped to SD Card [pins](https://linux-sunxi.org/JTAG) as shown in [Hardware section](#hardware).  
@@ -140,6 +138,10 @@ For flash firmware to Sipeed RV-Debugger Plus - Press and hold the boot pin then
 ```sh
 make debug-burn
 ```
+Useful articles:
+- https://github.com/orangecms/RV-Debugger-BL702/tree/nezha
+- https://github.com/bouffalolab/bouffalo_sdk/tree/master/tools/cklink_firmware
+
 To start GDB session in device that have FEL button (Sipeed Lichee RV) - press and hold the FEL button then press RESET button to go to the FEL mode, then execute command OR for device without FEL button (Clockwork Devterm) just don't insert boot SD card, press POWER button and execute command:
 ```sh
 make debug
@@ -168,7 +170,6 @@ Restoring binary file rt-thread/bsp/allwinner/d1s_d1h/rtthread.bin into memory (
 
 ## Hardware
 - [ClockworkPi DevTerm R01](https://www.clockworkpi.com/home-devterm)
-- [ClockworkPi uConsole R01](https://www.clockworkpi.com/uconsole)
 - [Sipeed Lichee RV + Dock](https://wiki.sipeed.com/hardware/en/lichee/RV/Dock.html)
 - Lichee RV Dock extension LCD adapter board
 - 4.3 RGB LCD Display (043026-N6(ML)) with IC ST7001s (SPI)
@@ -182,9 +183,6 @@ Restoring binary file rt-thread/bsp/allwinner/d1s_d1h/rtthread.bin into memory (
 I figure out that integrated UART work very unstable. According [discussion](https://forum.clockworkpi.com/t/devterm-r-01-ext-board-uart-is-read-only/8704)
 "The problem is that the CH340C provides 5 V logic levels, whereas the D1 only supports 3.3 V I/O...A better solution would be to solder wires to pins 2 and 3 of the CH340C and use a different USB-UART adapter that runs at the correct voltage." So I do this:
 ![Devterm_R01_uart](Pics/Devterm_R01_uart.jpg)
-
-### ClockworkPi uConsole R01 assembly
-Didn't have uConsole board. Can't check
 
 ### Sipeed Lichee RV assembly
 ![Lichee_RV_assembly](Pics/Lichee_RV_assembly.jpg)

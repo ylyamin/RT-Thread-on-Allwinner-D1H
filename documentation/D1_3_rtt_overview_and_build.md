@@ -39,8 +39,7 @@ https://www.rt-thread.io/document/site/programming-manual/ipc2/ipc2/
 
 ### BSP
 
-For our architecture Allwinner D1H with XuanTie C906 RISC-V Processor available implementation in folders:
-
+For our architecture Allwinner D1H available implementation in folders:
 - bsp/allwinner/d1/
 - bsp/allwinner/d1s/
 
@@ -70,7 +69,7 @@ In folder **rt-thread/bsp/allwinner/libraries/sunxi-hal/osal** contains operatin
 
 ### LibCPU
 
-Folder **rt-thread/libcpu/risc-v/t-head/c906** contains specifics of XuanTie C906 RISC-V Processor with library's for handle registers, interruptions, memory, etc.
+Folder **rt-thread/libcpu/risc-v/t-head/c906** contains specifics of XuanTie C906 RISC-V Processor used in D1H with library's for handle registers, interruptions, memory, etc.
 
 ### Build system
 
@@ -112,6 +111,7 @@ Then to build project execute:
 ```sh
 RTT_EXEC_PATH=$(RISCV64_MUSL_BIN) scons
 ```
+
 To clean project:
 ```sh
 RTT_EXEC_PATH=$(RISCV64_MUSL_BIN) scons -c
@@ -169,13 +169,13 @@ Create a [issue 9063](https://github.com/RT-Thread/rt-thread/issues/9063). (Late
 So as v5.0.2 seems to be the closest to be success for D1H - was performed fork from [v5.0.2](https://github.com/RT-Thread/rt-thread/releases/tag/v5.0.2) and introduced several changes to make it runnable in D1H.
 - All rt-thread folders moved to sub-folder rt-thread, also created folders for bootloaders, debugger, etc..
 - bsp/allwinner/d1s/ was taken as base to development and renamed to bsp/allwinner/d1s_d1h/
-- Other bsp and libcpu was removed
+- Other bsp and libcpu was removed to save space
 
 Created repository in github: https://github.com/ylyamin/RT-Thread-on-Allwinner-D1H
 
 ### Change bootloaders
 
-How in RTT prepares an image for booting D1s or D1H ?<br>
+How in RTT prepares an SDcard image for booting D1s or D1H ?<br>
 In file rt-thread/bsp/allwinner/d1s/rtconfig.py defined:
 ```python
 POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n' + './mksdimg.sh\n'
@@ -207,7 +207,7 @@ Also look to articles:
 - https://github.com/RT-Thread/rt-thread/blob/master/bsp/allwinner/d1s/README-MQ.md
 - https://club.rt-thread.org/ask/article/389ac36250b57737.html
 
-Looks like:
+Looks like in RTT:
 - bsp/allwinner/d1s/tools/boot0_sdcard_sun20iw1p1_d1s.bin - is Samuel Holland Secondary Program Loader.
 - bsp/allwinner/d1s/sbi.bin - is looks like OpenSBI
 - mkimage - tool from U-Boot

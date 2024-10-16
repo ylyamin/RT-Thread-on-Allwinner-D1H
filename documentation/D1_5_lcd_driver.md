@@ -8,10 +8,10 @@ Also I have Sipeed Lichee RV with 4.3 RGB LCD Display. That we will bring up too
 ## DevTerm display
 
 ### Define Display type
-DevTerm use 6.86 inch LCD Dispaly.<br>
-How I can control this dispaly ? First of all what interfaces and chip this dispaly have ?<br>
+DevTerm use 6.86 inch LCD Display.<br>
+How I can control this display ? First of all what interfaces and chip this display have ?<br>
 
-So looking to Clockworkpi repository can found folder 'patch' for d1 https://github.com/clockworkpi/DevTerm/tree/main/Code/patch/d1 and we found file board.dts. DTS is Linux Device Tree Source file that describes the system's hardware layout.
+So looking to ClockworkPi repository can found folder 'patch' for d1 https://github.com/clockworkpi/DevTerm/tree/main/Code/patch/d1 and we found file board.dts. DTS is Linux Device Tree Source file that describes the system's hardware layout.
 
 <details><summary>board.dts file:</summary>
 
@@ -31,8 +31,8 @@ Also in https://github.com/clockworkpi/DevTerm/tree/main/Schematics we have Data
 
 ![icnl9707_description.png](Pics/icnl9707_description.png) 
 
-Ok our Dispaly is 6.86 inch LCD Display with MIPI DSI interface and inc9707 IC (integrated chip), great.<br>
-What is MIPI DSI ? Accroding https://en.wikipedia.org/wiki/Display_Serial_Interface:
+Ok our Display is 6.86 inch LCD Display with MIPI DSI interface and inc9707 IC (integrated chip), great.<br>
+What is MIPI DSI ? According https://en.wikipedia.org/wiki/Display_Serial_Interface:
 
 "The Display Serial Interface (DSI) is a specification by the Mobile Industry Processor Interface (MIPI) Alliance aimed at reducing the cost of display controllers in a mobile device."
 
@@ -45,7 +45,7 @@ In [ICNL9707_Datasheet.pdf](ClockworkPi_DevTerm/ICNL9707_Datasheet.pdf) we can s
 
 ### Dispaly connection
 
-Lets look how is connected to D1H. Dispaly connected to Mainboard by 40pins ribbon cable: 
+Lets look how is connected to D1H. Display connected to Mainboard by 40pins ribbon cable: 
 
 ![display_connector_1.png](Pics/display_connector_1.png)
 
