@@ -8,7 +8,8 @@ The intention is to easily run peripherals in D1, exactly Display. RT-Thread OS 
 At the original repository [RT-Thread](https://github.com/RT-Thread/rt-thread) the compilation is not streamlined for D1H [^1].
 So was performed fork from [v5.0.2](https://github.com/RT-Thread/rt-thread/releases/tag/v5.0.2) and introduced several changes to make it runnable in D1H. Added also bootloaders, compiler, debugger, build system.
 
-Introduced code changes, knowledge and experience described in [series of articles](documentation/D1_0_index.md) stored in repository.
+Introduced code changes, knowledge and experience described in [series of articles](documentation/D1_0_index.md) stored in repository.<br>
+Discussion in forum: https://forum.clockworkpi.com/t/r-01-risc-v-baremetal-with-rt-thread-lcd-work-usb-in-progress/14683
 
  > [^1]: At time when I'm tried to compile was [issue 9063](https://github.com/RT-Thread/rt-thread/issues/9063) after it was solved by [PR](https://github.com/RT-Thread/rt-thread/pull/9142) in Master.
 

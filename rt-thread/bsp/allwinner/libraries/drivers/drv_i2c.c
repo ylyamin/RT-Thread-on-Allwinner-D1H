@@ -114,7 +114,7 @@ static struct hal_i2c_bus _i2c_bus_3 = {
 
 
 static const user_gpio_set_t _i2c_gpio_cfg[][2] = {
-#ifdef BSP_USING_CWP_DT_R01
+#if defined BSP_USING_CWP_DT_R01 || defined BSP_USING_CWP_UC_R01
     {// twi0
         {
             .gpio_name = "twi0.sck",

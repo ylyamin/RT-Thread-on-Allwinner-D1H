@@ -1,7 +1,9 @@
 # D1-1. Introduction
 [Index](D1_0_index.md) | [Next chapter](D1_2_boot_process.md)
 
-With this introduction I am beginning a series of articles about hobby experimentation with [Allwinner D1H](https://d1.docs.aw-ol.com/en/) RISC-V MCU and the [RT-Thread](https://www.rt-thread.io/) Operating System. The code is available at: https://github.com/ylyamin/RT-Thread-on-Allwinner-D1H <br>
+With this introduction I am beginning a series of articles about hobby experimentation with [Allwinner D1H](https://d1.docs.aw-ol.com/en/) RISC-V MCU and the [RT-Thread](https://www.rt-thread.io/) Operating System.<br>
+The code is available at: https://github.com/ylyamin/RT-Thread-on-Allwinner-D1H <br>
+Discussion in forum: https://forum.clockworkpi.com/t/r-01-risc-v-baremetal-with-rt-thread-lcd-work-usb-in-progress/14683<br>
 
 Next chapters will describe:
 - [D1-2. Boot process](D1_2_boot_process.md) - Existing best practices for Allwinner D1H bootloaders, examples of booting Linux and RT-Thread, using JTAG and GDB.
