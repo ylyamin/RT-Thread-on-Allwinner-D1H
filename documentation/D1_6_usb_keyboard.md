@@ -1113,7 +1113,7 @@ index 710a54e07..9c5894b16 100644
 +// HOST CONFIGURATION
  //--------------------------------------------------------------------
 +#define TUP_USBIP_EHCI
-+#define TUP_USBIP_OHCI
++//#define TUP_USBIP_OHCI
 +#define LPC_USB_BASE  0x4200000 + 0x400
  
 -#ifndef CFG_TUD_ENDPOINT0_SIZE
@@ -1398,38 +1398,6 @@ index 000000000..59d64a85f
 +{
 +    hal_usb_core_init();
 +	   hal_usb_hcd_init(1);
-+
-+/* 
-+    //assertion failed at function:_map_one_page
-+    int hci_num = 1;
-+    //ehci
-+    struct sunxi_hci_hcd *sunxi_ehci;
-+    struct platform_usb_config *ehci_table = platform_get_ehci_table();
-+    struct platform_usb_config *otg_table = platform_get_otg_table();
-+    sunxi_ehci->usbc_no     = hci_num;
-+    sunxi_ehci->usb_vbase   = ehci_table[hci_num].pbase;
-+    sunxi_ehci->irq_no      = ehci_table[hci_num].irq;
-+    sunxi_ehci->otg_vbase   = otg_table->pbase;
-+	   sprintf(sunxi_ehci->hci_name, "%s", ehci_table[hci_num].name);
-+
-+    hci_clock_init(sunxi_ehci,ehci_table);
-+    open_clock(sunxi_ehci);
-+    usb_passby(sunxi_ehci, 1);
-+
-+    //ohci
-+    struct sunxi_hci_hcd *sunxi_ohci;
-+    struct platform_usb_config *ohci_table = platform_get_ohci_table();
-+    sunxi_ohci->usbc_no = hci_num;
-+    sunxi_ohci->usb_vbase = ohci_table[hci_num].pbase;
-+    sunxi_ohci->irq_no = ohci_table[hci_num].irq;
-+    sunxi_ohci->otg_vbase = otg_table->pbase;
-+    sprintf(sunxi_ohci->hci_name, "%s", ohci_table[hci_num].name);
-+
-+    hci_clock_init(sunxi_ohci, ohci_table);
-+    open_clock(sunxi_ohci);
-+    usb_passby(sunxi_ohci, 1);  
-+
-+ */
 +    return 1;
 +}
 ```
@@ -1609,10 +1577,14 @@ index 5ac9e9cca..4fdf9c099 100644
 ```
 </details>
 
-Lets run TinyUSB variant and look to console output:
+## Test
+Lets put any USB device in board USB socket and run TinyUSB variant:
+```sh
+msh />usb_tiny
+```
 
 RTT Console output:
-```shell
+```sh
 [ehci-usb1] insmod host driver!
 phy write: 4200810<-0
 phy write: 4200800<-701
@@ -1649,15 +1621,53 @@ plic_irq_toggle irq:50,enable:0
 plic_irq_toggle irq:50,enable:1
 tuh_task_ext: tusb_inited
 ```
+No reaction to USB device attach / de-attach.<br>
+In function tusb_board_init() lets not use common sunxi-hal initialisation instead put only specific HAL function open_clock() usb_passby():
+```patch
+diff --git a/rt-thread/bsp/sunxi_D1/drv_tinyusb.c b/rt-thread/bsp/sunxi_D1/drv_tinyusb.c
 
+int tusb_board_init(void)
+{
++    //assertion failed at function:_map_one_page
++    int hci_num = 1;
++    //ehci
++    struct sunxi_hci_hcd *sunxi_ehci;
++    struct platform_usb_config *ehci_table = platform_get_ehci_table();
++    struct platform_usb_config *otg_table = platform_get_otg_table();
++    sunxi_ehci->usbc_no     = hci_num;
++    sunxi_ehci->usb_vbase   = ehci_table[hci_num].pbase;
++    sunxi_ehci->irq_no      = ehci_table[hci_num].irq;
++    sunxi_ehci->otg_vbase   = otg_table->pbase;
++	   sprintf(sunxi_ehci->hci_name, "%s", ehci_table[hci_num].name);
++
++    hci_clock_init(sunxi_ehci,ehci_table);
++    open_clock(sunxi_ehci);
++    usb_passby(sunxi_ehci, 1);
++
++    //ohci
++    struct sunxi_hci_hcd *sunxi_ohci;
++    struct platform_usb_config *ohci_table = platform_get_ohci_table();
++    sunxi_ohci->usbc_no = hci_num;
++    sunxi_ohci->usb_vbase = ohci_table[hci_num].pbase;
++    sunxi_ohci->irq_no = ohci_table[hci_num].irq;
++    sunxi_ohci->otg_vbase = otg_table->pbase;
++    sprintf(sunxi_ohci->hci_name, "%s", ohci_table[hci_num].name);
++
++    hci_clock_init(sunxi_ohci, ohci_table);
++    open_clock(sunxi_ohci);
++    usb_passby(sunxi_ohci, 1);  
+    return 1;
+}
+```
 
+RTT Console output:
 ```shell
-[ehci-usb1] insmod host driver!
-[sunxi-ehci1]: sunxi_set_vbus cnt.
-[usbh core]: adding sub dev  (config #1, interface 0)
-[ohci-usb1] insmod host driver!
-[sunxi-ohci1]: sunxi_set_vbus cnt.
-[usbh core]: adding sub dev  (config #1, interface 0)USBH init on controller 0
+msh />usb_tiny
+phy write: 4200810<-0
+phy write: 4200800<-701
+phy write: 4200810<-0
+phy write: 4200800<-701
+USBH init on controller 0
 sizeof(usbh_device_t) = 312
 sizeof(hcd_event_t) = 24
 sizeof(_ctrl_xfer) = 40
@@ -1678,30 +1688,6 @@ EHCI PHY_Status  (824): 0
 EHCI HCI_SIE_Port:      3
 plic_irq_toggle irq:49,enable:0
 plic_irq_toggle irq:49,enable:1
-tuh_task_ext: tusb_inited
-msh />
-msh />
-msh />ehci hcd_int_handler: 4
-regs->portsc = 1002
-  Current Connect Status: 0
-  Connect Status Change : 1
-  Port Enabled          : 0
-  Port Enabled Change   : 0
-  Port Reset            : 0
-  Port Power            : 1
-  Port Owner            : 0
-  Over current active   : 0
-  Over current change   : 0
-  Port suspend          : 0
-  Port line_status      : 0
-  Wake on connect enable: 0
-hcd_event_device_remove
-osal: rt_mq_send result: 0
-osal: rt_mq_recv result: 24
-tuh_task_ext: event.event_id 1
-tuh_task_ext:  USBH DEVICE REMOVED 
-[0:0:0] USBH DEVICE REMOVED
-tuh_task_ext: tusb_inited
 ehci hcd_int_handler: 4
 regs->portsc = 1803
   Current Connect Status: 1
@@ -1718,76 +1704,98 @@ regs->portsc = 1803
   Wake on connect enable: 0
 hcd_event_device_attach
 osal: rt_mq_send result: 0
+tuh_task_ext: tusb_inited
 osal: rt_mq_recv result: 24
 tuh_task_ext: event.event_id 0
 tuh_task_ext: USBH DEVICE ATTACH
 [0:] USBH DEVICE ATTACH
-Full Speed
-regs->portsc = 1801
-  Current Connect Status: 1
-  Connect Status Change : 0
-  Port Enabled          : 0
-  Port Enabled Change   : 0
-  Port Reset            : 0
-  Port Power            : 1
-  Port Owner            : 0
-  Over current active   : 0
-  Over current change   : 0
-  Port suspend          : 0
-  Port line_status      : 2
-  Wake on connect enable: 0
-process_enumeration start
-process_enumeration state:3
-[0:0] Open EP0 with Size = 8
-Get 8 byte of Device Descriptor
-[0:0] Get Descriptor: 80 06 00 01 00 00 08 00
-tehci hcd_int_handler: 3
-osal: rt_mq_send result: 0
-Unhandled Exception 13:Load Page Fault
-scause:0x0x000000000000000d,stval:0x0x0000000000000006,sepc:0x0x00000000404cb642
+ehci hcd_int_handler: 3
+``` 
+So is detected USB device attach by interapt hendler "ehci hcd_int_handler: 4"<br> 
+But then interapt hendler return error "ehci hcd_int_handler: 3"<br>
+
+Lets build OHCI:
+```patch
+diff --git a/rt-thread/tusb_config.h b/rt-thread/tusb_config.h
+
++#define TUP_USBIP_OHCI
+```
+
+RTT Console output:
+```sh
+msh />usb_tiny
+phy write: 4200810<-0
+phy write: 4200800<-701
+phy write: 4200810<-0
+phy write: 4200800<-701
+USBH init on controller 0
+sizeof(usbh_device_t) = 312
+sizeof(hcd_event_t) = 24
+sizeof(_ctrl_xfer) = 40
+sizeof(tuh_xfer_t) = 48
+sizeof(tu_fifo_t) = 32
+sizeof(tu_edpt_stream_t) = 144
+osal: rt_mq_init result: 0
+HID init
+HUB init
+tiny ehci_init
+EHCI HCIVERSION:0x0100
+EHCI HCSPARAMS:0x001101
+EHCI HCCPARAMS:0xa026
+EHCI HCI_interface:     1793
+EHCI HCI_Control_3:     0
+EHCI PHY_Control (810): 0
+EHCI PHY_Status  (824): 0
+EHCI HCI_SIE_Port:      3
+tiny ohcd_init
+plic_irq_toggle irq:49,enable:0
+plic_irq_toggle irq:49,enable:1
+Unhandled Exception 12:Instruction Page Fault
+scause:0x0x000000000000000c,stval:0x0x0000000004200000,sepc:0x0x0000000004200000
 --------------Dump Registers-----------------
 Function Registers:
-        ra(x1) = 0x0x00000000404cb62e   user_sp = 0x0x000000004053a4f8
-        gp(x3) = 0x0x000000004052a960   tp(x4) = 0x0x00000000deadbeef
+        ra(x1) = 0x0x000000004041d11e   user_sp = 0x0x000000004053ced8  
+        gp(x3) = 0x0x000000004052c020   tp(x4) = 0x0x00000000deadbeef   
 Temporary Registers:
-        t0(x5) = 0x0x8000000000000009   t1(x6) = 0x0x0000000000000008
-        t2(x7) = 0x0x00000000405ea958
-        t3(x28) = 0x0x00000000deadbeef  t4(x29) = 0x0x00000000deadbeef
-        t5(x30) = 0x0x00000000deadbeef  t6(x31) = 0x0x00000000deadbeef
+        t0(x5) = 0x0x8000000000000009   t1(x6) = 0x0x0000000000000008   
+        t2(x7) = 0x0x000000000000003a
+        t3(x28) = 0x0x0000000000000069  t4(x29) = 0x0x000000000000001f  
+        t5(x30) = 0x0x000000000000000b  t6(x31) = 0x0x000000000000000b  
 Saved Registers:
-        s0/fp(x8) = 0x0x000000004053a558        s1(x9) = 0x0x00000000deadbeef
-        s2(x18) = 0x0x00000000deadbeef  s3(x19) = 0x0x00000000deadbeef
-        s4(x20) = 0x0x00000000deadbeef  s5(x21) = 0x0x00000000deadbeef
-        s6(x22) = 0x0x00000000deadbeef  s7(x23) = 0x0x00000000deadbeef
-        s8(x24) = 0x0x00000000deadbeef  s9(x25) = 0x0x00000000deadbeef
-        s10(x26) = 0x0x00000000deadbeef s11(x27) = 0x0x00000000deadbeef
+        s0/fp(x8) = 0x0x000000004053cf38        s1(x9) = 0x0x00000000deadbeef
+        s2(x18) = 0x0x00000000deadbeef  s3(x19) = 0x0x00000000deadbeef  
+        s4(x20) = 0x0x00000000deadbeef  s5(x21) = 0x0x00000000deadbeef  
+        s6(x22) = 0x0x00000000deadbeef  s7(x23) = 0x0x00000000deadbeef  
+        s8(x24) = 0x0x00000000deadbeef  s9(x25) = 0x0x00000000deadbeef  
+        s10(x26) = 0x0x00000000deadbeef s11(x27) = 0x0x00000000deadbeef 
 Function Arguments Registers:
-        a0(x10) = 0x0x0000000000000001  a1(x11) = 0x0x0000000000000010
-        a2(x12) = 0x0x0000000000000010  a3(x13) = 0x0x0000000000000080
-        a4(x14) = 0x0x0000000000000001  a5(x15) = 0x0x0000000000000000
-        a6(x16) = 0x0xffffffffffffffff  a7(x17) = 0x0x0000000000000002
+        a0(x10) = 0x0x0000000040558560  a1(x11) = 0x0x0000000000000001  
+        a2(x12) = 0x0x0000003000000030  a3(x13) = 0x0x0000000000000001  
+        a4(x14) = 0x0x0410000004200000  a5(x15) = 0x0x0000000040558560
+        a6(x16) = 0x0xffffffffffffffff  a7(x17) = 0x0x0000000000000002  
 sstatus = 0x0x0000000200040100
         Supervisor Interrupt Disabled
         Last Time Supervisor Interrupt Disabled
         Last Privilege is Supervisor Mode
         Permit to Access User Page
         Not Permit to Read Executable-only Page
-satp = 0x0x800000000004056b
-        Current Page Table(Physical) = 0x0x000000004056b000
+satp = 0x0x800000000004056e
+        Current Page Table(Physical) = 0x0x000000004056e000
         Current ASID = 0x0x0000000000000000
         Mode = Page-based 39-bit Virtual Addressing Mode
 -----------------Dump OK---------------------
 --------------Thread list--------------
-current thread: tusb
+current thread: tshell
 --------------Backtrace--------------
-$TOOLCHAIN_INSTALL_DIR/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin/riscv64-unknown-linux-musl-addr2line -e rt-thread/bsp/allwinner/d1s_d1h/rtthread.elf -a -f 0x00000000404cb63e
+$TOOLCHAIN_INSTALL_DIR/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin/riscv64-unknown-linux-musl-addr2line -e rt-thread/bsp/allwinner/d1s_d1h/rtthread.elf -a -f 0x00000000041ffffc
+```
 
-``` 
+Page Fault happen. Don't know why. Maybe OHCI driver code somewhere use memory out of page.
 
+Also ideas why USB stack not working:
+1. EHCI/OHCI registers initialized in not corret way. Need print how is done im Linux kernel and compare.
+2. Maybe EHCI/OHCI somehow use DMA, and is not init correctly.
 
-### TODO USB:
-
-- linux ehci reg
-- DMA, MMU ?
+I’m really stuck with the USB driver. Perhaps someone would enjoy diving deep into the USB driver to solve this riddle. Ready for issue reports and pull requests.
 
 [Prev chapter](D1_5_lcd_driver.md) | [Index](D1_0_index.md)

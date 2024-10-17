@@ -168,6 +168,23 @@ Restoring binary file build/sun20i-d1-lichee-rv-dock.dtb into memory (0x40200000
 Restoring binary file rt-thread/bsp/allwinner/d1s_d1h/rtthread.bin into memory (0x40400000 to 0x404f0840)
 ```
 
+## Using
+So my routine of working with a board is:
+- Change code
+- Compile rtt
+  ```sh 
+  make rt
+  ```
+- Board Power Off / Power On
+- Start GDB session
+  ```sh
+  make debug
+  ```
+- Look to UART
+  ```sh
+  screen /dev/ttyUSB0 115200
+  ```
+
 ## Hardware
 - [ClockworkPi DevTerm R01](https://www.clockworkpi.com/home-devterm)
 - [Sipeed Lichee RV + Dock](https://wiki.sipeed.com/hardware/en/lichee/RV/Dock.html)
