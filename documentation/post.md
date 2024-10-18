@@ -6,7 +6,7 @@ R-01 RISC-V Baremetal with RT-Thread. LCD work, USB in progress.
 
 Hi all,
 
-I successfully build and ran RT-Thread (a small embedded OS) on the Devterm R-01.<br>
+I successfully build and ran [RT-Thread](https://www.rt-thread.io/) (a small embedded OS) on the Devterm R-01.<br>
 It may also work in uConsole R-01, but I didn't have uConsole. I would appreciate if someone could test it.<br>
 
 Honestly, R-01 RISC-V core Allwinner D1H is really pain - documentation very limited regarding peripherals, there are no examples and no standalone libraries.<br>
@@ -145,8 +145,41 @@ Perhaps someone would enjoy diving deep into the USB driver to solve this riddle
 Picture of LCD Display test in RT-Thread running on Devterm R-01:
 [img=Devterm]https://github.com/ylyamin/RT-Thread-on-Allwinner-D1H/blob/master/documentation/Pics/devterm_lcd_mipi_work.jpg[/img]
 
+# reddit
+
+RISC-V Allwinner D1H Baremetal with RT-Thread. LCD work, USB in progress.
+
+Hi all,
+I successfully build and ran RT-Thread (a small embedded OS) on the Allwinner D1H.<br> Experimenting on ClockworkPi DevTerm R-01 device and Sipeed Lichee RV board. It may also work in uConsole R-01, but I didn't have uConsole. I would appreciate if someone could test it.
+The Allwinner D1H documentation is very limited regarding peripherals. However, if you enjoy brainteasers and some low-level stuff, you’re welcome. The intention was to make an RT-Thread portable terminal with a working display and keyboard.
+I manage to:
+Create a working LCD MIPI DSI Display driver with a frame buffer.
+Make some progress on a USB keyboard driver.
+Boot from SD card and communicate via UART
+Debugging with GDB
+Please note: The battery charging/discharging controller is not yet configured in the driver, so I’m unsure how it affects the battery. I suggest not using the battery with RT-Thread and powering it via USB instead.
+Should say: it's not truly low-level bare-metal from ground as RT-Thread operates with threads and events and the HAL level is quite complex. But it is easier to manage compared to working within the Linux kernel - at least for me, as I'm not an expert in Linux. RT-Thread has great potential, as it supports many packages for GUI, audio, Ethernet, and more.
+The code is available at: https://github.com/ylyamin/RT-Thread-on-Allwinner-D1H
+Ready images for SD card:
+DevTerm R01: sd_image_devterm.img
+uConsole R01: sd_image_uconsole.img (not tested yet)
+Sipeed Lichee RV: sd_image_lichee.img
+I’m writing a series of articles covering the knowledge and experience I’ve gained:
+D1-1. Introduction - Motivation and intention.
+D1-2. Boot process - Existing Allwinner D1H bootloaders best practice in example with booting Linux and RT-Thread, also JTAG and GDB.
+D1-3. RT-Thread overview and Build - Overview of RT-Thread structure and libraries. Compile RT-Thread for Allwinner D1H platform.
+D1-4. Makefile and Hardware changes - My repository structure, Makefile and Hardware changes was needed to be done.
+D1-5. LCD Display driver - Display driver for DevTerm R-01, uConsole R-01 and Sipeed Lichee RV.
+D1-6. USB Keyboard - USB Keyboard driver for ClockworkPi DevTerm, is still not working.
+Finally, I dare to ask for help from the community, please:
+If someone could test whether the LCD display works in uConsole with the command "lcd_draw_point 100 100," I would appreciate it.
+I’m really stuck with the USB driver. It can detect device connections, but communication has not started. Perhaps someone would enjoy diving deep into the USB driver to solve this riddle. Ready for issue reports and pull requests.
+Picture of LCD Display test in RT-Thread running on Devterm R-01:
+
+
 # Discussions:
 - https://forum.clockworkpi.com/t/r-01-risc-v-baremetal-with-rt-thread-lcd-work-usb-in-progress/14683
 - https://club.rt-thread.org/ask/article/b66f7db40179a81b.html
 - https://club.rt-thread.io/ask/article/18.html
 - https://whycan.com/t_11510.html
+- https://www.reddit.com/r/RISCV/comments/1g6cbb4/riscv_allwinner_d1h_baremetal_with_rtthread_lcd/
