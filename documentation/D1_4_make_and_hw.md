@@ -102,7 +102,12 @@ For configure RT-Thread:
 ```sh
 make rt-conf
 ```
-In menuconfig chooses "General Drivers Configuration" -> "Choose Board" and then choose "ClockworkPi DevTerm R01 board" or "Sipeed Lichee RV board" depend what board do you use.
+In menuconfig chooses: 
+- "General Drivers Configuration" -> "Choose Board" and then choose "ClockworkPi DevTerm R01 board" or "ClockworkPi uConsole R01 board" or "Sipeed Lichee RV board" depend what board do you use.
+
+Also need to choose only one LCD panel and only one Board:
+- "HAL library from sunxi" -> "Video support for sunxi" -> "LCD panels select" -> "LCD support ICN9707_480x1280 panel" for Devterm OR "LCD support CWU50 panel" for uConsole
+- "HAL library from sunxi" -> "Video support for sunxi" -> "Soc and board select" -> "Board Select" -> "Clockworkpi Devterm R01 board with MIPI DSI display ICN9707" for Devterm respectively
 
 To compile RT-Thread use command:
 ```sh

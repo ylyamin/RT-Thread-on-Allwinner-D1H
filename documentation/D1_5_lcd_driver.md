@@ -748,8 +748,16 @@ diff --git a/rt-thread/bsp/allwinner/libraries/drivers/Kconfig b/rt-thread/bsp/a
 <br>
 <details><summary>.config:</summary>
 
+In menuconfig need to choose: 
+- "General Drivers Configuration" -> "Choose Board" and then choose "ClockworkPi DevTerm R01 board"
+
+Also need to choose only one LCD panel and only one Board:
+- "HAL library from sunxi" -> "Video support for sunxi" -> "LCD panels select" -> "LCD support ICN9707_480x1280 panel"
+- "HAL library from sunxi" -> "Video support for sunxi" -> "Soc and board select" -> "Board Select" -> "Clockworkpi Devterm R01 board with MIPI DSI display ICN9707"
+
 ```patch
 diff --git a/rt-thread/bsp/allwinner/d1s_d1h/.config b/rt-thread/bsp/allwinner/d1s_d1h/.config
++CONFIG_BSP_USING_CWP_DT_R01=y
 +CONFIG_LCD_SUPPORT_ICN9707_480x1280=y
 +CONFIG_MIPI_DSI_LCD_ICN9707=y
 ```
@@ -1498,6 +1506,8 @@ At "9.5.2. Power on sequence for differential power mode" paragraph defined Powe
 Lets modify LCD_power_on function in cwu50.c to use axp228 power manager:
 
 ```patch
+diff --git a/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/lcd/cwu50.c b/rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/lcd/cwu50.c
+
 +extern void _axp_LCD_control(bool on);
 
 static void LCD_power_on(u32 sel)
@@ -1706,10 +1716,19 @@ diff --git a/rt-thread/bsp/allwinner/libraries/drivers/Kconfig b/rt-thread/bsp/a
 ```
 </details>
 <br>
+
+In menuconfig need to choose: 
+- "General Drivers Configuration" -> "Choose Board" and then choose "ClockworkPi uConsole R01 board"
+
+Also need to choose only one LCD panel and only one Board:
+- "HAL library from sunxi" -> "Video support for sunxi" -> "LCD panels select" -> "LCD support CWU50 panel"
+- "HAL library from sunxi" -> "Video support for sunxi" -> "Soc and board select" -> "Board Select" -> "Clockworkpi uConsole R01 board with MIPI DSI display CWU50"
+
 <details><summary>.config:</summary>
 
 ```patch
 diff --git a/rt-thread/bsp/allwinner/d1s_d1h/.config b/rt-thread/bsp/allwinner/d1s_d1h/.config
++CONFIG_BSP_USING_CWP_UC_R01=y
 +CONFIG_LCD_SUPPORT_CWU50=y
 +CONFIG_MIPI_DSI_LCD_CWU50=y
 ```
@@ -1942,10 +1961,18 @@ diff --git a/rt-thread/bsp/allwinner/libraries/drivers/Kconfig b/rt-thread/bsp/a
 ```
 </details>
 <br>
+
+In menuconfig need to choose: 
+- "General Drivers Configuration" -> "Choose Board" and then choose "Sipeed Lichee RV board"
+
+Also need to choose only one LCD panel and only one Board:
+- "HAL library from sunxi" -> "Video support for sunxi" -> "LCD panels select" -> "LCD support ST7701S RGB panel"
+- "HAL library from sunxi" -> "Video support for sunxi" -> "Soc and board select" -> "Board Select" -> "4.3 inch RGB LCD display 043026-N6(ML) with ST7001s (SPI)"
 <details><summary>.config:</summary>
 
 ```patch
 diff --git a/rt-thread/bsp/allwinner/d1s_d1h/.config b/rt-thread/bsp/allwinner/d1s_d1h/.config
++CONFIG_BSP_USING_SIPEED_LICHEE_RV=y
 +CONFIG_LCD_SUPPORT_ST7701S_RGB=y
 +CONFIG_RGB_LCD_ST7001S=y
 ```

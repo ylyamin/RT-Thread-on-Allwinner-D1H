@@ -1,6 +1,8 @@
 # Post in community
 
-## R-01 RISC-V Baremetal with RT-Thread. LCD work, USB in progress.
+## forum.clockworkpi.com
+
+R-01 RISC-V Baremetal with RT-Thread. LCD work, USB in progress.
 
 Hi all,
 
@@ -25,7 +27,7 @@ The code is available at: https://github.com/ylyamin/RT-Thread-on-Allwinner-D1H
 
 Ready images for SD card:
 - DevTerm R01: [sd_image_devterm.img](https://github.com/ylyamin/RT-Thread-on-Allwinner-D1H/releases/download/v5.0.2.2/sd_image_devterm.img)
-- uConsole R01: [sd_image_uconsole.img](https://github.com/ylyamin/RT-Thread-on-Allwinner-D1H/releases/download/v5.0.2.2/sd_image_uconsole.img) (not tested yet)
+- uConsole R01: [sd_image_uconsole.img](https://github.com/ylyamin/RT-Thread-on-Allwinner-D1H/blob/master/image/sd_image_uconsole.img) (not tested yet)
 - Sipeed Lichee RV: [sd_image_lichee.img](https://github.com/ylyamin/RT-Thread-on-Allwinner-D1H/releases/download/v5.0.2.2/sd_image_lichee.img)
 
 I’m writing a series of articles covering the knowledge and experience I’ve gained:
@@ -46,12 +48,19 @@ Picture of LCD Display test in RT-Thread running on Devterm R-01:
 ![devterm_lcd_mipi_work.jpg](https://github.com/ylyamin/RT-Thread-on-Allwinner-D1H/blob/master/documentation/Pics/devterm_lcd_mipi_work.jpg)
 
 
-## RT-Thread on Allwinner D1H. LCD work, USB in progress.
+## club.rt-thread.io, club.rt-thread.org 
+
+RT-Thread on Allwinner D1H. LCD work, USB in progress.
+
+This is an experimentation with the RT-Thread Operating System with the Allwinner D1H RISC-V SOC and a Collection of Bootloaders and Developer environment for programming and debugging. Executed at hardware such as ClockworkPi DevTerm R-01 and Sipeed Lich
 
 Hi all,
 
-I successfully build and ran RT-Thread (a small embedded OS) on the RISC-V Allwinner D1H SoC.<br>
-Experimenting on [ClockworkPi DevTerm R-01](https://www.clockworkpi.com/home-devterm) device and [Sipeed Lichee RV](https://wiki.sipeed.com/hardware/en/lichee/RV/Dock.html) board.Intention was to make RT-Thread portable terminal with working display and keyboard.
+I successfully build and ran RT-Thread on the RISC-V Allwinner D1H SoC.
+Experimenting on [ClockworkPi DevTerm R-01](https://www.clockworkpi.com/home-devterm) device and [Sipeed Lichee RV](https://wiki.sipeed.com/hardware/en/lichee/RV/Dock.html) board
+
+Allwinner D1H documentation very limited regarding peripherals. However if you enjoy brainteaser and some low-level stuff, you’re welcome.
+Intention was to make RT-Thread portable terminal with working display and keyboard.
 
 I manage to:
 - Create a working LCD MIPI DSI Display driver with frame buffer.
@@ -61,17 +70,15 @@ I manage to:
 - Debugging with GDB
 
 The code is available at: https://github.com/ylyamin/RT-Thread-on-Allwinner-D1H
-If you enjoy brainteaser and some low-level stuff, you’re welcome.<br>
 
 Ready images for SD card:
 - DevTerm R01: [sd_image_devterm.img](https://github.com/ylyamin/RT-Thread-on-Allwinner-D1H/releases/download/v5.0.2.2/sd_image_devterm.img)
-- uConsole R01: [sd_image_uconsole.img](https://github.com/ylyamin/RT-Thread-on-Allwinner-D1H/releases/download/v5.0.2.2/sd_image_uconsole.img) (not tested yet)
+- uConsole R01: [sd_image_uconsole.img](https://github.com/ylyamin/RT-Thread-on-Allwinner-D1H/blob/master/image/sd_image_uconsole.img)
 - Sipeed Lichee RV: [sd_image_lichee.img](https://github.com/ylyamin/RT-Thread-on-Allwinner-D1H/releases/download/v5.0.2.2/sd_image_lichee.img)
 
-**Please note:** The DevTerm/uConsole battery charging/discharging controller is not yet configured in the driver, so I’m unsure how it affects the battery. I suggest not using the battery with RT-Thread and powering it via USB instead.
+Please note: The DevTerm/uConsole battery charging/discharging controller is not yet configured in the driver, so I’m unsure how it affects the battery. I suggest not using the battery with RT-Thread and powering it via USB instead.
 
 I’m writing a series of articles covering the knowledge and experience I’ve gained:
-
 - [D1-1. Introduction](https://github.com/ylyamin/RT-Thread-on-Allwinner-D1H/blob/master/documentation/D1_1_introduction.md) - Motivation and intention.
 - [D1-2. Boot process](https://github.com/ylyamin/RT-Thread-on-Allwinner-D1H/blob/master/documentation/D1_2_boot_process.md) - Existing Allwinner D1H bootloaders best practice in example with booting Linux and RT-Thread, also JTAG and GDB.
 - [D1-3. RT-Thread overview and Build](https://github.com/ylyamin/RT-Thread-on-Allwinner-D1H/blob/master/documentation/D1_3_rtt_overview_and_build.md) - Overview of RT-Thread structure and libraries. Compile RT-Thread for Allwinner D1H platform.
@@ -79,15 +86,17 @@ I’m writing a series of articles covering the knowledge and experience I’ve 
 - [D1-5. LCD Display driver](https://github.com/ylyamin/RT-Thread-on-Allwinner-D1H/blob/master/documentation/D1_5_lcd_driver.md) - Display driver for [DevTerm R-01](https://www.clockworkpi.com/home-devterm), [uConsole R-01](https://www.clockworkpi.com/uconsole) and [Sipeed Lichee RV](https://wiki.sipeed.com/hardware/en/lichee/RV/Dock.html).
 - [D1-6. USB Keyboard](https://github.com/ylyamin/RT-Thread-on-Allwinner-D1H/blob/master/documentation/D1_6_usb_keyboard.md) - USB Keyboard driver for ClockworkPi DevTerm, still not working.
 
-*Finally, I dare to ask for help from the community, please:* <br>
-I’m really stuck with the USB driver. It can detect device connections, but communication has not started.<br>
+Finally, I dare to ask for help from the community, please:
+I’m really stuck with the USB driver. It can detect device connections, but communication has not started.
 Perhaps someone would enjoy diving deep into the USB driver to solve this riddle. Ready for issue reports and pull requests.
 
 Picture of LCD Display test in RT-Thread running on Devterm R-01:
-![devterm_lcd_mipi_work.jpg](https://github.com/ylyamin/RT-Thread-on-Allwinner-D1H/blob/master/documentation/Pics/devterm_lcd_mipi_work.jpg)
 
-## RT-Thread on Allwinner D1H. LCD work, USB in progress.
+![devterm_lcd_mipi_work.jpg](https://oss-club.rt-thread.org/uploads/20241017/a4b71b81adb31770f280599ce3d8d7ff.jpg.webp)
 
+## whycan.com: 
+
+RT-Thread on Allwinner D1H. LCD work, USB in progress.
 
 Hi all,
 
@@ -113,7 +122,7 @@ Should say: it's not truly low-level bare-metal from ground as RT-Thread operate
 Ready images for SD card:
 [list]
 [*]DevTerm R01: [url=https://github.com/ylyamin/RT-Thread-on-Allwinner-D1H/releases/download/v5.0.2.2/sd_image_devterm.img]sd_image_devterm.img[/url][/*]
-[*]uConsole R01: [url=https://github.com/ylyamin/RT-Thread-on-Allwinner-D1H/releases/download/v5.0.2.2/sd_image_uconsole.img] sd_image_uconsole.img[/url] (not tested yet)[/*]
+[*]uConsole R01: [https://github.com/ylyamin/RT-Thread-on-Allwinner-D1H/blob/master/image/sd_image_uconsole.img] sd_image_uconsole.img[/url] (not tested yet)[/*]
 [*]Sipeed Lichee RV: [url=https://github.com/ylyamin/RT-Thread-on-Allwinner-D1H/releases/download/v5.0.2.2/sd_image_lichee.img]sd_image_lichee.img[/url][/*]
 [/list]
 [b]Please note:[/b] The DevTerm/uConsole battery charging/discharging controller is not yet configured in the driver, so I’m unsure how it affects the battery. I suggest not using the battery with RT-Thread and powering it via USB instead.

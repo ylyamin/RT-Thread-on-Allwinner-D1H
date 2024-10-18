@@ -1,64 +1,68 @@
-#
-
 menu "Board Select"
+
+choice
+    prompt "Choose Board"
+    default MIPI_DSI_LCD_ICN9707
 
 config V459_PERF1
     bool "board v459 perf1"
-    default n
+    #default n
     ---help---
       board v459 perf1
 
 config F133_FPGA
     bool "board fpga f133"
-    default n
+    #default n
     ---help---
       board f133 fpga
 
 config VVX07H005A10_MIPI
     bool "board, disp with VVX07H005A10_mipi"
-    default n
+    #default n
     ---help---
       board, disp with VVX07H005A10_mipi
 config TFT08006_MIPI
     bool "board, disp with TFT08006_mipi"
-    default n
+    #default n
     ---help---
       board, disp with TFT08006_mipi
 
 config TFT_RGB
     bool "board, disp with TFT RGB"
-    default n
+    #default n
     ---help---
       board, disp with TFT RGB
 
 config HE0801A068_MIPI
     bool "EVB board, disp with HE0801A068_MIPI"
-    default n
+    #default n
     ---help---
       EVB board, disp with HE0801A068_MIPI
 config DEFAULT_LVDS
     bool "board, disp with lvds"
-    default n
+    #default n
     ---help---
       board, disp with lvds
 
 config RGB_LCD_ST7001S
     bool "4.3 inch RGB LCD display 043026-N6(ML) with ST7001s (SPI)"
-    default n
+    #default n
     ---help---
       4.3 inch RGB LCD display 043026-N6(ML) with ST7001s (SPI)
 
 config MIPI_DSI_LCD_ICN9707
     bool "Clockworkpi Devterm R01 board with MIPI DSI display ICN9707"
-    default n
+    #default n
     ---help---
       Clockworkpi Devterm R01 board with MIPI DSI display ICN9707
 
 config MIPI_DSI_LCD_CWU50
-      bool "Clockworkpi uConsole R01 board with MIPI DSI display CWU50"
-      default n
-      ---help---
-        Clockworkpi uConsole R01 board with MIPI DSI display CWU50
+    bool "Clockworkpi uConsole R01 board with MIPI DSI display CWU50"
+    #default n
+    ---help---
+      Clockworkpi uConsole R01 board with MIPI DSI display CWU50
+
+endchoice
 
 endmenu
 
