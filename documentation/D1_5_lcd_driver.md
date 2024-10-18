@@ -1497,7 +1497,7 @@ I extracted driver for cwu50 display, lets put it to **lcd** folder:
 - rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/lcd/cwu50.c
 - rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/lcd/cwu50.h
 
-Looking to ClockworkPi repository looks like they have datasheet for uConsole display IC [JD9365DA-H3_DS_V0.01_20200819.pdf](uConsole/JD9365DA-H3_DS_V0.01_20200819.pdf). Is JADART JD9365DA-H3 Single chip solution for a WXGA a-Si type LCD display.
+Looking to ClockworkPi repository looks like they have datasheet for uConsole display IC [JD9365DA-H3_DS_V0.01_20200819.pdf](ClockworkPi_uConsole/JD9365DA-H3_DS_V0.01_20200819.pdf). Is JADART JD9365DA-H3 Single chip solution for a WXGA a-Si type LCD display.
 
 At "9.5.2. Power on sequence for differential power mode" paragraph defined Power on sequence diagram:
 
