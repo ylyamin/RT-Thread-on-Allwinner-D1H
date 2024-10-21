@@ -1492,6 +1492,11 @@ uConsole display initialisation process looks like very similar as DevTerm LCD D
 I skip most of explanation as is the same as was before for Devterm MIPI DSI variant.<br>
 Please refer to paragraph above for additional information about each step.
 
+After the first attempt display didn't show anything. 
+Clockworkpi forum user "jusentari" selected experimental parameters with display finally worked (https://forum.clockworkpi.com/t/r-01-risc-v-baremetal-with-rt-thread-lcd-work-usb-in-progress/14683/8).
+
+**Used experimental parameters, please use with caution.**
+
 From ClockworkPi path to uConsole R01 https://github.com/clockworkpi/uConsole/blob/master/Code/patch/r01/20230614/r01_v1.01_230614.patch<br>
 I extracted driver for cwu50 display, lets put it to **lcd** folder:
 - rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/lcd/cwu50.c
@@ -1502,6 +1507,10 @@ Looking to ClockworkPi repository looks like they have datasheet for uConsole di
 At "9.5.2. Power on sequence for differential power mode" paragraph defined Power on sequence diagram:
 
 ![display_jadart_power.png](Pics/display_jadart_power.png)
+
+Clockworkpi forum user "jusentari" found by experiment this siquence wrok:
+
+![uConsole_display_timings.png](Pics/uConsole_display_timings.png)
 
 Lets modify LCD_power_on function in cwu50.c to use axp228 power manager:
 
@@ -1666,6 +1675,13 @@ struct property_t g_lcd0_config_soc[] = {
 ```
 </details>
 <br>
+
+Clockworkpi forum user "jusentari" found with lcd_dclk_freq = 62 screen slowly flickers, according datasheet 62Mhz is propper frequency for this resolution:
+
+![uConsole_display_clock.png](Pics/uConsole_display_clock.png)
+
+"I fixed it by upping the lcd_dclk_freq in the cwu50_config.c file from 62 to 67. There was some trial and error (the flickering gets worse as the number goes up until about 67) but now the screen displays the drawn pixels correctly. Pushed it further to see if I could increase the bandwidth. That worked! I don’t know if it affects battery life or the life of the screen, but at least there’s something on the screen now."
+
 <details><summary>Need add this config file to RTT build:</summary>
 
 ```patch
@@ -1735,22 +1751,15 @@ diff --git a/rt-thread/bsp/allwinner/d1s_d1h/.config b/rt-thread/bsp/allwinner/d
 </details>
 <br>
 
-### After all modification 
+### MIPI DSI LCD Display work
 
-in RT-Thread console output shown driver init:
-
-```sh
-Hello RISC-V
-raoyiming +++ LCD_open_flow
-<0>raoyiming +++ sunxi_lcd_gpio_set_value
-<0>raoyiming +++ LCD_panel_init
-```
-
-Can't know if Display works as I didn'r have uConsole, previos Devterm implementation work perfectly.<br>
-This driver could be tested by command:
+After all modification in code uConsole R01 - LCD MIPI DSI Display successfully started, can be tested by command:
 ```sh
 lcd_draw_point 100 100
 ```
+
+![uConsole_dispaly_works.jpeg](Pics/uConsole_dispaly_works.jpeg)
+
 
 ## LCD Display driver for RGB Display
 

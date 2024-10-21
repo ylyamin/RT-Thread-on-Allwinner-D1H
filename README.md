@@ -1,7 +1,7 @@
 # Overview
 This is an experimentation with the [RT-Thread Operating System](https://www.rt-thread.io/) with the [Allwinner D1H](https://d1.docs.aw-ol.com/en/) RISC-V SOC and a Collection of Bootloaders and Developer environment for programming and debugging.  
 
-Executed at hardware such as [ClockworkPi DevTerm R-01](https://www.clockworkpi.com/home-devterm) and [Sipeed Lichee RV + Dock](https://wiki.sipeed.com/hardware/en/lichee/RV/Dock.html). Also hope it will work at [ClockworkPi uConsole R-01](https://www.clockworkpi.com/uconsole).  
+Executed at hardware such as [ClockworkPi uConsole R-01](https://www.clockworkpi.com/uconsole),[ClockworkPi DevTerm R-01](https://www.clockworkpi.com/home-devterm) and [Sipeed Lichee RV + Dock](https://wiki.sipeed.com/hardware/en/lichee/RV/Dock.html).
 
 The intention is to easily run peripherals in D1, exactly Display. RT-Thread OS was chosen because it looks like has the most extensive HAL layer for D1, similar to the [Linux kernel](https://github.com/cuu/last_linux-5.4/tree/master/drivers/video/fbdev/sunxi/) but not so overcomplicated.
 
@@ -9,7 +9,7 @@ At the original repository [RT-Thread](https://github.com/RT-Thread/rt-thread) t
 So was performed fork from [v5.0.2](https://github.com/RT-Thread/rt-thread/releases/tag/v5.0.2) and introduced several changes to make it runnable in D1H. Added also bootloaders, compiler, debugger, build system.
 
 Introduced code changes, knowledge and experience described in [series of articles](documentation/D1_0_index.md) stored in repository.<br>
-Discussion in forum: https://forum.clockworkpi.com/t/r-01-risc-v-baremetal-with-rt-thread-lcd-work-usb-in-progress/14683
+Discussion in: https://forum.clockworkpi.com/t/r-01-risc-v-baremetal-with-rt-thread-lcd-work-usb-in-progress/14683
 
  > [^1]: At time when I'm tried to compile was [issue 9063](https://github.com/RT-Thread/rt-thread/issues/9063) after it was solved by [PR](https://github.com/RT-Thread/rt-thread/pull/9142) in Master.
 
@@ -19,14 +19,16 @@ Discussion in forum: https://forum.clockworkpi.com/t/r-01-risc-v-baremetal-with-
 
 ![devterm_lcd_mipi_work.jpg](documentation/Pics/devterm_lcd_mipi_work.jpg)
 
-2. Hope RT-Thread could run in ClockworkPi uConsole R-01 and manage MIPI DSI LCD Display too. But can't test as I didn't have uConsole.
+2. RT-Thread could run in ClockworkPi uConsole R-01 and manage MIPI DSI LCD Display (experimental parameters, use with caution).
+
+![uConsole_dispaly_works.jpeg](documentation/Pics/uConsole_dispaly_works.jpeg)
 
 3. Also could run in Sipeed Lichee RV and manage RGB LCD Display [lichee_lcd_rgb_work](documentation/Pics/lichee_lcd_rgb_work.jpg)
 
 # Installation
 In repository exist pre-builded images for SD card in folder [image](image), need to flash it to SD card and install to device.
 - For ClockworkPi DevTerm R01 board please use [image/sd_image_devterm.img](image/sd_image_devterm.img)
-- For ClockworkPi uConsole R01 board please use [image/sd_image_uconsole.img](image/sd_image_uconsole.img) (not tested yet)
+- For ClockworkPi uConsole R01 board please use [image/sd_image_uconsole.img](image/sd_image_uconsole.img) (experimental parameters, use with caution)
 - For Sipeed Lichee RV board please use [image/sd_image_lichee.img](image/sd_image_lichee.img)
 
 ## Windows

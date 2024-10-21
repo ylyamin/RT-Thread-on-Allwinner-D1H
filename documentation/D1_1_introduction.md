@@ -25,6 +25,8 @@ Found [ClockworkPi DevTerm](https://www.clockworkpi.com/home-devterm) Open Sourc
 
 And an additional it can have module: R-01 core with 64-bit RISC-V MCU and 1GB DDR3 memory. Inside R-01 Allwinner D1H  RISC-V SoC - and is where I found pain.<br>
 
+![d1h.png](Pics/d1h.png)
+
 I thought if Linux can run on this chip, then I could definitely implement some bare-metal drivers. But in reality, the Allwinner documentation very limited regarding peripherals - there are no examples and no standalone libraries. <br>
 Allwinner Drivers in Linux consist of thousand lines of code mixed with all Allwinner platforms and Linux libraries, I can't convert it to bare-metal.<br>
 Why is this so ? Who knows. Maybe the peripherals in the SoC is intellectual property from external suppliers and can only be provided if you have a commercial agreement.<br>
