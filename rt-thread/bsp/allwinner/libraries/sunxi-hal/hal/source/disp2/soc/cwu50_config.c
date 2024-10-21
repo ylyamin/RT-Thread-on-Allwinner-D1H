@@ -69,7 +69,7 @@ struct property_t g_lcd0_config_soc[] = {
     {
         .name = "lcd_dclk_freq",
         .type = PROPERTY_INTGER,
-        .v.value = 62,
+        .v.value = 67,
     },
     {
         .name = "lcd_pwm_used",
