@@ -19,7 +19,7 @@ Discussion in: https://forum.clockworkpi.com/t/r-01-risc-v-baremetal-with-rt-thr
 
 ![devterm_lcd_mipi_work.jpg](documentation/Pics/devterm_lcd_mipi_work.jpg)
 
-2. RT-Thread could run in ClockworkPi uConsole R-01 and manage MIPI DSI LCD Display (experimental parameters, use with caution).
+2. RT-Thread could run in ClockworkPi uConsole R-01 and manage MIPI DSI LCD Display, thanks for ClockworkPi forum user @jusentari. **(experimental display parameters, use with caution)**.
 
 ![uConsole_dispaly_works.jpeg](documentation/Pics/uConsole_dispaly_works.jpeg)
 
@@ -28,7 +28,7 @@ Discussion in: https://forum.clockworkpi.com/t/r-01-risc-v-baremetal-with-rt-thr
 # Installation
 In repository exist pre-builded images for SD card in folder [image](image), need to flash it to SD card and install to device.
 - For ClockworkPi DevTerm R01 board please use [image/sd_image_devterm.img](image/sd_image_devterm.img)
-- For ClockworkPi uConsole R01 board please use [image/sd_image_uconsole.img](image/sd_image_uconsole.img) (experimental parameters, use with caution)
+- For ClockworkPi uConsole R01 board please use [image/sd_image_uconsole.img](image/sd_image_uconsole.img) **(experimental display parameters, use with caution)**
 - For Sipeed Lichee RV board please use [image/sd_image_lichee.img](image/sd_image_lichee.img)
 
 ## Windows
