@@ -16,7 +16,7 @@ static void LCD_cfg_panel_info(struct panel_extend_para * info)
 static s32 LCD_open_flow(u32 sel)
 {
     printk("raoyiming +++ LCD_open_flow\n");
-    //LCD_OPEN_FUNC(sel, LCD_power_on, 100);   //open lcd power, and delay 50ms
+    LCD_OPEN_FUNC(sel, LCD_power_on, 100);   //open lcd power, and delay 50ms
     LCD_OPEN_FUNC(sel, LCD_panel_init, 200);   //open lcd power, than delay 200ms
     LCD_OPEN_FUNC(sel, sunxi_lcd_tcon_enable, 200);     //open lcd controller, and delay 100ms
     LCD_OPEN_FUNC(sel, LCD_bl_open, 0);     //open lcd backlight, and delay 0ms
@@ -309,23 +309,16 @@ static void LCD_panel_init(u32 sel)
     u32 i;
     printk("<0>raoyiming +++ LCD_panel_init\n");
 	
-	/*Power off*/
-	panel_rst(0);
-	sunxi_lcd_delay_ms(120);
-    _axp_LCD_control(0);
-    sunxi_lcd_delay_ms(100);
-
-	/*power on*/
-    _axp_LCD_control(1);
-
-    /*tRPWIRES*/
+    /**/
+    panel_rst(1);
     sunxi_lcd_delay_ms(10);
-
-    /*tRESETH*/
+    
+	panel_rst(0);
+    sunxi_lcd_delay_ms(50);
+    
 	panel_rst(1);
-    sunxi_lcd_delay_ms(5);
+    sunxi_lcd_delay_ms(200);
 
-    /*init sequence*/
     for (i = 0; ; i++) {
         if(lcd_init_setting[i].cmd == REGFLAG_END_OF_TABLE) {
             break;
