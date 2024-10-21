@@ -3,7 +3,7 @@
 
 With this introduction I am beginning a series of articles about hobby experimentation with [Allwinner D1H](https://d1.docs.aw-ol.com/en/) RISC-V MCU and the [RT-Thread](https://www.rt-thread.io/) Operating System.<br>
 The code is available at: https://github.com/ylyamin/RT-Thread-on-Allwinner-D1H <br>
-Discussion in forum: https://forum.clockworkpi.com/t/r-01-risc-v-baremetal-with-rt-thread-lcd-work-usb-in-progress/14683<br>
+Discussion: https://forum.clockworkpi.com/t/r-01-risc-v-baremetal-with-rt-thread-lcd-work-usb-in-progress/14683<br>
 
 Next chapters will describe:
 - [D1-2. Boot process](D1_2_boot_process.md) - Existing best practices for Allwinner D1H bootloaders, examples of booting Linux and RT-Thread, using JTAG and GDB.
@@ -42,9 +42,15 @@ Lets go to the next chapter.<br>
 
 [Index](D1_0_index.md) | [Next chapter](D1_2_boot_process.md)
 
-TODO:
+### TODO:
 - try [PR](https://github.com/RT-Thread/rt-thread/pull/9142) for d1s in d1h
 - create RTT mirror and new PR for d1h common folder
 - create new PR for display drivers
 
-
+### Discussions:
+- https://forum.clockworkpi.com/t/r-01-risc-v-baremetal-with-rt-thread-lcd-work-usb-in-progress/14683
+- https://www.reddit.com/r/RISCV/comments/1g6cbb4/riscv_allwinner_d1h_baremetal_with_rtthread_lcd/
+- https://bbs.aw-ol.com/topic/5844/rt-thread-on-d1h-lcd-work-usb-in-progress
+- https://club.rt-thread.org/ask/article/b66f7db40179a81b.html
+- https://club.rt-thread.io/ask/article/18.html
+- https://whycan.com/t_11510.html
