@@ -1825,7 +1825,8 @@ static void hub_events(u32 flag)
  * In Devterm power provided separetly from axp228
  * comment this funtion
  */
-                //!hub_power_on(hub);
+                //!
+                hub_power_on(hub);
             }
         }
 

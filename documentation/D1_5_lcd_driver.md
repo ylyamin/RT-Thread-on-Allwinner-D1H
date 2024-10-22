@@ -1508,10 +1508,7 @@ At "9.5.2. Power on sequence for differential power mode" paragraph defined Powe
 
 ![display_jadart_power.png](Pics/display_jadart_power.png)
 
-Clockworkpi forum user @jusentari found by experiment this siquence is wrok:
-
-![uConsole_display_timings.png](Pics/uConsole_display_timings.png)
-
+cwu50.c power siquence not exact implement what defined in datasheet, but is wrok.<br>
 Lets modify LCD_power_on function in cwu50.c to use axp228 power manager:
 
 ```patch

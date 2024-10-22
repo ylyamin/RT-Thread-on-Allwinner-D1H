@@ -183,11 +183,13 @@ int sunxi_insmod_ehci(struct sunxi_hci_hcd *sunxi_ehci)
 
 //!!
 	// request irq 
-/* 	if (hal_request_irq(sunxi_ehci->irq_no, ehci_irq_handler, "ehci", hcd) < 0) {
+	/* 	
+	if (hal_request_irq(sunxi_ehci->irq_no, ehci_irq_handler, "ehci", hcd) < 0) {
 		hal_log_err("request irq error\n");
 		return -1;
 	}
-	hal_enable_irq(sunxi_ehci->irq_no); */
+	hal_enable_irq(sunxi_ehci->irq_no); 
+	*/
 //!!
 
 	/* echi start to work */

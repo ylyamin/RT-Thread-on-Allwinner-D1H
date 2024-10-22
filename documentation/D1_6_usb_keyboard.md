@@ -149,10 +149,13 @@ index 165cce4ac..beb29117f 100644
 +source/usb/core/usb_core_base.c	
 +source/usb/core/usb_driver_init.c
 +source/usb/core/urb.c
-+source/usb/host/ehci-hcd.c
 +source/usb/host/sunxi-hci.c
-+source/usb/host/ehci-sunxi.c
 +source/usb/host/hal_hci.c
++source/usb/host/ehci-hcd.c
++source/usb/host/ehci-sunxi.c
++source/usb/host/ohci-hub.c
++source/usb/host/ohci-hcd.c
++source/usb/host/ohci_sunxi.c
 +source/usb/hid/Client/KeyBoard/KeyBoard.c
 +source/usb/hid/Client/misc_lib.c
 +source/usb/hid/Class/Hid.c
@@ -164,21 +167,6 @@ index 165cce4ac..beb29117f 100644
 +source/usb/hid/Client/Mouse/UsbMouse.c
 +source/usb/hid/Client/Mouse/UsbMouse_DriftControl.c
 +''')
-+#source/usb/hid/Client/Mouse/UsbMouse.c
-+#source/usb/hid/Client/Mouse/UsbMouse_DriftControl.c
-+
-+#source/usb/storage/Class/mscProtocol.c
-+#source/usb/storage/Class/mscTransport.c
-+#source/usb/storage/Class/mscTransport_i.c
-+#source/usb/storage/Class/usb_msc.c
-+#source/usb/storage/Disk/BlkDev.c
-+#source/usb/storage/Disk/CD.c
-+#source/usb/storage/Disk/Disk.c
-+#source/usb/storage/Disk/LunMgr.c
-+#source/usb/storage/Disk/Scsi2.c
-+#source/usb/storage/Misc/usbh_buff_manager.c
-+#source/usb/storage/Misc/usbh_disk_info.c
-+#source/usb/storage/Misc/usbh_disk_remove_time.c
 +
 +host_test_src = Split('''
 +test/usb/host/test_hci.c
@@ -323,33 +311,194 @@ index 000000000..8b71888a1
 ```
 </details>
 <br>
+
+Change debug level in file rt-thread\bsp\allwinner\libraries\libos\include\log.h
+```patch
+-#define DBG_LVL DBG_ERROR
++#define DBG_LVL DBG_INFO
+```
+
 But after running RTT nothing happen.
 <br>
 <details><summary>Is RTT console output:</summary>
 
 ```shell
-phy_vbase : 0x4100400, usbc_no : 0, efuse : 0x1e9200f
-[ehci-usb0] insmod host driver!
-[sunxi-ehci0]: sunxi_set_vbus cnt.
-[usbh core]: adding sub dev  (config #1, interface 0)
-[ohci-usb0] insmod host driver!
-[sunxi-ohci0]: sunxi_set_vbus cnt.
-[usbh core]: adding sub dev  (config #1, interface 0)
-[ehci-usb1] insmod host driver!
-[sunxi-ehci1]: sunxi_set_vbus cnt.
-[usbh core]: adding sub dev  (config #1, interface 0)
-[ohci-usb1] insmod host driver!
-[sunxi-ohci1]: sunxi_set_vbus cnt.
-[usbh core]: adding sub dev  (config #1, interface 0)
+[I/DBG] --usb_gen_hub_init---1----
+[I/DBG] --usb_gen_hub_init---2----
+[I/DBG] [usb bus]: driver "hub drv" detect usb bus.
+[I/DBG] --usb_virt_bus_drv_reg---1-2--
+[I/DBG] --usb_virt_bus_drv_reg---1-3--
+[I/DBG] --usb_gen_hub_init---4----
+[I/DBG] --usb_gen_hub_init---5----
+[I/DBG] [sunxi-ehci11]: probe, sunxi_ehci: 0x0x00000000405816c0, 0x:0x0000000004200000, irq_no:49
+plic_irq_toggle irq:49,enable:1
+[I/DBG] --open_clock 0x810 = 0x0
+[I/DBG] reg_value = 0x701
+[I/DBG] ---usb_passby 0x800 = 0x701
+[I/DBG] [usbh core]: add gen_dev SW USB2.0 'Enhanced' Host Controller (EHCI) Driver
+[ehci_qtd_alloc:57] qtd virt = 0x405999c0, phys = 0x405999c0
+[I/DBG] ----2--usb_add_hc_gen_dev
+[I/DBG] ----3--usb_add_hc_gen_dev
+[I/DBG] --ehci_run: cmd = 0x10005
+[I/DBG] --ehci_run: hc_capbase = 0x100
+[I/DBG] USB 0.0 started, EHCI 1.00(NULL)
+[ehci_irq_handler:718]
+ehci_irq: highspeed device connect
+[I/DBG] ----4--usb_add_hc_gen_dev
+[I/DBG] hcd->remote_wakeup=0
+[I/DBG] ----5--usb_add_hc_gen_dev
+[I/DBG] ---usb_get_device_descriptor---1--
+[I/DBG] ---usb_get_device_descriptor---2--
+[I/DBG] ---usb_get_device_descriptor---3--
+[usbh core]: adding sub dev  (config #1, interface 0)[I/DBG] --usb_virt_bus_dev_add---0
+[I/DBG] --usb_virt_bus_dev_add---1
+[I/DBG] ----func_drv->func_drv_name = hub drv
+[I/DBG] ---usb_core_func_drv_probe----1---
+[I/DBG] usb match id suceessfull
+[I/DBG] ---usb_core_func_drv_probe----2---
+[I/DBG] [hub]: usb hub probe
+[I/DBG] hub_probe--1--
+[I/DBG] hub_probe--2--
+[I/DBG] hub_probe--3--
+[I/DBG] hub_probe--3-4--
+[I/DBG] hub_probe--4--
+[I/DBG] _hub_config--1--
+[I/DBG] _hub_config--2--
+[I/DBG] _hub_config--3--
+[I/DBG] [hub]: 1 port detected
+[usbh hub]: stand alone hub[I/DBG] _hub_config--4--
+[usbh hub]: individual port power switching[I/DBG] _hub_config--4--
+[usbh hub]: global over-current protection[I/DBG] _hub_config--5--
+[I/DBG] _hub_config--6--
+[usbh hub]: TT requires at most 8 FS bit times[I/DBG] _hub_config--7--
+[I/DBG] _hub_config--8--
+[I/DBG] _hub_config--9--
+[I/DBG] _hub_config--10--
+[I/DBG] [usbh hub]: local power source is good
+[I/DBG] [usbh hub]: no over-current condition exists
+[I/DBG] _hub_config--11--
+[I/DBG] _hub_config--12--
+[I/DBG] _hub_config--13--
+[I/DBG] _hub_config--14--
+[I/DBG] _hub_config--15--
+[I/DBG] _hub_config--16--
+[I/DBG] ---usb_core_func_drv_probe----3---
+[I/DBG] portstatus = 0x501, portchange = 0x1
+[I/DBG] port debounce 0...
+[I/DBG] port debounce 0...
+[I/DBG] port debounce 25...
+[I/DBG] port debounce 50...
+[I/DBG] port debounce 75...
+[I/DBG] hub_port_init: udev address = 0
+[ehci_irq_handler:718] 
+ehci_irq: highspeed device disconnect
+[E/DBG] port_wait_reset: err = -107
+[E/DBG] ERR: hub_port_reset failed!
+[E/DBG] ERR: hub_port_init failed, retry....
+ERR: parameter is NULL, can't freeERR: parameter is NULL, can't freeERR: parameter is NULL, can't freeERR: parameter is NULL, can't free[I/DBG] hub_events--6-10--
+[I/DBG] hub_events--7--
+[I/DBG] hub_events--8--
+[I/DBG] hub_events--9--
+[I/DBG] portstatus = 0x100, portchange = 0x1
+[I/DBG] port debounce 0...
+[I/DBG] port debounce 0...
+[I/DBG] port debounce 25...
+[I/DBG] port debounce 50...
+[I/DBG] port debounce 75...
+[I/DBG] hub_events--6-10--
+[I/DBG] hub_events--7--
+[I/DBG] hub_events--8--
+[I/DBG] hub_events--9--
+[I/DBG] ----6--usb_add_hc_gen_dev
 ```
 </details>
 <br>
-I expect some process of enumeration USB devices, but looks like is not rich this point.
+Seems is detect USB device connection, I expect some process of enumeration USB devices, but looks like is not rich this point.
+
 Trying to use RTT function rt_usb_host_init() from rt-thread\components\drivers\usb\usbhost\core\usbhost.c also not show anything.<br>
-Noticed when USB device connected is called interrupt handler ehci_irq_handler() and reach point where print message "ehci_irq: highspeed device connect" but then communication not start.  
 
 ### USB D1s Melis HAL variant
-Thinking maybe whole USB host HAL outdated or broken, lets look to other variants. I found different HAL in https://github.com/Tina-Linux/d1s-melis/tree/master/ekernel/drivers. I moved this usb HAL folder to RTT - is can be compiled and run but also nothing really happen, when device attached is failed in ehci_irq_handler() line &ehci->regs->status.
+Thinking maybe whole USB host HAL outdated or broken, lets look to other variants.<br>
+I found different HAL in https://github.com/Tina-Linux/d1s-melis/tree/master/ekernel/drivers.<br>
+
+Moved this usb HAL folder to RTT: rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb_melis <br>
+Original RTT USB HAL folder moved to: rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb_old <br>
+Change rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/SConscript <br>
+<details><summary>Is RTT console output:</summary>
+
+```shell
+[I/DBG] [usb bus]: driver "hub drv" detect usb bus.
+[ehci-usb1] insmod host driver!
+[I/DBG] --open_clock 0x810 = 0x0
+phy_vbase : 0x4200800, usbc_no : 1, efuse : 0x1e9200f
+[sunxi-ehci1]: sunxi_set_vbus cnt.
+[I/DBG] ehci insmod status = 2
+[I/DBG] [usbh core]: add gen_dev SW USB2.0 'Enhanced' Host Controller (EHCI) Driver
+[I/DBG] USB 0.0 started, EHCI 1.00
+ehci_irq_handler hcd: 405a26d8
+ehci_irq_handler regs: 4200010
+ehci_irq_handler status: 4200014
+ehci_irq: highspeed device connect
+[usb_control_msg:70]                    req:GET_DESCRIPTOR(6), req_type:0x80
+[usb_hcd_link_urb_to_ep:1310]           urb_enqueue(0x00000000405e7420) ctrl-0-in
+[urb_unlink:127]                        urb_dequeue(0x00000000405e7420)
+[usb_control_msg:70]                    req:GET_DESCRIPTOR(6), req_type:0x80
+[usb_hcd_link_urb_to_ep:1310]           urb_enqueue(0x00000000405e7588) ctrl-0-in
+[urb_unlink:127]                        urb_dequeue(0x00000000405e7588)
+[usb_control_msg:70]                    req:GET_DESCRIPTOR(6), req_type:0x80
+[usb_hcd_link_urb_to_ep:1310]           urb_enqueue(0x00000000405e7650) ctrl-0-in
+[urb_unlink:127]                        urb_dequeue(0x00000000405e7650)
+[usb_control_msg:70]                    req:GET_DESCRIPTOR(6), req_type:0x80
+[usb_hcd_link_urb_to_ep:1310]           urb_enqueue(0x00000000405e7920) ctrl-0-in
+[urb_unlink:127]                        urb_dequeue(0x00000000405e7920)
+[usb_control_msg:70]                    req:GET_DESCRIPTOR(6), req_type:0x80
+[usb_hcd_link_urb_to_ep:1310]           urb_enqueue(0x00000000405e7920) ctrl-0-in
+[urb_unlink:127]                        urb_dequeue(0x00000000405e7920)
+[usb_control_msg:70]                    req:GET_DESCRIPTOR(6), req_type:0x80
+[usb_hcd_link_urb_to_ep:1310]           urb_enqueue(0x00000000405e7a48) ctrl-0-in
+[urb_unlink:127]                        urb_dequeue(0x00000000405e7a48)
+[usb_control_msg:70]                    req:GET_DESCRIPTOR(6), req_type:0x80
+[usb_hcd_link_urb_to_ep:1310]           urb_enqueue(0x00000000405e7b70) ctrl-0-in
+[urb_unlink:127]                        urb_dequeue(0x00000000405e7b70)
+[usb_control_msg:70]                    req:SET_CONFIGURATION(9), req_type:0x0
+[usb_hcd_link_urb_to_ep:1310]           urb_enqueue(0x00000000405e7a78) ctrl-0-out
+[urb_unlink:127]                        urb_dequeue(0x00000000405e7a78)
+[usbh core]: adding sub dev  (config #1, interface 0)[I/DBG] usb match id suceessfull
+[ohci-usb1] insmod host driver!
+[I/DBG] --open_clock 0x810 = 0x3880
+phy_vbase : 0x4200800, usbc_no : 1, efuse : 0x1e9200f
+[sunxi-ohci1]: sunxi_set_vbus cnt.
+[I/DBG] [usbh core]: add gen_dev SW USB2.0 'Open' Host Controller (OHCI) Driver
+[usb_control_msg:70]                    req:GET_DESCRIPTOR(6), req_type:0x80
+[usb_hcd_link_urb_to_ep:1310]           urb_enqueue(0x00000000405e97f0) ctrl-0-in
+[urb_unlink:127]                        urb_dequeue(0x00000000405e97f0)
+[usb_control_msg:70]                    req:GET_DESCRIPTOR(6), req_type:0x80
+[usb_hcd_link_urb_to_ep:1310]           urb_enqueue(0x00000000405e9a38) ctrl-0-in
+[urb_unlink:127]                        urb_dequeue(0x00000000405e9a38)
+[usb_control_msg:70]                    req:GET_DESCRIPTOR(6), req_type:0x80
+[usb_hcd_link_urb_to_ep:1310]           urb_enqueue(0x00000000405e9b00) ctrl-0-in
+[urb_unlink:127]                        urb_dequeue(0x00000000405e9b00)
+[usb_control_msg:70]                    req:GET_DESCRIPTOR(6), req_type:0x80
+[usb_hcd_link_urb_to_ep:1310]           urb_enqueue(0x00000000405e9e10) ctrl-0-in
+[urb_unlink:127]                        urb_dequeue(0x00000000405e9e10)
+[usb_control_msg:70]                    req:GET_DESCRIPTOR(6), req_type:0x80
+[usb_hcd_link_urb_to_ep:1310]           urb_enqueue(0x00000000405e9e10) ctrl-0-in
+[urb_unlink:127]                        urb_dequeue(0x00000000405e9e10)
+[usb_control_msg:70]                    req:GET_DESCRIPTOR(6), req_type:0x80
+[usb_hcd_link_urb_to_ep:1310]           urb_enqueue(0x00000000405e9f38) ctrl-0-in
+[urb_unlink:127]                        urb_dequeue(0x00000000405e9f38)
+[usb_control_msg:70]                    req:GET_DESCRIPTOR(6), req_type:0x80
+[usb_hcd_link_urb_to_ep:1310]           urb_enqueue(0x00000000405ea060) ctrl-0-in
+[urb_unlink:127]                        urb_dequeue(0x00000000405ea060)
+[usb_control_msg:70]                    req:SET_CONFIGURATION(9), req_type:0x0
+[usb_hcd_link_urb_to_ep:1310]           urb_enqueue(0x00000000405e9f68) ctrl-0-out
+[urb_unlink:127]                        urb_dequeue(0x00000000405e9f68)
+[usbh core]: adding sub dev  (config #1, interface 0)[I/DBG] usb match id suceessfull
+```
+</details>
+<br>
+Looks like exchange descriptors but I believe is an exchange with a virtual device not real.<br>
+Seems is detect USB device connection but communication and enumeration did not happen.
 
 ## D1H Documentation
 
@@ -860,7 +1009,7 @@ usb_passby
 phy write: 4200800<-701
 ```
 </details>
-
+<br>
 Overall seems Linux and RTT implementation quite similar.
 Lets asume clock and phy init is ok. So maybe problem in EHCI/OHCI
 
@@ -886,8 +1035,9 @@ EHCI and OHCI is low level controllers for High and Full speed USB devices accor
 
 Code for work with EHCI in sunxi hal for me is quite complicated, and is not reach enumeration. So I tryed to find simple opensource implementation. 
 
-RTT support use of external packages https://packages.rt-thread.org/en/index.html for USB stack offers CherryUSB and TinyUSB packages.
-This packages downloads from differen repositories to folder rt-thread\bsp\allwinner\d1s_d1h\packages. 
+RTT support use of external packages https://packages.rt-thread.org/en/index.html for USB stack offers CherryUSB and TinyUSB packages.<br>
+
+This packages downloads from differen repositories to folder rt-thread/bsp/allwinner/d1s_d1h/packages. 
 I created forks of this packages:
 * https://github.com/ylyamin/CherryUSB_fork
 * https://github.com/ylyamin/tinyusb_fork
@@ -998,7 +1148,7 @@ int ohci_kill_urb(struct usbh_urb *urb)
 </details>
 
 ### TinyUSB
-In TinyUSB  transfer functions is implemented for EHCI and OHCI
+In TinyUSB transfer functions is implemented for EHCI and OHCI
 
 /src/portable/ehci/ehci.c<br>
 /src/portable/ohci/ohci.c<br>
@@ -1403,6 +1553,38 @@ index 000000000..59d64a85f
 ```
 </details>
 
+### Disable interrupts in sunxi-hal
+
+<details><summary>Change files:</summary>
+
+rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb_melis/host/ehci-sunxi.c
+
+```patch
++	/* 	
+	if (hal_request_irq(sunxi_ehci->irq_no, ehci_irq_handler, "ehci", hcd) < 0) {
+		hal_log_err("request irq error\n");
+		return -1;
+	}
+	hal_enable_irq(sunxi_ehci->irq_no); 
++	*/
+```
+
+rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/usb_melis/host/ohci-sunxi.c
+
+```patch
++/*
+  	if (hal_request_irq(sunxi_ohci->irq_no, ohci_irq_handler, "ohci", hcd) < 0) {
+		hal_log_err("request irq error\n");
+		return -1;
+	}
+
+	hal_enable_irq(sunxi_ohci->irq_no); 
++*/
+```
+
+</details>
+
+
 ### Add switching to companion support
 <details><summary>If ehci detect full speed device put port owner to 1</summary>
 
@@ -1576,6 +1758,7 @@ index 5ac9e9cca..4fdf9c099 100644
 +    #endif
 ```
 </details>
+
 
 ## Test
 Lets put any USB device in board USB socket and run TinyUSB variant:

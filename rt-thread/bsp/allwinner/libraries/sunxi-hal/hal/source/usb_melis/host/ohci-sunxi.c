@@ -308,12 +308,14 @@ static int sunxi_insmod_ohci(struct sunxi_hci_hcd *sunxi_ohci)
 	hcd->regs = (void *)sunxi_ohci->ohci_base;
 	sunxi_ohci->hcd = hcd;
 //!
-/*  	if (hal_request_irq(sunxi_ohci->irq_no, ohci_irq_handler, "ohci", hcd) < 0) {
+/*
+  	if (hal_request_irq(sunxi_ohci->irq_no, ohci_irq_handler, "ohci", hcd) < 0) {
 		hal_log_err("request irq error\n");
 		return -1;
 	}
 
-	hal_enable_irq(sunxi_ohci->irq_no); */
+	hal_enable_irq(sunxi_ohci->irq_no); 
+*/
 //!
 	/* ochi start to work */
 	sunxi_start_ohci(sunxi_ohci);

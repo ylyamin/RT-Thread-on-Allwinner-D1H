@@ -261,13 +261,24 @@ if GetDepend('DRIVERS_TWI'):
     twi_path += [cwd + '/source/twi']
 
 # USB udc
-udc_src = Split('''
+udc_src_old = Split('''
+source/usb_old/platform/sun20iw1/usb_sun20iw1.c
+source/usb_old/udc/hal_udc.c
+''')
+udc_src_melis = Split('''
 source/usb_melis/platform/sun20iw1/usb_sun20iw1.c
 source/usb_melis/udc/udc.c
 source/usb_melis/udc/udc_hal.c
 ''')
-udc_path = [cwd + '/source/usb_melis/udc']
-udc_path += [cwd + '/source/usb_melis/include']
+
+udc_src = udc_src_melis
+
+udc_path_old = [cwd + '/source/usb_old/udc']
+udc_path_old += [cwd + '/source/usb_old/include']
+udc_path_melis = [cwd + '/source/usb_melis/udc']
+udc_path_melis += [cwd + '/source/usb_melis/include']
+
+udc_path = udc_path_melis
 
 udc_test_src = Split('''
 test/usb/udc/usb_msg.c
@@ -297,9 +308,13 @@ source/usb_old/core/usb_core_base.c
 source/usb_old/core/usb_driver_init.c
 source/usb_old/core/urb.c
 source/usb_old/host/ehci-hcd.c
+
 source/usb_old/host/sunxi-hci.c
 source/usb_old/host/ehci-sunxi.c
 source/usb_old/host/hal_hci.c
+source/usb_old/host/ohci-hub.c
+source/usb_old/host/ohci-hcd.c
+source/usb_old/host/ohci_sunxi.c
 source/usb_old/manager/usb_manager.c
 source/usb_old/manager/usb_msg_center.c
 source/usb_old/manager/usb_hw_scan.c
@@ -334,32 +349,7 @@ source/usb_melis/manager/usb_hw_scan.c
 ''')
 host_src = host_src_melis
 
-#source/usb/hid/Client/Mouse/UsbMouse.c
-#source/usb/hid/Client/Mouse/UsbMouse_DriftControl.c
-#source/usb/hid/Client/KeyBoard/KeyBoard.c
-#source/usb/hid/Client/misc_lib.c
-#source/usb/hid/Class/Hid.c
-#source/usb/hid/Class/HidProtocol.c
-#source/usb/hid/Class/HidTransport.c
-
-#source/usb/storage/Class/mscProtocol.c
-#source/usb/storage/Class/mscTransport.c
-#source/usb/storage/Class/mscTransport_i.c
-#source/usb/storage/Class/usb_msc.c
-#source/usb/storage/Disk/BlkDev.c
-#source/usb/storage/Disk/CD.c
-#source/usb/storage/Disk/Disk.c
-#source/usb/storage/Disk/LunMgr.c
-#source/usb/storage/Disk/Scsi2.c
-#source/usb/storage/Misc/usbh_buff_manager.c
-#source/usb/storage/Misc/usbh_disk_info.c
-#source/usb/storage/Misc/usbh_disk_remove_time.c
-
-#source/usb/include/usb_os_platform.c
-#source/usb/include/list_head_ext.c
-#source/usb/include/usb_gen_dev_mod.c
-#source/usb/include/usb_drv_dev_macth.c
-#source/usb/include/usb_utils_find_zero_bit.c
+#source/usb_old/host/ehci-hub.c
 
 host_test_src = Split('''
 test/usb/host/test_hci.c

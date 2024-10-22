@@ -187,17 +187,19 @@ int open_clock(struct sunxi_hci_hcd *sunxi_hci)
 	USBC_Clean_SIDDP(sunxi_hci);
 
 	/* otg and hci0 Controller Shared phy in SUN50I */
-	//! if (sunxi_hci->usbc_no == HCI0_USBC_NO)
-	//	USBC_SelectPhyToHci(sunxi_hci);
+	//!
+	if (sunxi_hci->usbc_no == HCI0_USBC_NO)
+		USBC_SelectPhyToHci(sunxi_hci);
 
 	// hal_log_info("--open_clock 0x810 = 0x%x",
 	// 	     USBC_Readl(sunxi_hci->usb_vbase + SUNXI_HCI_PHY_CTRL));
-	// mutex_unlock(&usb_clock_lock);
+	 // mutex_unlock(&usb_clock_lock);
 
-	///!
-	//usb_phy_init(sunxi_hci->usb_vbase + SUNXI_USB_PHY_BASE_OFFSET, sunxi_hci->usbc_no);
+	//!
+	usb_phy_init(sunxi_hci->usb_vbase + SUNXI_USB_PHY_BASE_OFFSET, sunxi_hci->usbc_no);
 
 /* special */
+//!
 	if (sunxi_hci->usbc_no == HCI0_USBC_NO)
 	{
 		unsigned long reg_value = 0;
@@ -318,6 +320,7 @@ void usb_passby(struct sunxi_hci_hcd *sunxi_hci, u32 enable)
 	// 	     USBC_Readl(sunxi_hci->usb_vbase + SUNXI_USB_PMU_IRQ_ENABLE));
 
 /* special */
+//!
 	if (sunxi_hci->usbc_no == HCI0_USBC_NO)
 	{
 		reg_value = 0;
