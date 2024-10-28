@@ -52,5 +52,6 @@ Lets go to the next chapter.<br>
 - https://www.reddit.com/r/RISCV/comments/1g6cbb4/riscv_allwinner_d1h_baremetal_with_rtthread_lcd/
 - https://bbs.aw-ol.com/topic/5844/rt-thread-on-d1h-lcd-work-usb-in-progress
 - https://club.rt-thread.org/ask/article/b66f7db40179a81b.html
+- https://club.rt-thread.org/ask/question/881984d138edbf55.html
 - https://club.rt-thread.io/ask/article/18.html
 - https://whycan.com/t_11510.html

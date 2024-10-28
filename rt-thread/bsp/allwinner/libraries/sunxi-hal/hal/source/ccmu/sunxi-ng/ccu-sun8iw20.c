@@ -1273,12 +1273,14 @@ int sunxi_ccu_init(void)
      * This clock mux is still mysterious, and the code just enforces
      * it to have a valid clock parent.
      */
-    for (i = 0; i < ARRAY_SIZE(usb2_clk_regs); i++)
+    //!
+/*     for (i = 0; i < ARRAY_SIZE(usb2_clk_regs); i++)
     {
         val = readl(reg + usb2_clk_regs[i]);
         val &= ~GENMASK(25, 24);
         writel(val, reg + usb2_clk_regs[i]);
-    }
+    } 
+*/
 
     return ccu_common_init(reg, &sun8iw20_ccu_desc);
 }

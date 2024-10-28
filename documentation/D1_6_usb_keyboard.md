@@ -1975,7 +1975,43 @@ $TOOLCHAIN_INSTALL_DIR/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin/riscv6
 
 Page Fault happen. Don't know why. Maybe OHCI driver code somewhere use memory out of page.
 
-Also ideas why USB stack not working:
+## OHCI only
+
+Thanks for Clockworkpi forum user @zoenggit who [found](https://forum.clockworkpi.com/t/r-01-risc-v-baremetal-with-rt-thread-lcd-work-usb-in-progress/14683/20) looks like similar [issue](https://github.com/hathach/tinyusb/discussions/1599), discussed in TinyUSB repo<br>
+And releted repo https://github.com/robots/allwinner_t113 is Allwinner T113 chip with ARM core but pirephiral looks the same.
+
+So in this repo author deside to deactivate EHCI and use only OHCI. I try to do the same:
+
+rt-thread/bsp/allwinner/d1s_d1h/packages/TinyUSB/rt-thread/bsp/sunxi_D1/drv_tinyusb.c
+```c
+	volatile uint32_t *usb_ctrl = (uint32_t * ) (EHCI1_BASE + 0x800); //HCI interface
+	volatile uint32_t *phy_ctrl = (uint32_t * ) (EHCI1_BASE + 0x810); //PHY cntrl
+	volatile uint32_t *portsc  = (uint32_t * ) (EHCI1_BASE + 0x054);  //E_PORTSC
+	*phy_ctrl &= ~BV(3);
+	*usb_ctrl |= BV(10) | BV(9) | BV(8) | BV(0);
+	*portsc |= BV(13);
+```
+
+Looks like USB device start to do something:
+```sh
+[0:0] Get Descriptor: 80 06 00 01 00 00 12 00 
+on EP 00 with 0 bytes
+on EP 00 with 2088 bytes
+[0:0] Control data:
+  0000:  00 00 00 03 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+  0010:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+  0020:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+  0030:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+```
+
+But later USB stak go to FAULT:
+```sh
+[0:0] Get Descriptor: 80 06 00 01 00 00 12 00 
+on EP 00 with 8 bytes
+[0:1] Control FAILED, xferred_bytes = 8
+```
+
+## Also ideas why USB stack not working:
 1. EHCI/OHCI registers initialized in not corret way. Need print how is done im Linux kernel and compare.
 2. Maybe EHCI/OHCI somehow use DMA, and is not init correctly.
 
