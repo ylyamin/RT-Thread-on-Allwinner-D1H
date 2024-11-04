@@ -12,22 +12,17 @@ INCLUDE "link_stacksize.lds"
 
 OUTPUT_ARCH( "riscv" )
 
-/*
- * Memory layout:
- * 0x10200000 - 0x10201000: Bootloader
- * 0x10201000 - 0x10A00000: Kernel
- * 0x10A00000 - 0x11200000: Heap
- */
-
 MEMORY
 {
-   SRAM : ORIGIN = 0x40400000, LENGTH = 560M
+    SRAM : ORIGIN = 0x40300000, LENGTH = 4M
+    DMA :  ORIGIN = 0x40700000, LENGTH = 16M
+    HEAP : ORIGIN = 0x41700000, LENGTH = 16M
 }
 
 ENTRY(_start)
 SECTIONS
 {
-    . = 0x40400000 ;
+    . = ORIGIN(SRAM);
 
     /* __STACKSIZE__ = 4096; */
     __text_start = .;
@@ -117,15 +112,6 @@ SECTIONS
         PROVIDE(__dtors_end__ = .);
     } > SRAM
 
-    .usb :
-    {
-    /* section information for usbh class */
-    . = ALIGN(4);
-    __usbh_class_info_start__ = .;
-    KEEP(*(.usbh_class_info))
-    __usbh_class_info_end__ = .;
-    } > SRAM
-
     /* stack for dual core */
     .stack :
     {
@@ -134,9 +120,10 @@ SECTIONS
 
         . += __STACKSIZE__;
         __stack_cpu0 = .;
-
+        /* 
         . += __STACKSIZE__;
-        __stack_cpu1 = .;
+        __stack_cpu1 = .; 
+        */
     } > SRAM
 
     . = ALIGN(8);
@@ -167,6 +154,22 @@ SECTIONS
         *(COMMON)
     __bss_end = .;
     } > SRAM
+
+    . = ORIGIN(DMA);
+    .usb :
+    {
+        . = ALIGN(4);   
+        __usbh_class_info_start__ = .;
+        KEEP(*(.usbh_class_info))
+        __usbh_class_info_end__ = .; 
+    } > DMA
+
+    . = ORIGIN(HEAP);
+    .heap :
+    {
+        __heap_start = .;
+        *(.heap)
+    } > HEAP
 
     _end = .;
 

@@ -1977,39 +1977,98 @@ Page Fault happen. Don't know why. Maybe OHCI driver code somewhere use memory o
 
 ## OHCI only
 
-Thanks for Clockworkpi forum user @zoenggit who [found](https://forum.clockworkpi.com/t/r-01-risc-v-baremetal-with-rt-thread-lcd-work-usb-in-progress/14683/20) looks like similar [issue](https://github.com/hathach/tinyusb/discussions/1599), discussed in TinyUSB repo<br>
-And releted repo https://github.com/robots/allwinner_t113 is Allwinner T113 chip with ARM core but pirephiral looks the same.
+Thanks for Clockworkpi forum user @zoenggit who [found](https://forum.clockworkpi.com/t/r-01-risc-v-baremetal-with-rt-thread-lcd-work-usb-in-progress/14683/20) discussion  in TinyUSB repo looks like about similar [issue](https://github.com/hathach/tinyusb/discussions/1599)<br>
 
-So in this repo author deside to deactivate EHCI and use only OHCI. I try to do the same:
+Acccording this discussion topic user @robots create repo https://github.com/robots/allwinner_t113 for Allwinner T113 chip. Is ARM core but pirephiral looks absolutly the same as D1H RISC-V.<br>
+Is repo is baremetal experiments with T113 and FreeRTOS also contains Doom.<br> 
+So author deside to deactivate EHCI and use only OHCI. Also for USB descriptors used memmory section with direct mapping.<br>
+
+I try to do the same:
+
+1. Deactivate EHCI:
 
 rt-thread/bsp/allwinner/d1s_d1h/packages/TinyUSB/rt-thread/bsp/sunxi_D1/drv_tinyusb.c
 ```c
-	volatile uint32_t *usb_ctrl = (uint32_t * ) (EHCI1_BASE + 0x800); //HCI interface
-	volatile uint32_t *phy_ctrl = (uint32_t * ) (EHCI1_BASE + 0x810); //PHY cntrl
 	volatile uint32_t *portsc  = (uint32_t * ) (EHCI1_BASE + 0x054);  //E_PORTSC
-	*phy_ctrl &= ~BV(3);
-	*usb_ctrl |= BV(10) | BV(9) | BV(8) | BV(0);
 	*portsc |= BV(13);
 ```
 
-Looks like USB device start to do something:
-```sh
-[0:0] Get Descriptor: 80 06 00 01 00 00 12 00 
-on EP 00 with 0 bytes
-on EP 00 with 2088 bytes
-[0:0] Control data:
-  0000:  00 00 00 03 00 00 00 00 00 00 00 00 00 00 00 00  |................|
-  0010:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
-  0020:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
-  0030:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+2. Define DMA memmory section:
+
+rt-thread/bsp/allwinner/d1s_d1h/link.lds
+```conf
+MEMORY
+{
+    SRAM : ORIGIN = 0x40300000, LENGTH = 4M
+    DMA :  ORIGIN = 0x40700000, LENGTH = 16M
+    HEAP : ORIGIN = 0x41700000, LENGTH = 16M
+}
+
+SECTIONS
+{
+    .usb :
+    {
+        . = ALIGN(4);   
+    } > DMA
 ```
 
-But later USB stak go to FAULT:
+Init MMU with different sections in rt-thread/bsp/allwinner/d1s_d1h/board/board.c:
+```c
+struct mem_desc platform_mem_desc[] = {
+    {KERNEL_VADDR_START, 0x40700000 - 1, (rt_size_t)ARCH_MAP_FAILED, NORMAL_MEM},       //KERNEL
+    {0x1000, 0x3ffff000 - 1, (rt_size_t)ARCH_MAP_FAILED, DEVICE_MEM},                   //IO
+    {0x40700000, 0x40700000 + 0x1000000 - 1, (rt_size_t)ARCH_MAP_FAILED, DEVICE_MEM},   //DMA
+    {0x41700000, 0x40700000 + 0x4000000 - 1, (rt_size_t)ARCH_MAP_FAILED, NORMAL_MEM},   //HEAP + HW PAGE
+};
+```
+
+rt-thread/bsp/allwinner/d1s_d1h/packages/TinyUSB/src/portable/ohci/ohci.c
+```c
+CFG_TUSB_MEM_SECTION TU_ATTR_ALIGNED(256) static ohci_data_t ohci_data;
+```
+
+Run board. Looks like USB device start to do something new, but all data transfers did not produce any results, all of it STALLED or FAULT:
 ```sh
+[0:0] Open EP0 with Size = 8
+Get 8 byte of Device Descriptor
+[0:0] Get Descriptor: 80 06 00 01 00 00 08 00
+on EP 00 with 8 bytes
+on EP 80 with 8 bytes
+[0:0] Control STALLED, xferred_bytes = 8
+
+[0:0] Get Descriptor: 80 06 00 03 D0 03 08 00 
+on EP 00 with 8 bytes
+on EP 80 with 8 bytes
+[0:0] Control STALLED, xferred_bytes = 8
+
+[0:0] Get Descriptor: 80 06 00 02 18 08 08 00 
+on EP 00 with 8 bytes
+on EP 80 with 8 bytes
+[0:0] Control STALLED, xferred_bytes = 8
+
+[0:0] Get Descriptor: 80 06 00 02 58 0C 08 00 
+on EP 00 with 8 bytes
+on EP 00 with 4294964828 bytes
+
+Set Address = 1
+[0:0] Set Address: 00 05 01 00 00 00 00 00
+on EP 00 with 0 bytes
+[0:0] Control STALLED, xferred_bytes = 0
+
+[0:0] Set Address: 00 05 01 02 00 00 00 00 
+on EP 00 with 0 bytes
+on EP 00 with 2088 bytes
+
 [0:0] Get Descriptor: 80 06 00 01 00 00 12 00 
 on EP 00 with 8 bytes
 [0:1] Control FAILED, xferred_bytes = 8
 ```
+
+So did not lead to success again. Need to dive deeper into EHCI/OHCI, maybe some one can advice please ?
+
+- DevTerm R01 image [image/sd_image_devterm.img](image/sd_image_devterm.img)
+- uConsole R01 image [image/sd_image_uconsole.img](image/sd_image_uconsole.img) **(experimental display parameters, use with caution)**
+- Sipeed Lichee image [image/sd_image_lichee.img](image/sd_image_lichee.img)
 
 ## Also ideas why USB stack not working:
 1. EHCI/OHCI registers initialized in not corret way. Need print how is done im Linux kernel and compare.

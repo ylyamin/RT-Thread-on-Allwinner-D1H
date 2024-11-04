@@ -100,6 +100,9 @@ rt-clean: toolchain
 rt-conf: toolchain
 	cd rt-thread/bsp/allwinner/d1s_d1h/ && RTT_EXEC_PATH=$(RISCV64_MUSL_BIN) scons --menuconfig
 
+rt-asm:
+	cd rt-thread/bsp/allwinner/d1s_d1h/ && $(RISCV64_MUSL_BIN)/riscv64-unknown-linux-musl-objdump -D -S rtthread.elf > rtthread.asm
+
 include rt-thread/bsp/allwinner/d1s_d1h/.config
 
 #SD card
