@@ -1979,9 +1979,9 @@ Page Fault happen. Don't know why. Maybe OHCI driver code somewhere use memory o
 
 Thanks for Clockworkpi forum user @zoenggit who [found](https://forum.clockworkpi.com/t/r-01-risc-v-baremetal-with-rt-thread-lcd-work-usb-in-progress/14683/20) discussion  in TinyUSB repo looks like about similar [issue](https://github.com/hathach/tinyusb/discussions/1599)<br>
 
-Acccording this discussion topic user @robots create repo https://github.com/robots/allwinner_t113 for Allwinner T113 chip. Is ARM core but pirephiral looks absolutly the same as D1H RISC-V.<br>
-Is repo is baremetal experiments with T113 and FreeRTOS also contains Doom.<br> 
-So author deside to deactivate EHCI and use only OHCI. Also for USB descriptors used memmory section with direct mapping.<br>
+According this discussion topic user @robots created repo https://github.com/robots/allwinner_t113 for Allwinner T113 chip. Is ARM core but peripherals looks absolutely the same as D1H RISC-V.<br>
+Is repo is bare metal experiments with T113 and FreeRTOS also contains Doom.<br> 
+So author decide to deactivate EHCI and use only OHCI. Also for USB descriptors used memory section with direct mapping.<br>
 
 I try to do the same:
 
@@ -1993,7 +1993,16 @@ rt-thread/bsp/allwinner/d1s_d1h/packages/TinyUSB/rt-thread/bsp/sunxi_D1/drv_tiny
 	*portsc |= BV(13);
 ```
 
-2. Define DMA memmory section:
+2. Add few places to clear/invalidate caches, in rt-thread/bsp/allwinner/d1s_d1h/packages/TinyUSB/src/portable/ohci/ohci.c:
+```c
+static void gtd_init(ohci_gtd_t* p_td, uint8_t* data_ptr, uint16_t total_bytes)
+{
+...
+  rt_hw_cpu_dcache_clean_and_invalidate_local(data_ptr, total_bytes);
+}
+```
+
+3. Define DMA memory section:
 
 rt-thread/bsp/allwinner/d1s_d1h/link.lds
 ```conf
