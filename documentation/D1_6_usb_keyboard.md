@@ -2073,15 +2073,12 @@ on EP 00 with 8 bytes
 [0:1] Control FAILED, xferred_bytes = 8
 ```
 
-So did not lead to success again. Need to dive deeper into EHCI/OHCI, maybe some one can advice please ?
-
-- DevTerm R01 image [image/sd_image_devterm.img](image/sd_image_devterm.img)
-- uConsole R01 image [image/sd_image_uconsole.img](image/sd_image_uconsole.img) **(experimental display parameters, use with caution)**
-- Sipeed Lichee image [image/sd_image_lichee.img](image/sd_image_lichee.img)
+So did not lead to success again.
 
 ## Also ideas why USB stack not working:
-1. EHCI/OHCI registers initialized in not corret way. Need print how is done im Linux kernel and compare.
-2. Maybe EHCI/OHCI somehow use DMA, and is not init correctly.
+- D cache clean in OpenSBI ?
+- Clk compare
+- EHCI/OHCI registers initialized in not corret way. Need print how is done im Linux kernel and compare.
 
 I’m really stuck with the USB driver. Perhaps someone would enjoy diving deep into the USB driver to solve this riddle. Ready for issue reports and pull requests.
 

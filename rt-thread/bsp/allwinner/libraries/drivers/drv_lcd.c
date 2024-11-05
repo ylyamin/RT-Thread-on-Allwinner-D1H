@@ -29,7 +29,7 @@
 #endif
 
 #include <video/sunxi_display2.h>
-#include <dfs_file.h>
+//#include <dfs_file.h>
 #include "dev_disp.h"
 
 #define DEFAULT_SCREEN (0)
@@ -652,7 +652,7 @@ static rt_err_t fb_control(rt_device_t dev, int cmd, void *args)
             info->yres = lcd_drv->lcd_info.height;
             break;
         }
-        case RT_FIOMMAP2:
+/*         case RT_FIOMMAP2:
         {
             struct dfs_mmap2_args *mmap2 = (struct dfs_mmap2_args *)args;
             if (mmap2)
@@ -665,7 +665,7 @@ static rt_err_t fb_control(rt_device_t dev, int cmd, void *args)
             }
 
             break;
-        }
+        }*/
         default:
             break;
     }
