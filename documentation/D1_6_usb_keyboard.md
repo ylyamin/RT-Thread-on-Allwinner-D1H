@@ -1993,13 +1993,31 @@ rt-thread/bsp/allwinner/d1s_d1h/packages/TinyUSB/rt-thread/bsp/sunxi_D1/drv_tiny
 	*portsc |= BV(13);
 ```
 
-2. Add few places to clear/invalidate caches, in rt-thread/bsp/allwinner/d1s_d1h/packages/TinyUSB/src/portable/ohci/ohci.c:
+2. Add few places to clear/invalidate caches. 
+
+in rt-thread/bsp/allwinner/d1s_d1h/packages/TinyUSB/src/portable/ohci/ohci.c:
 ```c
 static void gtd_init(ohci_gtd_t* p_td, uint8_t* data_ptr, uint16_t total_bytes)
 {
 ...
   rt_hw_cpu_dcache_clean_and_invalidate_local(data_ptr, total_bytes);
 }
+```
+
+in rt-thread/bsp/allwinner/d1s_d1h/packages/TinyUSB/src/class/hid/hid_host.c
+```c
+bool hidh_xfer_cb(uint8_t dev_addr, uint8_t ep_addr, xfer_result_t result, uint32_t xferred_bytes)
+{
+  ...
+  if ( dir == TUSB_DIR_IN )
+  {
+    rt_hw_cpu_dcache_invalidate(hid_itf->epin_buf, xferred_bytes);
+    tuh_hid_report_received_cb(dev_addr, instance, hid_itf->epin_buf, (uint16_t) xferred_bytes);
+  }else
+  {
+    rt_hw_cpu_dcache_invalidate(hid_itf->epin_buf, xferred_bytes);
+    if (tuh_hid_report_sent_cb) tuh_hid_report_sent_cb(dev_addr, instance, hid_itf->epout_buf, (uint16_t) xferred_bytes);
+  }
 ```
 
 3. Define DMA memory section:
@@ -2076,8 +2094,9 @@ on EP 00 with 8 bytes
 So did not lead to success again.
 
 ## Also ideas why USB stack not working:
-- D cache clean in OpenSBI ?
-- Clk compare
+- D cache clean can it be forbidden by OpenSBI ?
+- Some MMU restrictions
+- Need to use Thead GCC conpiler instead RTT musl
 - EHCI/OHCI registers initialized in not corret way. Need print how is done im Linux kernel and compare.
 
 I’m really stuck with the USB driver. Perhaps someone would enjoy diving deep into the USB driver to solve this riddle. Ready for issue reports and pull requests.

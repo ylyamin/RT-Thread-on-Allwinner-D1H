@@ -55,3 +55,4 @@ Lets go to the next chapter.<br>
 - https://club.rt-thread.org/ask/question/881984d138edbf55.html
 - https://club.rt-thread.io/ask/article/18.html
 - https://whycan.com/t_11510.html
+- https://github.com/robots/allwinner_t113/issues/2
