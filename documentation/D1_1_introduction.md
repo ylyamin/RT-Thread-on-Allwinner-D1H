@@ -37,7 +37,7 @@ I focused in RT-Thread spent a lot of time to understand boot process, debugging
 
 So, this series of articles will cover the knowledge and experience I gained from working with the Allwinner D1H and RT-Thread.<br>
 I hope someone finds something useful, RT-Thread have big potential as a bare-metal experimentation platform for the D1, as it includes many packages for GUI, audio, Ethernet, and more.<br>
-Maybe someone can help me with USB driver, please. I am ready for issue reports and pull requests.<br>
+
 Lets go to the next chapter.<br>
 
 [Index](D1_0_index.md) | [Next chapter](D1_2_boot_process.md)

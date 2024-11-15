@@ -24,7 +24,7 @@ extern unsigned int _end;
 #define RAM_BASE            (0x40000000)
 #define RAM_END_VADDR       (KERNEL_VADDR_START + RAM_SIZE)
 
-#define RT_HW_HEAP_BEGIN    ((void *)&__heap_start)
+#define RT_HW_HEAP_BEGIN    ((void *)&__bss_end)
 #define RT_HW_HEAP_END      ((void *)(((rt_size_t)RT_HW_HEAP_BEGIN) + 16 * 1024 * 1024))
 #define RT_HW_PAGE_START    (RT_HW_HEAP_END)
 #define RT_HW_PAGE_END      ((void *)RAM_END_VADDR)

@@ -1,10 +1,9 @@
 /*
  * Copyright (c) ylyamin
  */
-#include <drv_usbh.h>
 #include <stdio.h>
 #include <rtthread.h>
-//#include <sunxi-hci.h>
+#include <drv_usbh.h>
 #include <interrupt.h>
 #include <host/usbh.h>
 #include <portable/ehci/ehci_api.h>
@@ -81,12 +80,13 @@ void hcd_int_disable(uint8_t rhport)
 }
 
 
-int drv_usb_tiny(void)
+void drv_usb_tiny(void)
 {
     init_tinyusb();
 }
 //MSH_CMD_EXPORT_ALIAS(drv_usb_tiny, usb_tiny, usb);
 INIT_DEVICE_EXPORT(drv_usb_tiny);
+
 /* 
 
 int drv_usb_hal(void)
