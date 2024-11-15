@@ -435,25 +435,6 @@
 
 /* USB Drivers */
 
-#define USB
-#define DRIVERS_USB
-#define USB_UDC
-#define HAL_TEST_USB
-#define USB_HOST
-#define HAL_TEST_HCI
-#define USB_EHCI
-#define USB_OHCI
-#define USB_EHCI_0
-#define USB_OHCI_0
-#define USB_EHCI_1
-#define USB_OHCI_1
-#define USB_DEVICE
-#define HAL_TEST_UDC
-#define USB_GADGET
-#define COMPONENT_ADBD
-#define COMPONENTS_USB_GADGET_ADBD
-#define DRIVERS_USB_GADGET_ADB
-
 /* CE Devices */
 
 #define DRIVERS_CE

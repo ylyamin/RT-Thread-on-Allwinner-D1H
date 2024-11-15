@@ -29,6 +29,7 @@ if GetDepend('BSP_USING_LCD'):
 
 if GetDepend('BSP_USING_USB'):
     src += ['drv_usbh.c']
+    src += ['hid_app.c']
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 

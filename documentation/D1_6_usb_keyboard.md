@@ -1765,8 +1765,8 @@ Lets put any USB device in board USB socket and run TinyUSB variant:
 ```sh
 msh />usb_tiny
 ```
+<details><summary>RTT Console output:</summary>
 
-RTT Console output:
 ```sh
 [ehci-usb1] insmod host driver!
 phy write: 4200810<-0
@@ -1804,8 +1804,13 @@ plic_irq_toggle irq:50,enable:0
 plic_irq_toggle irq:50,enable:1
 tuh_task_ext: tusb_inited
 ```
+</details>
+
 No reaction to USB device attach / de-attach.<br>
 In function tusb_board_init() lets not use common sunxi-hal initialisation instead put only specific HAL function open_clock() usb_passby():
+
+<details><summary>drv_tinyusb.c:</summary>
+
 ```patch
 diff --git a/rt-thread/bsp/sunxi_D1/drv_tinyusb.c b/rt-thread/bsp/sunxi_D1/drv_tinyusb.c
 
@@ -1842,8 +1847,10 @@ int tusb_board_init(void)
     return 1;
 }
 ```
+</details>
 
-RTT Console output:
+<details><summary>RTT Console output:</summary>
+
 ```shell
 msh />usb_tiny
 phy write: 4200810<-0
@@ -1894,17 +1901,19 @@ tuh_task_ext: USBH DEVICE ATTACH
 [0:] USBH DEVICE ATTACH
 ehci hcd_int_handler: 3
 ``` 
+</details>
+
 So is detected USB device attach by interapt hendler "ehci hcd_int_handler: 4"<br> 
 But then interapt hendler return error "ehci hcd_int_handler: 3"<br>
 
 Lets build OHCI:
 ```patch
 diff --git a/rt-thread/tusb_config.h b/rt-thread/tusb_config.h
-
 +#define TUP_USBIP_OHCI
 ```
 
-RTT Console output:
+<details><summary>RTT Console output:</summary>
+
 ```sh
 msh />usb_tiny
 phy write: 4200810<-0
@@ -1972,6 +1981,7 @@ current thread: tshell
 --------------Backtrace--------------
 $TOOLCHAIN_INSTALL_DIR/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin/riscv64-unknown-linux-musl-addr2line -e rt-thread/bsp/allwinner/d1s_d1h/rtthread.elf -a -f 0x00000000041ffffc
 ```
+</details>
 
 Page Fault happen. Don't know why. Maybe OHCI driver code somewhere use memory out of page.
 
@@ -2055,6 +2065,8 @@ CFG_TUSB_MEM_SECTION TU_ATTR_ALIGNED(256) static ohci_data_t ohci_data;
 ```
 
 Run board. Looks like USB device start to do something new, but all data transfers did not produce any results, all of it STALLED or FAULT:
+<details><summary>RTT Console output:</summary>
+
 ```sh
 [0:0] Open EP0 with Size = 8
 Get 8 byte of Device Descriptor
@@ -2090,15 +2102,91 @@ on EP 00 with 2088 bytes
 on EP 00 with 8 bytes
 [0:1] Control FAILED, xferred_bytes = 8
 ```
+</details>
 
 So did not lead to success again.
 
-## Also ideas why USB stack not working:
-- D cache clean can it be forbidden by OpenSBI ?
-- Some MMU restrictions
-- Need to use Thead GCC conpiler instead RTT musl
-- EHCI/OHCI registers initialized in not corret way. Need print how is done im Linux kernel and compare.
+# USB Finnaly work !
 
-I’m really stuck with the USB driver. Perhaps someone would enjoy diving deep into the USB driver to solve this riddle. Ready for issue reports and pull requests.
+When I press keys "H e l l o !" on the keyboard, see it In RTT console:
+
+```sh
+HID device address = 2, instance = 0 is mounted
+HID Interface Protocol = None
+HID has 4 reports
+msh />
+
+H
+
+e
+
+l
+
+l
+
+o
+
+!
+```
+
+So the reason is not to deactivate EHCI, not clear/invalidate caches, DMA, or aligned linker sections. No no no<br> 
+
+I found this:
+
+![ham_radio](Pics/IMG_20230528_151045_219.jpg)
+
+Is hand-made ham radio transceivers from one guru guy<br>
+This project supports many chips: ARM, RISC-V, ATMEGA, and many peripheries. And is support Allwinner F133 aka D1s <br>
+On this radio USB working properly because just have a proper implementation of EHCI/OHCI stack and that is. <br>
+
+Ham radio use https://github.com/ua1arn/hftrx_tinyusb fork of TinyUSB with changes. I just little change it for support RT-Thread.
+
+Also, disabled drivers from sunxi-hal and rework USB driver to bare-metal init:
+
+rt-thread\bsp\allwinner\libraries\drivers\drv_usbh.c
+```c
+int tusb_board_init(void)
+{
+    _axp_USB_control(1);
+
+	volatile uint32_t *usb_ctrl = (uint32_t * ) (EHCI1_BASE + 0x800);
+	volatile uint32_t *phy_ctrl = (uint32_t * ) (EHCI1_BASE + 0x810);
+	volatile uint32_t *portsc   = (uint32_t * ) (EHCI1_BASE + 0x054);
+	volatile uint32_t *confflag = (uint32_t * ) (EHCI1_BASE + 0x050);
+
+	CCU->USB1_CLK_REG &= ~(BV(24) | BV(25));
+	CCU->USB1_CLK_REG |= BV(24); // usb clock 12M divided from 24MHz 
+	CCU->USB1_CLK_REG |= BV(30) | BV(31); // rst USB1 phy, gating
+
+	CCU->USB_BGR_REG &= ~BV(17);	// rst OHCI1
+	CCU->USB_BGR_REG &= ~BV(21);	// rst EHCI1
+
+	CCU->USB_BGR_REG |= BV(21); // rst EHCI1
+	CCU->USB_BGR_REG |= BV(5); // gating EHCI1
+
+	CCU->USB_BGR_REG |= BV(17); // rst OHCI1
+	CCU->USB_BGR_REG |= BV(1); // gating OHCI1
+
+
+	*phy_ctrl &= ~BV(3); // SIDDQ 0: Write 0 to enable phy
+
+  // Use INCR16 when appropriate
+  // Use INCR8 when appropriate
+  // Use INCR4 when appropriate
+  // Start INCRx burst only on burst x-align address
+  // Enable UTMI interface, disable ULPI interface
+	*usb_ctrl |= BV(11) | BV(10) | BV(9) | BV(8) | BV(0);
+
+...
+
+bool hcd_init(uint8_t rhport)
+{
+  return ehci_init(rhport, (uint32_t) EHCI1_BASE, (uint32_t) EHCI1_BASE+0x10);
+}
+
+```
+Also add HID keyboard report handler from TinyUSB example: rt-thread\bsp\allwinner\libraries\drivers\hid_app.c
+
+The next step is routing the keyboard to the console pipe and LCD frame-buffer and we will have a fully portable RT-Thread device!
 
 [Prev chapter](D1_5_lcd_driver.md) | [Index](D1_0_index.md)

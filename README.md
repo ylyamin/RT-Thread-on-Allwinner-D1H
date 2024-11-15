@@ -25,6 +25,24 @@ Discussion in: https://forum.clockworkpi.com/t/r-01-risc-v-baremetal-with-rt-thr
 
 3. Also could run in Sipeed Lichee RV and manage RGB LCD Display [lichee_lcd_rgb_work](documentation/Pics/lichee_lcd_rgb_work.jpg)
 
+4. USB works. HID keyboard, mouse and joystick sends data (big thanks to https://github.com/ua1arn/hftrx_tinyusb).
+
+```sh
+HID device address = 2, instance = 0 is mounted
+HID Interface Protocol = None
+HID has 4 reports
+msh />
+
+H
+e
+l
+l
+o
+!
+```
+
+The next step is routing the keyboard to the console pipe and LCD frame-buffer and we will have a fully portable RT-Thread device!
+
 # Installation
 In repository exist pre-builded images for SD card in folder [image](image), need to flash it to SD card and install to device.
 - For ClockworkPi DevTerm R01 board please use [image/sd_image_devterm.img](image/sd_image_devterm.img)
@@ -253,7 +271,6 @@ I figure out that integrated UART work very unstable. According [discussion](htt
 - https://github.com/smaeul/linux/tree/d1/all
 
 ## TODO
-- Keyboard, trackball
 - Build RTT gui
 
 

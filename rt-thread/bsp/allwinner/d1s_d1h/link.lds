@@ -15,8 +15,8 @@ OUTPUT_ARCH( "riscv" )
 MEMORY
 {
     SRAM : ORIGIN = 0x40300000, LENGTH = 4M
-    DMA :  ORIGIN = 0x40700000, LENGTH = 16M
-    HEAP : ORIGIN = 0x41700000, LENGTH = 16M
+/*     DMA :  ORIGIN = 0x40700000, LENGTH = 16M
+    HEAP : ORIGIN = 0x41700000, LENGTH = 16M */
 }
 
 ENTRY(_start)
@@ -155,21 +155,21 @@ SECTIONS
     __bss_end = .;
     } > SRAM
 
-    . = ORIGIN(DMA);
-    .usb ALIGN(1M) :
-    {
-        __usbh_class_info_start__ = .;
-        KEEP(*(.usbh_class_info))
-        __usbh_class_info_end__ = .; 
-        . = ALIGN(1M);
-    } > DMA
+/*     . = ORIGIN(DMA);*/ 
 
-    . = ORIGIN(HEAP);
+    .usb /* ALIGN(1M) */ :
+    {
+        *(.usb)
+        /* . = ALIGN(1M); */
+    } > SRAM
+
+/*     . = ORIGIN(HEAP); */    
+
     .heap :
     {
         __heap_start = .;
         *(.heap)
-    } > HEAP
+    } > SRAM
 
     _end = .;
 
