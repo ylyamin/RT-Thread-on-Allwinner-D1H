@@ -25,7 +25,7 @@ Discussion in: https://forum.clockworkpi.com/t/r-01-risc-v-baremetal-with-rt-thr
 
 3. Also could run in Sipeed Lichee RV and manage RGB LCD Display [lichee_lcd_rgb_work](documentation/Pics/lichee_lcd_rgb_work.jpg)
 
-4. USB works. HID keyboard, mouse and joystick sends data (big thanks to https://github.com/ua1arn/hftrx_tinyusb).
+4. USB works. HID keyboard, mouse and joystick sends data to system. (big thanks to @ua1arn https://github.com/ua1arn/hftrx_tinyusb and @zoenggit).
 
 ```sh
 HID device address = 2, instance = 0 is mounted
