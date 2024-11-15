@@ -11,3 +11,7 @@
 	path = bootloaders/xfel
 	url = https://github.com/xboot/xfel
 	ignore = dirty
+[submodule "rt-thread/bsp/allwinner/d1s_d1h/packages/hftrx_tinyusb_fork"]
+	path = rt-thread/bsp/allwinner/d1s_d1h/packages/hftrx_tinyusb_fork
+	url = https://github.com/ylyamin/hftrx_tinyusb_fork
+	branch = master_ua1arn
