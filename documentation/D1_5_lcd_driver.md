@@ -1497,6 +1497,45 @@ Thanks for Clockworkpi forum user @jusentari selected experimental parameters wi
 
 **Used experimental display parameters, please use with caution.**
 
+@jusentari say with default config display flickering and not show picture, when he upping the lcd_dclk_freq from 62 to 67 then displays drawn pixels correctly.<br>
+
+I asked display supplier Shenzhen tianxianwei Technology about if it is safe to change 62 to 67, and they answered:<br>
+```
+lcd_dclk_freq（像素时钟）=67Mhz，对应的刷新率为65Hz，
+大批量做货可能会掉数据出现黑屏、花屏、闪屏；
+建议按我们的刷新率=60Hz来调试。
+```
+Believe it means:
+```
+lcd_dclk_freq (pixel clock) = 67Mhz, the corresponding refresh rate is 65Hz. 
+When produce large quantities of devices, data may be dropped, black screens, blurry screens, and flickering screens appear; 
+it is recommended to debug according to our refresh rate = 60Hz.
+```
+Also they sent recomennded parameters:
+```
+Resolution:720x1280
+External system porch setting: VS=2 ,VBP=16 ,VFP=8 ,  HS=20 ,HBP=20 ,HFP=30
+Frame rate:60.10HZ
+Pixel Clk:61.90Mhz
+MIPI CLK:372Mbps(MIPI通道速率)
+dsi.PLL_CLOCK:186Mbps(MTK平台速率)
+Power:VCI=2.8V, IOVCC=1.8V RESET=1.8V
+```
+
+HBP and VBP quite different from ClockworkPi Linux deiver:
+```yaml
+	lcd_hspw            = <20>;
+	lcd_hbp             = <40>;
+	lcd_ht              = <790>;
+
+	lcd_vspw            = <2>;
+	lcd_vbp             = <18>;
+	lcd_vt              = <1306>;
+```
+Can't test it as I didn't have uConsole.
+
+**Below is an option of an implementation with ClockworkPi Linux deiver parameters and 67Mhz.**
+
 From ClockworkPi path to uConsole R01 https://github.com/clockworkpi/uConsole/blob/master/Code/patch/r01/20230614/r01_v1.01_230614.patch<br>
 I extracted driver for cwu50 display, lets put it to **lcd** folder:
 - rt-thread/bsp/allwinner/libraries/sunxi-hal/hal/source/disp2/disp/lcd/cwu50.c
