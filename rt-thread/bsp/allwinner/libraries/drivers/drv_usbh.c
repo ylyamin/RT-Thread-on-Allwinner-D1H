@@ -5,6 +5,7 @@
 #include <rtthread.h>
 #include <drv_usbh.h>
 #include <interrupt.h>
+#include <tusb_config.h>
 #include <host/usbh.h>
 #include <portable/ehci/ehci_api.h>
 #include <tusb_rt_thread_port.h>
@@ -43,20 +44,31 @@ int tusb_board_init(void)
 	// Use INCR4 when appropriate
 	// Start INCRx burst only on burst x-align address
 	// Enable UTMI interface, disable ULPI interface
+
 	*usb_ctrl |= BV(11) | BV(10) | BV(9) | BV(8) | BV(0);
 
-	//*confflag = 1;
-	//*portsc |= BV(13);
+#ifdef TUP_USBIP_EHCI
 
-    int irq_no = 49;
-    request_irq(irq_no, ehci_hcd_int_handler, 0, "ehci", NULL);
+	*confflag = 1;
+	*portsc &= ~BV(13);
+    request_irq(49, ehci_hcd_int_handler, 0, "ehci", NULL);
+
+#elif TUP_USBIP_OHCI
+	*confflag = 0;
+	*portsc |= BV(13);
+    request_irq(50, ehci_hcd_int_handler, 0, "ohci", NULL);
+
+#endif
     return 0;
+
 }
 
+#ifdef TUP_USBIP_EHCI
 bool hcd_init(uint8_t rhport)
 {
   return ehci_init(rhport, (uint32_t) EHCI1_BASE, (uint32_t) EHCI1_BASE+0x10);
 }
+#endif
 
 void ehci_hcd_int_handler(void)
 {
@@ -67,16 +79,23 @@ void hcd_int_enable(uint8_t rhport)
 {
 	(void)rhport;
 
-    int irq_no = 49;
-    enable_irq(irq_no);
+#ifdef TUP_USBIP_EHCI
+	enable_irq(49);
+#elif TUP_USBIP_OHCI
+	enable_irq(50);
+#endif
+
 }
 
 void hcd_int_disable(uint8_t rhport)
 {
 	(void)rhport;
+#ifdef TUP_USBIP_EHCI
+	disable_irq(49);
+#elif TUP_USBIP_OHCI
+	disable_irq(50);
+#endif
 
-    int irq_no = 49;
-    disable_irq(irq_no);
 }
 
 

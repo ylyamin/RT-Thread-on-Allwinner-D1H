@@ -2188,6 +2188,25 @@ bool hcd_init(uint8_t rhport)
 ```
 Also add HID report handler from TinyUSB example: rt-thread\bsp\allwinner\libraries\drivers\hid_app.c
 
+### Nuance with Full/High speed devices
+
+In Devterm / uConsole - all USB devices are connected through a USB HUB chip then to D1. So USB HUB is Hight speed device and need EHCI to handle this.
+
+In confirg rt-thread/bsp/allwinner/d1s_d1h/tusb_config.h should be defined:
+```c
+#define TUP_USBIP_EHCI 1
+```
+
+In Sipeed Lichee RV - all USB devices are connected directly to D1. 
+HID Keyboard for example is Full speed device and need OHCI to handle this.
+
+In confirg rt-thread/bsp/allwinner/d1s_d1h/tusb_config.h should be defined:
+```c
+#define TUP_USBIP_OHCI 1
+```
+
+Maybe in future, will re-implemented a dynamic switch between EHCI/OHCI
+
 ### Nuance with SD card
 
 USB works well when I flash firmware by JTAG, but with an SD card image does not work.<br>
