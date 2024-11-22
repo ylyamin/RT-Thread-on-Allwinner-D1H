@@ -19,8 +19,13 @@
 
 #define CFG_TUSB_MCU OPT_MCU_SUN20IW1
 
-//#define TUP_USBIP_OHCI 1
+#if defined(BSP_USING_CWP_DT_R01) || defined(BSP_USING_CWP_UC_R01)
 #define TUP_USBIP_EHCI 1
+#endif
+
+#if defined(BSP_USING_SIPEED_LICHEE_RV)
+#define TUP_USBIP_OHCI 1
+#endif
 
 #define CFG_TUH_ENDPOINT_MAX 	16
 #define CFG_TUSB_RHPORT0_MODE OPT_MODE_HOST
