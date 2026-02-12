@@ -62,6 +62,12 @@ config MIPI_DSI_LCD_CWU50
     ---help---
       Clockworkpi uConsole R01 board with MIPI DSI display CWU50
 
+config NV3051F
+    bool "NV3051F"
+    #default n
+    ---help---
+      NV3051F
+
 endchoice
 
 endmenu

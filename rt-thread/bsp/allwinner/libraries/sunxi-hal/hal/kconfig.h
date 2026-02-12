@@ -48,6 +48,10 @@
 #define CONFIG_LCD_SUPPORT_ICN9707_480x1280 1
 #endif
 
+#if defined(LCD_SUPPORT_NV3051F)
+#define CONFIG_LCD_SUPPORT_NV3051F 1
+#endif
+
 #if defined(MIPI_DSI_LCD_ICN9707)
 #define CONFIG_MIPI_DSI_LCD_ICN9707 1
 #endif
@@ -58,6 +62,10 @@
 
 #if defined(MIPI_DSI_LCD_CWU50)
 #define CONFIG_MIPI_DSI_LCD_CWU50 1
+#endif
+
+#if defined(NV3051F)
+#define CONFIG_NV3051F 1
 #endif
 
 #define CONFIG_RT_THREAD_PRIORITY_MAX 32

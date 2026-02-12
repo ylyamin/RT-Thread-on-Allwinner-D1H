@@ -108,10 +108,6 @@
 #define RT_DFS_ELM_REENTRANT
 #define RT_DFS_ELM_MUTEX_TIMEOUT 3000
 #define RT_USING_DFS_DEVFS
-#define RT_USING_FAL
-#define FAL_DEBUG_CONFIG
-#define FAL_DEBUG 1
-#define FAL_PART_HAS_TABLE_CFG
 #define RT_USING_LWP
 #define RT_LWP_MAX_NR 30
 #define LWP_TASK_STACK_SIZE 16384
@@ -145,11 +141,6 @@
 /* Using USB */
 
 #define RT_USING_USB
-#define RT_USING_USB_HOST
-#define RT_USBH_HID
-#define RT_USBH_HID_MOUSE
-#define RT_USBH_HID_KEYBOARD
-#define RT_USBD_THREAD_STACK_SZ 4096
 
 /* C/C++ and POSIX layer */
 
@@ -286,6 +277,30 @@
 /* Kendryte SDK */
 
 
+/* WCH HAL & SDK Drivers */
+
+
+/* AT32 HAL & SDK Drivers */
+
+
+/* HC32 DDL Drivers */
+
+
+/* NXP HAL & SDK Drivers */
+
+
+/* NUVOTON Drivers */
+
+
+/* GD32 Drivers */
+
+
+/* HPMicro SDK */
+
+
+/* FT32 HAL & SDK Drivers */
+
+
 /* sensors drivers */
 
 
@@ -357,11 +372,7 @@
 #define BSP_USING_I2C
 #define BSP_USING_I2C0
 #define BSP_USING_PWM
-#define BSP_USING_SDMMC
-#define SD_CARD_CHECK
-#define BSP_USING_FS
 #define BSP_USING_LCD
-#define BSP_USING_USB
 
 /* Board extended module Drivers */
 
@@ -393,7 +404,7 @@
 
 /* LCD panels select */
 
-#define LCD_SUPPORT_ICN9707_480x1280
+#define LCD_SUPPORT_NV3051F
 
 /* Display engine feature select */
 
@@ -403,7 +414,7 @@
 
 /* Board Select */
 
-#define MIPI_DSI_LCD_ICN9707
+#define NV3051F
 
 /* Soc Select */
 
@@ -411,15 +422,6 @@
 
 /* SDMMC Devices */
 
-#define DRIVERS_SDMMC
-#define USE_SD
-#define USE_SDIO
-#define DETECT_CARD
-#define SDC_DMA_USED
-#define SDIO_IRQ_SUPPORT
-#define SD_TEST
-#define SDC_DMA_BUF_SIZE 64
-#define DRIVERS_SDC_CDPIN_PRESENT_VAL 0
 
 /* SPI Devices */
 
@@ -434,6 +436,8 @@
 #define DRIVERS_G2D
 
 /* USB Drivers */
+
+#define HAL_TEST_USB
 
 /* CE Devices */
 

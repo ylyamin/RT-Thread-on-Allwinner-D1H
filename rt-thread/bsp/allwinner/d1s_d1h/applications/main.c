@@ -20,7 +20,13 @@ int main(void)
 void tcon_dump_regs(void)
 {
 
-rt_kprintf("\n\rStep 1 Select HV interface type\n\n\r");
+rt_kprintf("	SUN50I_DPHY_PLL_REG0		0x104 	%08x\n\r", *(uint32_t *)(0x05450000 + 0x1000 + 0x104)	);
+rt_kprintf("	CCU->PLL_PERI_CTRL_REG      0x020       %08x\n\r",  *(uint32_t *)( 0x02001000 + 0x020)	);
+rt_kprintf("	CCU->PLL_VIDEO0_CTRL_REG    0x040       %08x\n\r",  *(uint32_t *)( 0x02001000 + 0x040)	);
+rt_kprintf("	TCON_LCD0->LCD_DCLK_REG     0x044		%08x\n\r",  *(uint32_t *)( 0x05461000 + 0x044)	);
+rt_kprintf("	CCU->DSI_CLK_REG            0xB24		%08x\n\r",  *(uint32_t *)( 0x02001000 + 0xB24)	);
+
+/* rt_kprintf("\n\rStep 1 Select HV interface type\n\n\r");
 
 rt_kprintf("	TCON_LCD0->LCD_CTL_REG      0x040 		%08x\n\r", *(uint32_t *)( 0x05461000 + 0x040)	);
 rt_kprintf("	TCON_LCD0->LCD_HV_IF_REG    0x058		%08x\n\r", *(uint32_t *)( 0x05461000 + 0x058)	);
@@ -71,7 +77,7 @@ rt_kprintf("	TCON_LCD0->LCD_LVDS_ANA_REG[0]  0x220           %08x\n\r", *(uint32
 rt_kprintf("\n\rStep 5-7 Set and open interrupt function\n\n\r");
 
 rt_kprintf("	TCON_LCD0->LCD_GINT0_REG    0x004           %08x\n\r", *(uint32_t *)( 0x05461000 + 0x004) 	);		
-rt_kprintf("	TCON_LCD0->LCD_GINT1_REG    0x008           %08x\n\r", *(uint32_t *)( 0x05461000 + 0x008) 	);	
+rt_kprintf("	TCON_LCD0->LCD_GINT1_REG    0x008           %08x\n\r", *(uint32_t *)( 0x05461000 + 0x008) 	);	 */
 
 }
 

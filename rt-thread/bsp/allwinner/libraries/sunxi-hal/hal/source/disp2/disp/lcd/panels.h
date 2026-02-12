@@ -153,6 +153,9 @@ extern struct __lcd_panel VVX07H005A10_panel;
 #ifdef CONFIG_LCD_SUPPORT_ICN9707_480x1280
 extern struct __lcd_panel icn9707_480x1280_panel;
 #endif
+#ifdef CONFIG_LCD_SUPPORT_NV3051F
+extern struct __lcd_panel NV3051F_panel;
+#endif
 #ifdef CONFIG_LCD_SUPPORT_CWU50
 extern struct __lcd_panel cwu50_panel;
 #endif

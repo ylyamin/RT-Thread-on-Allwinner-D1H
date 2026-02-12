@@ -203,4 +203,10 @@ config LCD_SUPPORT_CWU50
     ---help---
         If you want to support CWU50 panel for display driver, select it.
 
+config LCD_SUPPORT_NV3051F
+    bool "NV3051F"
+    #default n
+    ---help---
+        NV3051F
+
 endchoice

@@ -13,6 +13,10 @@ obj-$(CONFIG_DEFAULT_LVDS)+= f133_lvds.o
 
 obj-$(CONFIG_RGB_LCD_ST7001S)+= RGB_LCD_ST7001s.o
 obj-$(CONFIG_MIPI_DSI_LCD_ICN9707)+= icn9707_mipi_config.o
+obj-$(CONFIG_NV3051F)+= NV3051F_config.o
+
+
+
 
 
 

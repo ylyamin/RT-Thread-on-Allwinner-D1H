@@ -162,6 +162,9 @@ if GetDepend('RGB_LCD_ST7001S'):
 if GetDepend('LCD_SUPPORT_ICN9707_480x1280'):
     disp2_src += ['./source/disp2/disp/lcd/icn9707_480x1280.c']
 
+if GetDepend('LCD_SUPPORT_NV3051F'):
+    disp2_src += ['./source/disp2/disp/lcd/NV3051F.c']
+
 if GetDepend('MIPI_DSI_LCD_ICN9707'):
     disp2_src += ['./source/disp2/soc/icn9707_mipi_config.c']
 
@@ -170,6 +173,9 @@ if GetDepend('LCD_SUPPORT_CWU50'):
 
 if GetDepend('MIPI_DSI_LCD_CWU50'):
     disp2_src += ['./source/disp2/soc/cwu50_config.c']
+
+if GetDepend('NV3051F'):
+    disp2_src += ['./source/disp2/soc/NV3051F_config.c']
 
 
 sdmmc_src = Split('''
