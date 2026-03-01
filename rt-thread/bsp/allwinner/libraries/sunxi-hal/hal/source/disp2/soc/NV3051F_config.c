@@ -58,12 +58,12 @@ struct property_t g_lcd0_config_soc[] = {
     {
         .name = "lcd_width",
         .type = PROPERTY_INTGER,
-        .v.value = 60,
+        .v.value = 480,
     },
     {
         .name = "lcd_height",
         .type = PROPERTY_INTGER,
-        .v.value = 160,
+        .v.value = 1280,
     },
     {
         .name = "lcd_dclk_freq",
@@ -103,7 +103,7 @@ struct property_t g_lcd0_config_soc[] = {
     {
         .name = "lcd_ht",
         .type = PROPERTY_INTGER,
-        .v.value = 600+44+46+2,
+        .v.value = 1280+44+46+2,
     },
     {
         .name = "lcd_hspw",
@@ -118,7 +118,7 @@ struct property_t g_lcd0_config_soc[] = {
     {
         .name = "lcd_vt",
         .type = PROPERTY_INTGER,
-        .v.value = 1280+8+16+2,
+        .v.value = 600+8+16+2,
     },
     {
         .name = "lcd_vspw",
@@ -133,17 +133,17 @@ struct property_t g_lcd0_config_soc[] = {
     {
         .name = "lcd_lvds_colordepth",
         .type = PROPERTY_INTGER,
-        .v.value = 1,
+        .v.value = 0,
     },
     {
         .name = "lcd_lvds_mode",
         .type = PROPERTY_INTGER,
-        .v.value = 0,
+        .v.value = 4,
     },
     {
         .name = "lcd_frm",
         .type = PROPERTY_INTGER,
-        .v.value = 1,
+        .v.value = 0,
     },
     {
         .name = "lcd_hv_clk_phase",
