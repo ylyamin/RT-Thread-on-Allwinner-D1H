@@ -750,9 +750,9 @@ int rt_hw_lcd_init(void)
 
     return RT_EOK;
 }
- INIT_DEVICE_EXPORT(rt_hw_lcd_init); //when init as a device and not a application in main then could be debugged by gdb
+INIT_DEVICE_EXPORT(rt_hw_lcd_init); //when init as a device and not a application in main then could be debugged by gdb
 
-static int lcd_draw_point(int args, char *argv[])
+int lcd_draw_point(int args, char *argv[])
 {
     struct lcd_device *lcd_drv = g_lcd;
     int x = 0;
